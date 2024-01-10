@@ -68,14 +68,39 @@ provider-internal client-server communication up to the provider.
 
 # Introduction
 
-[[ TODO Introduction ]]
+The goal of the More Instant Messaging Interoperability (MIMI) Working Group is
+to enable multiple providers of end-to-end encrypted instant messaging to
+interoperate. As described in the MIMI architecture, group chats and direct
+messages are described in terms of "rooms". Each MIMI protocol room is hosted at
+a single provider (the "hub" provider"), but allows users from different
+providers to become participants in the room. The hub provider maintains the
+policy and participation for the room, authorizes messages, and is responsible
+for message ordering, the participation list, and policy of its rooms. Each
+provider also stores initial keying material and consent for its users (who may
+be offline).
+
+This document describes the communication between and among different providers
+necessary to send and receive encrypted messages, share room policy, and add
+participants to and remove participants from rooms. In support of these
+functions, the protocol also has primitives to fetch initial keying material,
+fetch the current MLS GroupInfo, and request, grant, and reject consent to
+communicate with users on other providers.
+
+Messages sent inside each room are end-to-end encrypted using the Messaging
+Layer Security (MLS) protocol {{!RFC9420}}, and each room is associated with an
+MLS group. MLS also ensures that clients in a room agree on the room policy and
+participation.
 
 # Conventions and Definitions
 
 {::boilerplate bcp14-tagged}
 
-[[ Syntax is shown in JSON here, but might be re-encoded in a more compact
-format later ]]
+Most MIMI-related terms are inherited from {{!I-D.barnes-mimi-arch}}. Readers
+of this document should be familiar with the Terminology section of the MLS protocol {{!RFC9420}}.
+
+Throughout this document, the examples use the TLS Presentation Language
+{{!RFC8446}} and the semantics of HTTP {{!RFC7231}} respectively as
+placeholders for a binary encoding mechanism and transport semantics.
 
 # Protocol Overview
 
@@ -99,7 +124,7 @@ format later ]]
 * All actions within a room are E2E-authenticated
 * Each room has an associated MLS group
 * Messages are protected as PrivateMessage
-* Room changes are protected as PublicMessage(Proposal) 
+* Room changes are protected as PublicMessage(Proposal)
 * ... incl. origination by servers
 
 # Application Layer
