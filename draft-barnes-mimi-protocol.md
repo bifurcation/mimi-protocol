@@ -70,11 +70,29 @@ provider-internal client-server communication up to the provider.
 
 TODO Introduction
 
-
 # Conventions and Definitions
 
 {::boilerplate bcp14-tagged}
 
+# Protocol Overview
+
+[[ Layering: State control; security; transport ]]
+
+## Creating a Room
+
+[[ Alice creates room; No protocol interaction; what state is initialized ]]
+
+## Fetching Key Material for a User
+
+[[ HTTP request / response ]]
+
+## Adding and Removing Participants to a Room
+
+## Adding and Removing Participants' Clients
+
+## Exchanging Messages
+
+# HEDGEDOC CONTENT BELOW THIS LINE
 
 # Operational Model
 
@@ -90,11 +108,9 @@ TODO Introduction
 * Some actions cannot be committed immediately
     * Self-remove
     * Any action intiated by a server
-* If an action cannot be committed immediately, the hub enqueues it and assures it is committed as soon as possible 
+* If an action cannot be committed immediately, the hub enqueues it and assures it is committed as soon as possible
 
 * Some actions happen outside a room: Consent, claim key material, identifier resolution
-
----
 
 Functional/layering model of MIMI protocol:
 
@@ -104,7 +120,7 @@ Functional/layering model of MIMI protocol:
 * Room state change request / response
     * Proposal* + \[CommitBundle]
     * Proposal = Add / Update / Remove / MIMI
-* Message submission request / response 
+* Message submission request / response
 
 ```
                    +---------------+-------------+
@@ -115,14 +131,12 @@ Functional/layering model of MIMI protocol:
 |                    Transport                   |
 +------------------------------------------------+
 ```
-
-
 ```
 POST /updateRoom/dxzxxDuvMOTsUD4D_YdSyQ
 
 PublicMessage{
   /* MLS Commit - inside is a list of Proposals */
-  Commit[ 
+  Commit[
     ParticipantListPatch{
       addUsers [
         [Charlie, [normal]],
@@ -142,7 +156,7 @@ PublicMessage{
   Welcome
   /* MLS GroupInfo if the Commit is accepted (without the ratchet_tree)
   GroupInfo,
-  /* 
+  /*
   RatchetTree
 }
 ```
@@ -167,7 +181,7 @@ POST /updateRoom/dxzxxDuvMOTsUD4D_YdSyQ
 
 PublicMessage{
   /* MLS Commit - inside is a list of Proposals */
-  Commit[ 
+  Commit[
     ParticipantListPatch{
       removeUsers [Alice]
     },
@@ -210,7 +224,7 @@ one another.
 
 ## Alice creates a room
 
-We assume that someone on ProviderA (possibly Alice) has created Room1, that ProviderA is the *hub provider* for the room, and that the room policy means that if you have the "admin" role in the room you can add and remove users to the participant list and change the roles of participants. 
+We assume that someone on ProviderA (possibly Alice) has created Room1, that ProviderA is the *hub provider* for the room, and that the room policy means that if you have the "admin" role in the room you can add and remove users to the participant list and change the roles of participants.
 
 Creating a room is done between a client and its local provider and is
 out of scope of MIMI. However, we assume that Room1 has the following
@@ -222,7 +236,7 @@ policies.
 - the administrator and owner roles are allowed to add and remove users, and to promote a user to be an administrator.
 
 We also assume that Alice is the owner, and therefore an administrator,
-of the room. Alice has owner, administrator, and regular user roles in the room. 
+of the room. Alice has owner, administrator, and regular user roles in the room.
 
 ## Alice adds Bob
 
@@ -237,7 +251,7 @@ In MLS, in order for Alice to add Bob, her client needs to somehow obtain a KeyP
 To create a conversation with Bob, Alice would like to get KeyPackages for all
 of Bob's clients (for example for clients on his laptop, his phone, and his tablet). Alice's client requests Bob's KeyPackages from her local provider (not specified by MIMI), then her provider sends a request to Bob's provider asking for KeyPackages for Bob's clients. That request may include the
 room ID in which Alice intends to use the KeyPackages, in case Bob's consent
-only applies to a single room. 
+only applies to a single room.
 
 ```
 Bob* -> ProviderB: KeyPackage
@@ -269,7 +283,7 @@ is made by committing an MLS GroupContextExtensions proposal.
 
 Changes to the participant list are maintained by patching the participation
 list. In MLS this accomplished by committing a `ParticipantListPatch` proposal
-(defined in this document). 
+(defined in this document).
 
 Unless the base policy document defines otherwise, an MLS client who makes a
 change to the participant list is expected to simultaneously effect the
@@ -277,7 +291,7 @@ corresponding change to the MLS group state (to the extent allowed by the
 protocol). Except for active participants committing valid pending remove
 proposals, a client making a change to the participant list should not expect
 any other client to take any immediate action based on updating the participant
-list alone. 
+list alone.
 
 Making any of these changes, the client sends either a set of proposals,
 or sends a Commit bundle, which consists of a Commit, a Welcome if there were
@@ -319,7 +333,7 @@ ProviderB -> Bob*: Message notification
 
 Digress to talk about room policy here...
 
-Since Alice is the owner of the room and the room policy is that administrators have to Alice commits a `ParticipantListPatch` proposal updating Bob's roles in the room to `[regular_user, admin]`. 
+Since Alice is the owner of the room and the room policy is that administrators have to Alice commits a `ParticipantListPatch` proposal updating Bob's roles in the room to `[regular_user, admin]`.
 
 If the hub provider accepts the commit, it fans it out so all the active participants receive it.
 
@@ -328,7 +342,6 @@ Alice1 -> ProviderA: CommitBundle(PLP)
 ProviderA: Validate commit sequencing; PLP authz by policy
 ProviderA -> Alice1: Commit accepted
 ```
-
 ## Bob adds Cathy and Doug
 
 Since Bob is now an admin, Bob wants to Cathy and Doug. Bob starts by fetching their KeyPackages (assuming Bob already has consent from Cathy and Doug). Then Bob commits a `ParticipantListPatch` proposal adding Cathy as both a regular user and administrator, and Doug as a regular user; and Add proposals for all of Cathy's and Doug's KeyPackages.
@@ -405,13 +418,13 @@ ProviderB -> Bob*: Commit notification
 ProviderD -> Doug*: Commit notification
 ```
 
-## Consent 
+## Consent
 
 Most instant messaging systems have some notion of how a user consents to be added to a room, and how they manipulate this consent.
 
-In the connection-oriented model, once two users are connected, either user can add the other to any number of rooms. In other systems (often with many large and/or public rooms), a user needs to consent individually to be added to a room. 
+In the connection-oriented model, once two users are connected, either user can add the other to any number of rooms. In other systems (often with many large and/or public rooms), a user needs to consent individually to be added to a room.
 
-The MIMI consent mechanism supports both models and allows them to coexist. It allows a user to request consent, grant consent, revoke consent, and cancel a request for consent. Each of these consent operations can indicate a specific room, or indicate any room. 
+The MIMI consent mechanism supports both models and allows them to coexist. It allows a user to request consent, grant consent, revoke consent, and cancel a request for consent. Each of these consent operations can indicate a specific room, or indicate any room.
 
 A connection grant or revoke does not need to specify a room if a connection request did, or vice versa. A connection grant or revoke does not even need to follow a connection request.
 
@@ -421,11 +434,11 @@ For example, Alice could ask for consent to add Bob to a specific room. Bob coul
 
 Consent requests have sensitive privacy implications. The sender of a consent request should receive an acknowledgement that the request was received by the *provider* of the target user. For privacy reasons, the requestor should not know if the target user received or viewed the request. The original requestor will obviously find out if the target grants consent, but a consent revocation/rejection is typically not communicated to the revoked/rejected user (again for privacy reasons).
 
-Consent operations are only sent directly between the acting provider (sending the request, grant, revoke, or cancel) and the target provider (the object of the consent). In other words, the two providers must have a direct peering relationship. 
+Consent operations are only sent directly between the acting provider (sending the request, grant, revoke, or cancel) and the target provider (the object of the consent). In other words, the two providers must have a direct peering relationship.
 
 In our example, Alice requests consent from Bob for any room. Later, Bob sends a grants consent to Alice to add him to any room. At the same time as sending the consent request, Alice grants consent to Bob to add her to any room.
 
-**TODO:** decide if we like any of the text below better: 
+**TODO:** decide if we like any of the text below better:
 
 The consent primitive needs to include the following:
 - the specific operation (a request for consent, a grant of consent, or a rejection/revocation of consent);
@@ -467,9 +480,6 @@ Note that a user could reject consent for all rooms from a user even if there wa
 
 out of scope
 
-
-
-
 # Definition of Primitives
 
 ## MIMI URL directory
@@ -478,11 +488,11 @@ Like the ACME protocol {{?RFC8555}}, the MIMI protocol uses a directory document
 
 The directory URL is discovered using the `mimi-protocol-directory` well-known URI.
 
-```
+~~~
 GET /.well-known/mimi-protocol-directory
-```
+~~~
 
-```
+~~~
 enum {
   get(1),
   post(2),
@@ -512,11 +522,11 @@ struct {
 struct {
   MimiDirectoryEntry directory<V>;
 } MimiDirectory;
-```
+~~~
 
 ## Obtain consent
 
-Alice can request consent for Bob in the context of a room, or in general. Bob can grant or refuse consent to Alice in the context of a room or in general. 
+Alice can request consent for Bob in the context of a room, or in general. Bob can grant or refuse consent to Alice in the context of a room or in general.
 
 ~~~
 POST /requestConsent/{targetDomain}
@@ -532,7 +542,7 @@ enum {
 
 struct {
   ConsentOperation consentOperation;
-  IdentifierUri requesterUri; 
+  IdentifierUri requesterUri;
   IdentifierUri targetUri;
   optional<RoomId> roomId;
   select(consentOperation) {
@@ -691,10 +701,10 @@ using a `GroupContextExtensions` proposal. Likewise, any change to the
 participant list is always communicated via a `ParticipantListPatch`
 proposal type. The participant list change needed to add a user MUST happen either before or simultaneously with the corresponding MLS operation.
 
-Removing an active user from a participant list or banning an active participant SHOULD happen simultaneously with any MLS changes made to the commit removing the participant. 
+Removing an active user from a participant list or banning an active participant SHOULD happen simultaneously with any MLS changes made to the commit removing the participant.
 
 
-[[ RWM: TO REMOVE: "The provider is in an impossible situation handling users removed from the participation list but who are still active participants. It should forward the commit removing Bob as a participant to Bob's clients so that Bob is aware that it has been removed, but it should not forward the commit to Bob's clients because those clients would then be able to form the epoch secret for the new epoch." ]] 
+[[ RWM: TO REMOVE: "The provider is in an impossible situation handling users removed from the participation list but who are still active participants. It should forward the commit removing Bob as a participant to Bob's clients so that Bob is aware that it has been removed, but it should not forward the commit to Bob's clients because those clients would then be able to form the epoch secret for the new epoch." ]]
 
 A hub provider which observes that an active user has been removed or banned, but still has clients MUST prevent any of those clients from sending or receiving any additional application messages; MUST prevent any of those clients from sending Commit messages; and MUST prevent it from sending any proposals except for `Remove` and `SelfRemove` proposals.
 
@@ -889,7 +899,7 @@ struct {
   /* an application message (wire_format = private_message and */
   /* content_type = application) and the key and nonce to decrypt */
   /* just this single application message */
-  MLSMessage 
+  MLSMessage
   bytes key;
   bytes nonce;
 } AbusiveMessage;
@@ -992,6 +1002,11 @@ MLS defines an abstract Delivery Server (DS) and Authentication Server (AS). Thi
 The MLS profile for MIMI requires a concept of a user identifier and a mechanism to associate credentials in MLS clients to MIMI users.
 
 Clients are free to fetch pseudonymous user identifiers from their local provider, and use these in rooms. These pseudonymns need only identify the client's provider to other providers and clients. The actual user identity could be shared among the active participants of the room, by using a credential with selective disclosures, or by signing a binding with both the pseudonymous signature key and the "real" identity signature key and presenting the binding to other members.
+
+
+
+
+
 
 # Security Considerations
 
