@@ -89,7 +89,9 @@ communicate with users on other providers.
 Messages sent inside each room are end-to-end encrypted using the Messaging
 Layer Security (MLS) protocol {{!RFC9420}}, and each room is associated with an
 MLS group. MLS also ensures that clients in a room agree on the room policy and
-participation.
+participation. One of the core principles of this protocol is that ar all times,
+the clients of the end-to-end encryption protocol (the MLS clients who are in an
+MLS group) all need to correspond to users who are in the associated room.
 
 # Conventions and Definitions
 
