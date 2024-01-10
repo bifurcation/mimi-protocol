@@ -1366,7 +1366,9 @@ communicate with users on other providers.<a href="#section-1-2" class="pilcrow"
 <p id="section-1-3">Messages sent inside each room are end-to-end encrypted using the Messaging
 Layer Security (MLS) protocol <span>[<a href="#RFC9420" class="cite xref">RFC9420</a>]</span>, and each room is associated with an
 MLS group. MLS also ensures that clients in a room agree on the room policy and
-participation.<a href="#section-1-3" class="pilcrow">¶</a></p>
+participation. One of the core principles of this protocol is that ar all times,
+the clients of the end-to-end encryption protocol (the MLS clients who are in an
+MLS group) all need to correspond to users who are in the associated room.<a href="#section-1-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="conventions-and-definitions">
