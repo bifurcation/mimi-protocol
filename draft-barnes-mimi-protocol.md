@@ -68,29 +68,62 @@ provider-internal client-server communication up to the provider.
 
 # Introduction
 
-TODO Introduction
+[[ TODO Introduction ]]
 
 # Conventions and Definitions
 
 {::boilerplate bcp14-tagged}
 
+[[ Syntax is shown in JSON here, but might be re-encoded in a more compact
+format later ]]
+
 # Protocol Overview
 
 [[ Layering: State control; security; transport ]]
 
-## Creating a Room
+## Dramatis Personae
+## Alice Creates a Room
+## Alice adds Bob to the Room
+## Bob adds Charlie to the Room
+## Cathy sends a Message
 
-[[ Alice creates room; No protocol interaction; what state is initialized ]]
+# Transport layer
 
-## Fetching Key Material for a User
+* Server for user identified by domain half of identifier
+* HTTPS over mutually-authenticated TLS
+* Transport framing needs to identify intended src/dst domains
+* TLS certificates need to authenticate src/dst domains
 
-[[ HTTP request / response ]]
+# E2E Security Layer
 
-## Adding and Removing Participants to a Room
+* All actions within a room are E2E-authenticated
+* Each room has an associated MLS group
+* Messages are protected as PrivateMessage
+* Room changes are protected as PublicMessage(Proposal) 
+* ... incl. origination by servers
 
-## Adding and Removing Participants' Clients
+# Application Layer
 
-## Exchanging Messages
+## Room State
+
+[[ Only room state right now is a list of participant IDs, MLS group ID ]]
+[[ Hub and followers track KP hashes for Welcome routing ]]
+
+## Application Endpoints
+
+[[ keyMaterial / notify / update / message ]]
+[[ Discovery from domain via .well-known ]]
+
+### Fetching Key Material for a User
+### Updating Room State
+### Notifying Followers of Room Events
+### Sending Messages
+
+# Consent Sketch
+
+[[ Consent is important, so we include a preliminary sketch here ]]
+
+
 
 # HEDGEDOC CONTENT BELOW THIS LINE
 
