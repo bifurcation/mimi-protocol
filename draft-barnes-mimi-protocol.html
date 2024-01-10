@@ -1908,14 +1908,6 @@ ProviderD -&gt; Doug*: Commit notification
 <p id="section-10.8-7">Consent requests have sensitive privacy implications. The sender of a consent request should receive an acknowledgement that the request was received by the <em>provider</em> of the target user. For privacy reasons, the requestor should not know if the target user received or viewed the request. The original requestor will obviously find out if the target grants consent, but a consent revocation/rejection is typically not communicated to the revoked/rejected user (again for privacy reasons).<a href="#section-10.8-7" class="pilcrow">¶</a></p>
 <p id="section-10.8-8">Consent operations are only sent directly between the acting provider (sending the request, grant, revoke, or cancel) and the target provider (the object of the consent). In other words, the two providers must have a direct peering relationship.<a href="#section-10.8-8" class="pilcrow">¶</a></p>
 <p id="section-10.8-9">In our example, Alice requests consent from Bob for any room. Later, Bob sends a grants consent to Alice to add him to any room. At the same time as sending the consent request, Alice grants consent to Bob to add her to any room.<a href="#section-10.8-9" class="pilcrow">¶</a></p>
-<p id="section-10.8-10"><strong>TODO:</strong> decide if we like any of the text below better:<a href="#section-10.8-10" class="pilcrow">¶</a></p>
-<p id="section-10.8-11">The consent primitive needs to include the following:
-- the specific operation (a request for consent, a grant of consent, or a rejection/revocation of consent);
-- the user ID of the user requesting consent;
-- the user ID of the target user; and
-- optionally, the room ID for which the consent was requested.<a href="#section-10.8-11" class="pilcrow">¶</a></p>
-<p id="section-10.8-12">If the consent primitive does not specify a room, it implies consent for any room. This is a common model for systems that use connection requests. Once a user accepts a connection request, either party is consenting to add the other to any number of rooms (connection requests involve granting two unidirectional consents). In other systems, consent for Alice to add Bob to a soccer fans room does not imply that Alice has permission to add Bob to a timeshare presentations room. Both models are common, so MIMI should be able to support both models.<a href="#section-10.8-12" class="pilcrow">¶</a></p>
-<p id="section-10.8-13">Note that a user could reject consent for all rooms from a user even if there was a consent request for a specific room, or even no consent request.<a href="#section-10.8-13" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="other-ways-to-join">
@@ -2079,26 +2071,25 @@ struct {
 <a href="#section-11.3" class="section-number selfRef">11.3. </a><a href="#name-claim-keys" class="section-name selfRef">Claim keys</a>
         </h3>
 <p id="section-11.3-1">This action attempts to claim initial keying material for all the clients
-of a list of users at a single provider. The keying material may not be
+of a single user at a specific provider. The keying material may not be
 reused unless identified as "last resort" keying material.<a href="#section-11.3-1" class="pilcrow">¶</a></p>
-<p id="section-11.3-2">The target provider's domain name is listed in the request path. KeyPackages
+<p id="section-11.3-2">The target user's URI is listed in the request path. KeyPackages
 requested using this primitive <span class="bcp14">MUST</span> be sent via the hub provider of whatever
 room they will be used in. (If this is not the case, the hub provider will be
 unable to forward a Welcome message to the target provider).<a href="#section-11.3-2" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-11.3-3">
 <pre>
-POST /claimKeymaterial/{domain}
+POST /keyMaterial/{targetUser}
 </pre><a href="#section-11.3-3" class="pilcrow">¶</a>
 </div>
-<p id="section-11.3-4">The request body includes the protocol (currently just MLS 1.0), the requesting
-user, and one or more target users hosted at the target provider domain. The
-request <span class="bcp14">SHOULD</span> include the room ID for which the KeyPackage is intended, as the
-target may have only granted consent for a specific room.<a href="#section-11.3-4" class="pilcrow">¶</a></p>
-<p id="section-11.3-5">For MLS, the request
-includes a non-empty list of acceptable MLS ciphersuites, and an MLS
-<code>RequiredCapabilities</code> object (which contains credential types, non-default
-proposal types, and extensions) required by the requesting provider (these lists
-can be an empty). The <code>lastResortAllowed</code> field <span class="bcp14">SHOULD</span> be false.<a href="#section-11.3-5" class="pilcrow">¶</a></p>
+<p id="section-11.3-4">The path includes the target user. The request body includes the protocol
+(currently just MLS 1.0), and the requesting user. The request <span class="bcp14">SHOULD</span> include
+the room ID for which the KeyPackage is intended, as the target may have only
+granted consent for a specific room.<a href="#section-11.3-4" class="pilcrow">¶</a></p>
+<p id="section-11.3-5">For MLS, the request includes a non-empty list of acceptable MLS ciphersuites,
+and an MLS <code>RequiredCapabilities</code> object (which contains credential types,
+non-default proposal types, and extensions) required by the requesting provider
+(these lists can be an empty). The <code>lastResortAllowed</code> field <span class="bcp14">SHOULD</span> be false.<a href="#section-11.3-5" class="pilcrow">¶</a></p>
 <p id="section-11.3-6">The request body has the following form.<a href="#section-11.3-6" class="pilcrow">¶</a></p>
 <div class="lang-tls sourcecode" id="section-11.3-7">
 <pre>
@@ -2182,14 +2173,10 @@ struct {
 } ClientKeyMaterial;
 
 struct {
-    KeyMaterialUserCode userStatus;
-    IdentifiedUri userUri;
-    ClientKeyMaterial clients&lt;V&gt;;
-} UserKeyMaterial;
-
-struct {
     Protocol protocol;
-    UserKeyMaterial users&lt;V&gt;;
+    KeyMaterialUserCode userStatus;
+    IdentifierUri userUri;
+    ClientKeyMaterial clients&lt;V&gt;;
 } KeyMaterialResponse;
 </pre><a href="#section-11.3-11" class="pilcrow">¶</a>
 </div>
@@ -2200,7 +2187,6 @@ its <code>KeyPackageRef</code> with the target provider. This insures that Welco
 messages can be correctly routed to the target provider and client. These
 associations can be deleted after a Welcome message is forwarded or after the
 KeyPackage <code>leaf_node.lifetime.not_after</code> time has passed.<a href="#section-11.3-12" class="pilcrow">¶</a></p>
-<p id="section-11.3-13"><strong>ISSUE</strong>: Do we want key material requests to be combined for multiple users?<a href="#section-11.3-13" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="change-room-policyparticipation">
