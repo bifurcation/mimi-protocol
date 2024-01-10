@@ -83,57 +83,83 @@ Table of Contents
    1.  Introduction
    2.  Conventions and Definitions
    3.  Protocol Overview
-     3.1.  Creating a Room
-     3.2.  Fetching Key Material for a User
-     3.3.  Adding and Removing Participants to a Room
-     3.4.  Adding and Removing Participants' Clients
-     3.5.  Exchanging Messages
-   4.  HEDGEDOC CONTENT BELOW THIS LINE
-   5.  Operational Model
-   6.  ABCs of the Protocol
-     6.1.  Dramatis Personae
-     6.2.  Alice creates a room
-     6.3.  Alice adds Bob
-       6.3.1.  Alice gets initial keying material for Bob
-       6.3.2.  Alice adds Bob to the participant list and MLS group
-       6.3.3.  Alice and Bob exchange messages
-     6.4.  Alice makes Bob a room administrator
-     6.5.  Bob leaves the room
-     6.6.  Cathy removes Doug
-     6.7.  Cathy gets a new client
-     6.8.  Consent
-     6.9.  Other ways to join
-       6.9.1.  Joining with an join URL / code
-       6.9.2.  Joining an open room
-       6.9.3.  Knocks
-       6.9.4.  Invites
-     6.10. Reporting abuse/spam
-     6.11. Alice sends an attachment which Cathy downloads
-     6.12. Getting the internal identitifier for a user
-     6.13. Moderation
-   7.  Definition of Primitives
-     7.1.  MIMI URL directory
-     7.2.  Obtain consent
-     7.3.  Claim keys
-     7.4.  Change room policy/participation
-     7.5.  Send provisional message
-     7.6.  Fan out messages
-     7.7.  Claim end-to-end crypto group key information
-     7.8.  Download files
-     7.9.  Report abuse
-     7.10. Find internal address
-   8.  Use of MLS DS/AS
-   9.  Security Considerations
-   10. IANA Considerations
-   11. References
-     11.1.  Normative References
-     11.2.  Informative References
+     3.1.  Dramatis Personae
+   4.  Transport layer
+   5.  E2E Security Layer
+   6.  Application Layer
+     6.1.  Room State
+     6.2.  Application Endpoints
+       6.2.1.  Fetching Key Material for a User
+   7.  Consent Sketch
+   8.  HEDGEDOC CONTENT BELOW THIS LINE
+   9.  Operational Model
+   10. ABCs of the Protocol
+     10.1.  Dramatis Personae
+     10.2.  Alice creates a room
+     10.3.  Alice adds Bob
+       10.3.1.  Alice gets initial keying material for Bob
+       10.3.2.  Alice adds Bob to the participant list and MLS group
+       10.3.3.  Alice and Bob exchange messages
+     10.4.  Alice makes Bob a room administrator
+     10.5.  Bob leaves the room
+     10.6.  Cathy removes Doug
+     10.7.  Cathy gets a new client
+     10.8.  Consent
+     10.9.  Other ways to join
+       10.9.1.  Joining with an join URL / code
+       10.9.2.  Joining an open room
+       10.9.3.  Knocks
+       10.9.4.  Invites
+     10.10. Reporting abuse/spam
+     10.11. Alice sends an attachment which Cathy downloads
+     10.12. Getting the internal identitifier for a user
+     10.13. Moderation
+   11. Definition of Primitives
+     11.1.  MIMI URL directory
+     11.2.  Obtain consent
+     11.3.  Claim keys
+     11.4.  Change room policy/participation
+     11.5.  Send provisional message
+     11.6.  Fan out messages
+     11.7.  Claim end-to-end crypto group key information
+     11.8.  Download files
+     11.9.  Report abuse
+     11.10. Find internal address
+   12. Use of MLS DS/AS
+   13. Security Considerations
+   14. IANA Considerations
+   15. References
+     15.1.  Normative References
+     15.2.  Informative References
    Acknowledgments
    Authors' Addresses
 
 1.  Introduction
 
-   TODO Introduction
+   The goal of the More Instant Messaging Interoperability (MIMI)
+   Working Group is to enable multiple providers of end-to-end encrypted
+   instant messaging to interoperate.  As described in the MIMI
+   architecture, group chats and direct messages are described in terms
+   of "rooms".  Each MIMI protocol room is hosted at a single provider
+   (the "hub" provider"), but allows users from different providers to
+   become participants in the room.  The hub provider maintains the
+   policy and participation for the room, authorizes messages, and is
+   responsible for message ordering, the participation list, and policy
+   of its rooms.  Each provider also stores initial keying material and
+   consent for its users (who may be offline).
+
+   This document describes the communication between and among different
+   providers necessary to send and receive encrypted messages, share
+   room policy, and add participants to and remove participants from
+   rooms.  In support of these functions, the protocol also has
+   primitives to fetch initial keying material, fetch the current MLS
+   GroupInfo, and request, grant, and reject consent to communicate with
+   users on other providers.
+
+   Messages sent inside each room are end-to-end encrypted using the
+   Messaging Layer Security (MLS) protocol [RFC9420], and each room is
+   associated with an MLS group.  MLS also ensures that clients in a
+   room agree on the room policy and participation.
 
 2.  Conventions and Definitions
 
@@ -143,28 +169,70 @@ Table of Contents
    BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all
    capitals, as shown here.
 
+   Most MIMI-related terms are inherited from [I-D.barnes-mimi-arch].
+   Readers of this document should be familiar with the Terminology
+   section of the MLS protocol [RFC9420].
+
+   Throughout this document, the examples use the TLS Presentation
+   Language [RFC8446] and the semantics of HTTP [RFC7231] respectively
+   as placeholders for a binary encoding mechanism and transport
+   semantics.
+
 3.  Protocol Overview
 
    [[ Layering: State control; security; transport ]]
 
-3.1.  Creating a Room
+3.1.  Dramatis Personae
 
-   [[ Alice creates room; No protocol interaction; what state is
-   initialized ]]
+   ## Alice Creates a Room ## Alice adds Bob to the Room ## Bob adds
+   Charlie to the Room ## Cathy sends a Message
 
-3.2.  Fetching Key Material for a User
+4.  Transport layer
 
-   [[ HTTP request / response ]]
+   *  Server for user identified by domain half of identifier
 
-3.3.  Adding and Removing Participants to a Room
+   *  HTTPS over mutually-authenticated TLS
 
-3.4.  Adding and Removing Participants' Clients
+   *  Transport framing needs to identify intended src/dst domains
 
-3.5.  Exchanging Messages
+   *  TLS certificates need to authenticate src/dst domains
 
-4.  HEDGEDOC CONTENT BELOW THIS LINE
+5.  E2E Security Layer
 
-5.  Operational Model
+   *  All actions within a room are E2E-authenticated
+
+   *  Each room has an associated MLS group
+
+   *  Messages are protected as PrivateMessage
+
+   *  Room changes are protected as PublicMessage(Proposal)
+
+   *  ... incl. origination by servers
+
+6.  Application Layer
+
+6.1.  Room State
+
+   [[ Only room state right now is a list of participant IDs, MLS group
+   ID ]] [[ Hub and followers track KP hashes for Welcome routing ]]
+
+6.2.  Application Endpoints
+
+   [[ keyMaterial / notify / update / message ]] [[ Discovery from
+   domain via .well-known ]]
+
+6.2.1.  Fetching Key Material for a User
+
+   ### Updating Room State ### Notifying Followers of Room Events ###
+   Sending Messages
+
+7.  Consent Sketch
+
+   [[ Consent is important, so we include a preliminary sketch here ]]
+
+8.  HEDGEDOC CONTENT BELOW THIS LINE
+
+9.  Operational Model
 
    [[ RLB: This might be better to pull up into the architecture. ]]
 
@@ -243,7 +311,7 @@ Table of Contents
    GroupInfo, /_ ratchet_tree or some other representation */
    RatchetTree } ```
 
-6.  ABCs of the Protocol
+10.  ABCs of the Protocol
 
    The MIMI transport protocol is designed to allow users of instant
    messaging on different providers to participate together in group
@@ -271,7 +339,7 @@ Table of Contents
    with their respective servers, which then communicate with one
    another.
 
-6.1.  Dramatis Personae
+10.1.  Dramatis Personae
 
    *  Alice, Bob: Users
 
@@ -282,7 +350,7 @@ Table of Contents
 
    *  Room1 is a room in which the users are interacting
 
-6.2.  Alice creates a room
+10.2.  Alice creates a room
 
    We assume that someone on ProviderA (possibly Alice) has created
    Room1, that ProviderA is the _hub provider_ for the room, and that
@@ -307,9 +375,9 @@ Table of Contents
    administrator, of the room.  Alice has owner, administrator, and
    regular user roles in the room.
 
-6.3.  Alice adds Bob
+10.3.  Alice adds Bob
 
-6.3.1.  Alice gets initial keying material for Bob
+10.3.1.  Alice gets initial keying material for Bob
 
    In end-to-end encryption protocols, there is typiclly some type of
    initial ephemeral keying material which clients generate.  Clients
@@ -346,7 +414,7 @@ Table of Contents
    more in [[consent section]].  For the purpose of this simple example,
    we assume that Alice already has appropriate consent.
 
-6.3.2.  Alice adds Bob to the participant list and MLS group
+10.3.2.  Alice adds Bob to the participant list and MLS group
 
    In MIMI, the room policy consists of the base policy (which can refer
    to roles, but does not refer to specific participants), the
@@ -410,7 +478,7 @@ Table of Contents
    commit sequencing; PLP authz by policy; Add authz by PL ProviderA ->
    Alice1: Commit accepted
 
-6.3.3.  Alice and Bob exchange messages
+10.3.3.  Alice and Bob exchange messages
 
    Any of Alice's or Bob's clients can try to send a instant message to
    the room.  For an MLS room, Alice's or Bob's provider just sends the
@@ -428,7 +496,7 @@ Table of Contents
    ProviderA -> ProviderB: Message notification ProviderB -> Bob*:
    Message notification
 
-6.4.  Alice makes Bob a room administrator
+10.4.  Alice makes Bob a room administrator
 
    Digress to talk about room policy here...
 
@@ -476,7 +544,7 @@ Table of Contents
    ProviderA -> ProviderD: Commit ProviderB -> Bob's other clients:
    Commit ProviderC -> Cathy*: Commit ProviderD -> Doug*: Commit
 
-6.5.  Bob leaves the room
+10.5.  Bob leaves the room
 
    Removing oneself from a room deserves a special mention.  In MLS a
    client cannot send a commit which removes itself from the group.
@@ -500,7 +568,7 @@ Table of Contents
    ProviderA: Validate commit sequencing; PLP authz by policy; Rem authz
    by PL ProviderA: Enqueue Rem(B2), PLP ProviderA: [[ fanout Commit ]]
 
-6.6.  Cathy removes Doug
+10.6.  Cathy removes Doug
 
    For Cathy to remove Doug, she commits a ParticipantListPatch proposal
    removing Doug, and Remove proposals for each of Doug's clients.
@@ -510,7 +578,7 @@ Table of Contents
 
    (similar Commit flow)
 
-6.7.  Cathy gets a new client
+10.7.  Cathy gets a new client
 
    When a user is already a participant of a room, but a specific client
    is not yet a member of the corresponding MLS group, the client can
@@ -531,7 +599,7 @@ Table of Contents
    notification ProviderA -> Alice*: Commit notification ProviderB ->
    Bob*: Commit notification ProviderD -> Doug*: Commit notification
 
-6.8.  Consent
+10.8.  Consent
 
    Most instant messaging systems have some notion of how a user
    consents to be added to a room, and how they manipulate this consent.
@@ -612,37 +680,37 @@ Table of Contents
    if there was a consent request for a specific room, or even no
    consent request.
 
-6.9.  Other ways to join
+10.9.  Other ways to join
 
    [[ RWM: TBC ]]
 
-6.9.1.  Joining with an join URL / code
+10.9.1.  Joining with an join URL / code
 
-6.9.2.  Joining an open room
+10.9.2.  Joining an open room
 
-6.9.3.  Knocks
+10.9.3.  Knocks
 
-6.9.4.  Invites
+10.9.4.  Invites
 
-6.10.  Reporting abuse/spam
-
-   [[ RWM: TBC ]]
-
-6.11.  Alice sends an attachment which Cathy downloads
+10.10.  Reporting abuse/spam
 
    [[ RWM: TBC ]]
 
-6.12.  Getting the internal identitifier for a user
+10.11.  Alice sends an attachment which Cathy downloads
 
    [[ RWM: TBC ]]
 
-6.13.  Moderation
+10.12.  Getting the internal identitifier for a user
+
+   [[ RWM: TBC ]]
+
+10.13.  Moderation
 
    out of scope
 
-7.  Definition of Primitives
+11.  Definition of Primitives
 
-7.1.  MIMI URL directory
+11.1.  MIMI URL directory
 
    Like the ACME protocol [RFC8555], the MIMI protocol uses a directory
    document to convey the HTTPS URLs used to reach certain endpoints (as
@@ -683,7 +751,7 @@ Table of Contents
      MimiDirectoryEntry directory<V>;
    } MimiDirectory;
 
-7.2.  Obtain consent
+11.2.  Obtain consent
 
    Alice can request consent for Bob in the context of a room, or in
    general.  Bob can grant or refuse consent to Alice in the context of
@@ -711,7 +779,7 @@ Table of Contents
      }
    } ConsentEntry;
 
-7.3.  Claim keys
+11.3.  Claim keys
 
    This action attempts to claim initial keying material for all the
    clients of a list of users at a single provider.  The keying material
@@ -842,7 +910,7 @@ Table of Contents
    *ISSUE*: Do we want key material requests to be combined for multiple
    users?
 
-7.4.  Change room policy/participation
+11.4.  Change room policy/participation
 
    Adds, removes, and policy changes to the room are all forms of
    updating the room state.  They are accomplished using the updateRoom
@@ -958,7 +1026,7 @@ Table of Contents
        string errorDescription;
    } UpdateRoomResponse
 
-7.5.  Send provisional message
+11.5.  Send provisional message
 
    POST /provisionalMessage/{roomId}
 
@@ -973,7 +1041,7 @@ Table of Contents
    "is typing" notifications), which do not need to be queued at the
    target provider.
 
-7.6.  Fan out messages
+11.6.  Fan out messages
 
    If the hub provider accepts an application or handshake message
    (proposal or commit) message, it forward that message to all other
@@ -1004,7 +1072,7 @@ Table of Contents
    *NOTE:* Correctly fanning out Welcome messages relies on the hub and
    target providers storing the KeyPackageRef of claimed KeyPackages.
 
-7.7.  Claim end-to-end crypto group key information
+11.7.  Claim end-to-end crypto group key information
 
    For Bob's new client to join the MLS group and therefore fully
    participate in the room with Alice, Bob needs to fetch the MLS
@@ -1043,11 +1111,11 @@ Table of Contents
    sensitive that it should be encrypted from the end client to the hub
    provider (unreadable by the local provider).
 
-7.8.  Download files
+11.8.  Download files
 
    [[ RWM: TBC ]]
 
-7.9.  Report abuse
+11.9.  Report abuse
 
    Abuse reports are only sent to the hub provider.
 
@@ -1077,7 +1145,7 @@ Table of Contents
    The response code only indicates if the abuse report was accepted,
    not if any specific automated or human action was taken.
 
-7.10.  Find internal address
+11.10.  Find internal address
 
    GET /identifierQuery/{domain}
 
@@ -1146,7 +1214,7 @@ Table of Contents
    [I-D.mahy-mimi-identity].  Any specific conventions which are needed
    should be merged into this document.
 
-8.  Use of MLS DS/AS
+12.  Use of MLS DS/AS
 
    MLS defines an abstract Delivery Server (DS) and Authentication
    Server (AS).  This abstract functionality is split across all the MLS
@@ -1168,28 +1236,49 @@ Table of Contents
    "real" identity signature key and presenting the binding to other
    members.
 
-9.  Security Considerations
+13.  Security Considerations
 
    TODO Security
 
-10.  IANA Considerations
+14.  IANA Considerations
 
    This document has no IANA actions.
 
-11.  References
+15.  References
 
-11.1.  Normative References
+15.1.  Normative References
+
+   [I-D.barnes-mimi-arch]
+              Barnes, R., "An Architecture for More Instant Messaging
+              Interoperability (MIMI)", Work in Progress, Internet-
+              Draft, draft-barnes-mimi-arch-02, 23 October 2023,
+              <https://datatracker.ietf.org/doc/html/draft-barnes-mimi-
+              arch-02>.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
               DOI 10.17487/RFC2119, March 1997,
               <https://www.rfc-editor.org/rfc/rfc2119>.
 
+   [RFC7231]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
+              Protocol (HTTP/1.1): Semantics and Content", RFC 7231,
+              DOI 10.17487/RFC7231, June 2014,
+              <https://www.rfc-editor.org/rfc/rfc7231>.
+
    [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
               May 2017, <https://www.rfc-editor.org/rfc/rfc8174>.
 
-11.2.  Informative References
+   [RFC8446]  Rescorla, E., "The Transport Layer Security (TLS) Protocol
+              Version 1.3", RFC 8446, DOI 10.17487/RFC8446, August 2018,
+              <https://www.rfc-editor.org/rfc/rfc8446>.
+
+   [RFC9420]  Barnes, R., Beurdouche, B., Robert, R., Millican, J.,
+              Omara, E., and K. Cohn-Gordon, "The Messaging Layer
+              Security (MLS) Protocol", RFC 9420, DOI 10.17487/RFC9420,
+              July 2023, <https://www.rfc-editor.org/rfc/rfc9420>.
+
+15.2.  Informative References
 
    [I-D.mahy-mimi-identity]
               Mahy, R., "More Instant Messaging Interoperability (MIMI)

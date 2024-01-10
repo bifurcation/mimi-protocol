@@ -1173,157 +1173,170 @@ provider-internal client-server communication up to the provider.<a href="#secti
             <p id="section-toc.1-1.3.1"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-protocol-overview" class="internal xref">Protocol Overview</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1">
-                <p id="section-toc.1-1.3.2.1.1" class="keepWithNext"><a href="#section-3.1" class="auto internal xref">3.1</a>.  <a href="#name-creating-a-room" class="internal xref">Creating a Room</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.2">
-                <p id="section-toc.1-1.3.2.2.1"><a href="#section-3.2" class="auto internal xref">3.2</a>.  <a href="#name-fetching-key-material-for-a" class="internal xref">Fetching Key Material for a User</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.3">
-                <p id="section-toc.1-1.3.2.3.1"><a href="#section-3.3" class="auto internal xref">3.3</a>.  <a href="#name-adding-and-removing-partici" class="internal xref">Adding and Removing Participants to a Room</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.4">
-                <p id="section-toc.1-1.3.2.4.1"><a href="#section-3.4" class="auto internal xref">3.4</a>.  <a href="#name-adding-and-removing-particip" class="internal xref">Adding and Removing Participants' Clients</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.5">
-                <p id="section-toc.1-1.3.2.5.1"><a href="#section-3.5" class="auto internal xref">3.5</a>.  <a href="#name-exchanging-messages" class="internal xref">Exchanging Messages</a></p>
+                <p id="section-toc.1-1.3.2.1.1" class="keepWithNext"><a href="#section-3.1" class="auto internal xref">3.1</a>.  <a href="#name-dramatis-personae" class="internal xref">Dramatis Personae</a></p>
 </li>
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
-            <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-hedgedoc-content-below-this" class="internal xref">HEDGEDOC CONTENT BELOW THIS LINE</a></p>
+            <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-transport-layer" class="internal xref">Transport layer</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
-            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-operational-model" class="internal xref">Operational Model</a></p>
+            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-e2e-security-layer" class="internal xref">E2E Security Layer</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
-            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-abcs-of-the-protocol" class="internal xref">ABCs of the Protocol</a></p>
+            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-application-layer" class="internal xref">Application Layer</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1">
-                <p id="section-toc.1-1.6.2.1.1"><a href="#section-6.1" class="auto internal xref">6.1</a>.  <a href="#name-dramatis-personae" class="internal xref">Dramatis Personae</a></p>
+                <p id="section-toc.1-1.6.2.1.1"><a href="#section-6.1" class="auto internal xref">6.1</a>.  <a href="#name-room-state" class="internal xref">Room State</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.2">
-                <p id="section-toc.1-1.6.2.2.1"><a href="#section-6.2" class="auto internal xref">6.2</a>.  <a href="#name-alice-creates-a-room" class="internal xref">Alice creates a room</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.3">
-                <p id="section-toc.1-1.6.2.3.1"><a href="#section-6.3" class="auto internal xref">6.3</a>.  <a href="#name-alice-adds-bob" class="internal xref">Alice adds Bob</a></p>
+                <p id="section-toc.1-1.6.2.2.1"><a href="#section-6.2" class="auto internal xref">6.2</a>.  <a href="#name-application-endpoints" class="internal xref">Application Endpoints</a></p>
 <ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.3.2.1">
-                    <p id="section-toc.1-1.6.2.3.2.1.1"><a href="#section-6.3.1" class="auto internal xref">6.3.1</a>.  <a href="#name-alice-gets-initial-keying-m" class="internal xref">Alice gets initial keying material for Bob</a></p>
-</li>
-                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.3.2.2">
-                    <p id="section-toc.1-1.6.2.3.2.2.1"><a href="#section-6.3.2" class="auto internal xref">6.3.2</a>.  <a href="#name-alice-adds-bob-to-the-parti" class="internal xref">Alice adds Bob to the participant list and MLS group</a></p>
-</li>
-                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.3.2.3">
-                    <p id="section-toc.1-1.6.2.3.2.3.1"><a href="#section-6.3.3" class="auto internal xref">6.3.3</a>.  <a href="#name-alice-and-bob-exchange-mess" class="internal xref">Alice and Bob exchange messages</a></p>
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.2.2.1">
+                    <p id="section-toc.1-1.6.2.2.2.1.1"><a href="#section-6.2.1" class="auto internal xref">6.2.1</a>.  <a href="#name-fetching-key-material-for-a" class="internal xref">Fetching Key Material for a User</a></p>
 </li>
                 </ul>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.4">
-                <p id="section-toc.1-1.6.2.4.1"><a href="#section-6.4" class="auto internal xref">6.4</a>.  <a href="#name-alice-makes-bob-a-room-admi" class="internal xref">Alice makes Bob a room administrator</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.5">
-                <p id="section-toc.1-1.6.2.5.1"><a href="#section-6.5" class="auto internal xref">6.5</a>.  <a href="#name-bob-leaves-the-room" class="internal xref">Bob leaves the room</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.6">
-                <p id="section-toc.1-1.6.2.6.1"><a href="#section-6.6" class="auto internal xref">6.6</a>.  <a href="#name-cathy-removes-doug" class="internal xref">Cathy removes Doug</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.7">
-                <p id="section-toc.1-1.6.2.7.1"><a href="#section-6.7" class="auto internal xref">6.7</a>.  <a href="#name-cathy-gets-a-new-client" class="internal xref">Cathy gets a new client</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.8">
-                <p id="section-toc.1-1.6.2.8.1"><a href="#section-6.8" class="auto internal xref">6.8</a>.  <a href="#name-consent" class="internal xref">Consent</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.9">
-                <p id="section-toc.1-1.6.2.9.1"><a href="#section-6.9" class="auto internal xref">6.9</a>.  <a href="#name-other-ways-to-join" class="internal xref">Other ways to join</a></p>
-<ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.9.2.1">
-                    <p id="section-toc.1-1.6.2.9.2.1.1"><a href="#section-6.9.1" class="auto internal xref">6.9.1</a>.  <a href="#name-joining-with-an-join-url-co" class="internal xref">Joining with an join URL / code</a></p>
-</li>
-                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.9.2.2">
-                    <p id="section-toc.1-1.6.2.9.2.2.1"><a href="#section-6.9.2" class="auto internal xref">6.9.2</a>.  <a href="#name-joining-an-open-room" class="internal xref">Joining an open room</a></p>
-</li>
-                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.9.2.3">
-                    <p id="section-toc.1-1.6.2.9.2.3.1"><a href="#section-6.9.3" class="auto internal xref">6.9.3</a>.  <a href="#name-knocks" class="internal xref">Knocks</a></p>
-</li>
-                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.9.2.4">
-                    <p id="section-toc.1-1.6.2.9.2.4.1"><a href="#section-6.9.4" class="auto internal xref">6.9.4</a>.  <a href="#name-invites" class="internal xref">Invites</a></p>
-</li>
-                </ul>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.10">
-                <p id="section-toc.1-1.6.2.10.1"><a href="#section-6.10" class="auto internal xref">6.10</a>. <a href="#name-reporting-abuse-spam" class="internal xref">Reporting abuse/spam</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.11">
-                <p id="section-toc.1-1.6.2.11.1"><a href="#section-6.11" class="auto internal xref">6.11</a>. <a href="#name-alice-sends-an-attachment-w" class="internal xref">Alice sends an attachment which Cathy downloads</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.12">
-                <p id="section-toc.1-1.6.2.12.1"><a href="#section-6.12" class="auto internal xref">6.12</a>. <a href="#name-getting-the-internal-identi" class="internal xref">Getting the internal identitifier for a user</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.13">
-                <p id="section-toc.1-1.6.2.13.1"><a href="#section-6.13" class="auto internal xref">6.13</a>. <a href="#name-moderation" class="internal xref">Moderation</a></p>
 </li>
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
-            <p id="section-toc.1-1.7.1"><a href="#section-7" class="auto internal xref">7</a>.  <a href="#name-definition-of-primitives" class="internal xref">Definition of Primitives</a></p>
+            <p id="section-toc.1-1.7.1"><a href="#section-7" class="auto internal xref">7</a>.  <a href="#name-consent-sketch" class="internal xref">Consent Sketch</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8">
+            <p id="section-toc.1-1.8.1"><a href="#section-8" class="auto internal xref">8</a>.  <a href="#name-hedgedoc-content-below-this" class="internal xref">HEDGEDOC CONTENT BELOW THIS LINE</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
+            <p id="section-toc.1-1.9.1"><a href="#section-9" class="auto internal xref">9</a>.  <a href="#name-operational-model" class="internal xref">Operational Model</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10">
+            <p id="section-toc.1-1.10.1"><a href="#section-10" class="auto internal xref">10</a>. <a href="#name-abcs-of-the-protocol" class="internal xref">ABCs of the Protocol</a></p>
 <ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.1">
-                <p id="section-toc.1-1.7.2.1.1"><a href="#section-7.1" class="auto internal xref">7.1</a>.  <a href="#name-mimi-url-directory" class="internal xref">MIMI URL directory</a></p>
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.1">
+                <p id="section-toc.1-1.10.2.1.1"><a href="#section-10.1" class="auto internal xref">10.1</a>.  <a href="#name-dramatis-personae-2" class="internal xref">Dramatis Personae</a></p>
 </li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.2">
-                <p id="section-toc.1-1.7.2.2.1"><a href="#section-7.2" class="auto internal xref">7.2</a>.  <a href="#name-obtain-consent" class="internal xref">Obtain consent</a></p>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.2">
+                <p id="section-toc.1-1.10.2.2.1"><a href="#section-10.2" class="auto internal xref">10.2</a>.  <a href="#name-alice-creates-a-room" class="internal xref">Alice creates a room</a></p>
 </li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.3">
-                <p id="section-toc.1-1.7.2.3.1"><a href="#section-7.3" class="auto internal xref">7.3</a>.  <a href="#name-claim-keys" class="internal xref">Claim keys</a></p>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.3">
+                <p id="section-toc.1-1.10.2.3.1"><a href="#section-10.3" class="auto internal xref">10.3</a>.  <a href="#name-alice-adds-bob" class="internal xref">Alice adds Bob</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.3.2.1">
+                    <p id="section-toc.1-1.10.2.3.2.1.1"><a href="#section-10.3.1" class="auto internal xref">10.3.1</a>.  <a href="#name-alice-gets-initial-keying-m" class="internal xref">Alice gets initial keying material for Bob</a></p>
 </li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.4">
-                <p id="section-toc.1-1.7.2.4.1"><a href="#section-7.4" class="auto internal xref">7.4</a>.  <a href="#name-change-room-policy-particip" class="internal xref">Change room policy/participation</a></p>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.3.2.2">
+                    <p id="section-toc.1-1.10.2.3.2.2.1"><a href="#section-10.3.2" class="auto internal xref">10.3.2</a>.  <a href="#name-alice-adds-bob-to-the-parti" class="internal xref">Alice adds Bob to the participant list and MLS group</a></p>
 </li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.5">
-                <p id="section-toc.1-1.7.2.5.1"><a href="#section-7.5" class="auto internal xref">7.5</a>.  <a href="#name-send-provisional-message" class="internal xref">Send provisional message</a></p>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.3.2.3">
+                    <p id="section-toc.1-1.10.2.3.2.3.1"><a href="#section-10.3.3" class="auto internal xref">10.3.3</a>.  <a href="#name-alice-and-bob-exchange-mess" class="internal xref">Alice and Bob exchange messages</a></p>
 </li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.6">
-                <p id="section-toc.1-1.7.2.6.1"><a href="#section-7.6" class="auto internal xref">7.6</a>.  <a href="#name-fan-out-messages" class="internal xref">Fan out messages</a></p>
+                </ul>
 </li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.7">
-                <p id="section-toc.1-1.7.2.7.1"><a href="#section-7.7" class="auto internal xref">7.7</a>.  <a href="#name-claim-end-to-end-crypto-gro" class="internal xref">Claim end-to-end crypto group key information</a></p>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.4">
+                <p id="section-toc.1-1.10.2.4.1"><a href="#section-10.4" class="auto internal xref">10.4</a>.  <a href="#name-alice-makes-bob-a-room-admi" class="internal xref">Alice makes Bob a room administrator</a></p>
 </li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.8">
-                <p id="section-toc.1-1.7.2.8.1"><a href="#section-7.8" class="auto internal xref">7.8</a>.  <a href="#name-download-files" class="internal xref">Download files</a></p>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.5">
+                <p id="section-toc.1-1.10.2.5.1"><a href="#section-10.5" class="auto internal xref">10.5</a>.  <a href="#name-bob-leaves-the-room" class="internal xref">Bob leaves the room</a></p>
 </li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.9">
-                <p id="section-toc.1-1.7.2.9.1"><a href="#section-7.9" class="auto internal xref">7.9</a>.  <a href="#name-report-abuse" class="internal xref">Report abuse</a></p>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.6">
+                <p id="section-toc.1-1.10.2.6.1"><a href="#section-10.6" class="auto internal xref">10.6</a>.  <a href="#name-cathy-removes-doug" class="internal xref">Cathy removes Doug</a></p>
 </li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.10">
-                <p id="section-toc.1-1.7.2.10.1"><a href="#section-7.10" class="auto internal xref">7.10</a>. <a href="#name-find-internal-address" class="internal xref">Find internal address</a></p>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.7">
+                <p id="section-toc.1-1.10.2.7.1"><a href="#section-10.7" class="auto internal xref">10.7</a>.  <a href="#name-cathy-gets-a-new-client" class="internal xref">Cathy gets a new client</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.8">
+                <p id="section-toc.1-1.10.2.8.1"><a href="#section-10.8" class="auto internal xref">10.8</a>.  <a href="#name-consent" class="internal xref">Consent</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.9">
+                <p id="section-toc.1-1.10.2.9.1"><a href="#section-10.9" class="auto internal xref">10.9</a>.  <a href="#name-other-ways-to-join" class="internal xref">Other ways to join</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.9.2.1">
+                    <p id="section-toc.1-1.10.2.9.2.1.1"><a href="#section-10.9.1" class="auto internal xref">10.9.1</a>.  <a href="#name-joining-with-an-join-url-co" class="internal xref">Joining with an join URL / code</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.9.2.2">
+                    <p id="section-toc.1-1.10.2.9.2.2.1"><a href="#section-10.9.2" class="auto internal xref">10.9.2</a>.  <a href="#name-joining-an-open-room" class="internal xref">Joining an open room</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.9.2.3">
+                    <p id="section-toc.1-1.10.2.9.2.3.1"><a href="#section-10.9.3" class="auto internal xref">10.9.3</a>.  <a href="#name-knocks" class="internal xref">Knocks</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.9.2.4">
+                    <p id="section-toc.1-1.10.2.9.2.4.1"><a href="#section-10.9.4" class="auto internal xref">10.9.4</a>.  <a href="#name-invites" class="internal xref">Invites</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.10">
+                <p id="section-toc.1-1.10.2.10.1"><a href="#section-10.10" class="auto internal xref">10.10</a>. <a href="#name-reporting-abuse-spam" class="internal xref">Reporting abuse/spam</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.11">
+                <p id="section-toc.1-1.10.2.11.1"><a href="#section-10.11" class="auto internal xref">10.11</a>. <a href="#name-alice-sends-an-attachment-w" class="internal xref">Alice sends an attachment which Cathy downloads</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.12">
+                <p id="section-toc.1-1.10.2.12.1"><a href="#section-10.12" class="auto internal xref">10.12</a>. <a href="#name-getting-the-internal-identi" class="internal xref">Getting the internal identitifier for a user</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.13">
+                <p id="section-toc.1-1.10.2.13.1"><a href="#section-10.13" class="auto internal xref">10.13</a>. <a href="#name-moderation" class="internal xref">Moderation</a></p>
 </li>
             </ul>
 </li>
-          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8">
-            <p id="section-toc.1-1.8.1"><a href="#section-8" class="auto internal xref">8</a>.  <a href="#name-use-of-mls-ds-as" class="internal xref">Use of MLS DS/AS</a></p>
-</li>
-          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
-            <p id="section-toc.1-1.9.1"><a href="#section-9" class="auto internal xref">9</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
-</li>
-          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10">
-            <p id="section-toc.1-1.10.1"><a href="#section-10" class="auto internal xref">10</a>. <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
-</li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11">
-            <p id="section-toc.1-1.11.1"><a href="#section-11" class="auto internal xref">11</a>. <a href="#name-references" class="internal xref">References</a></p>
+            <p id="section-toc.1-1.11.1"><a href="#section-11" class="auto internal xref">11</a>. <a href="#name-definition-of-primitives" class="internal xref">Definition of Primitives</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.1">
-                <p id="section-toc.1-1.11.2.1.1"><a href="#section-11.1" class="auto internal xref">11.1</a>.  <a href="#name-normative-references" class="internal xref">Normative References</a></p>
+                <p id="section-toc.1-1.11.2.1.1"><a href="#section-11.1" class="auto internal xref">11.1</a>.  <a href="#name-mimi-url-directory" class="internal xref">MIMI URL directory</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.2">
-                <p id="section-toc.1-1.11.2.2.1"><a href="#section-11.2" class="auto internal xref">11.2</a>.  <a href="#name-informative-references" class="internal xref">Informative References</a></p>
+                <p id="section-toc.1-1.11.2.2.1"><a href="#section-11.2" class="auto internal xref">11.2</a>.  <a href="#name-obtain-consent" class="internal xref">Obtain consent</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.3">
+                <p id="section-toc.1-1.11.2.3.1"><a href="#section-11.3" class="auto internal xref">11.3</a>.  <a href="#name-claim-keys" class="internal xref">Claim keys</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.4">
+                <p id="section-toc.1-1.11.2.4.1"><a href="#section-11.4" class="auto internal xref">11.4</a>.  <a href="#name-change-room-policy-particip" class="internal xref">Change room policy/participation</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.5">
+                <p id="section-toc.1-1.11.2.5.1"><a href="#section-11.5" class="auto internal xref">11.5</a>.  <a href="#name-send-provisional-message" class="internal xref">Send provisional message</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.6">
+                <p id="section-toc.1-1.11.2.6.1"><a href="#section-11.6" class="auto internal xref">11.6</a>.  <a href="#name-fan-out-messages" class="internal xref">Fan out messages</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.7">
+                <p id="section-toc.1-1.11.2.7.1"><a href="#section-11.7" class="auto internal xref">11.7</a>.  <a href="#name-claim-end-to-end-crypto-gro" class="internal xref">Claim end-to-end crypto group key information</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.8">
+                <p id="section-toc.1-1.11.2.8.1"><a href="#section-11.8" class="auto internal xref">11.8</a>.  <a href="#name-download-files" class="internal xref">Download files</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.9">
+                <p id="section-toc.1-1.11.2.9.1"><a href="#section-11.9" class="auto internal xref">11.9</a>.  <a href="#name-report-abuse" class="internal xref">Report abuse</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.10">
+                <p id="section-toc.1-1.11.2.10.1"><a href="#section-11.10" class="auto internal xref">11.10</a>. <a href="#name-find-internal-address" class="internal xref">Find internal address</a></p>
 </li>
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12">
-            <p id="section-toc.1-1.12.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-acknowledgments" class="internal xref">Acknowledgments</a></p>
+            <p id="section-toc.1-1.12.1"><a href="#section-12" class="auto internal xref">12</a>. <a href="#name-use-of-mls-ds-as" class="internal xref">Use of MLS DS/AS</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13">
-            <p id="section-toc.1-1.13.1"><a href="#appendix-B" class="auto internal xref"></a><a href="#name-authors-addresses" class="internal xref">Authors' Addresses</a></p>
+            <p id="section-toc.1-1.13.1"><a href="#section-13" class="auto internal xref">13</a>. <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.14">
+            <p id="section-toc.1-1.14.1"><a href="#section-14" class="auto internal xref">14</a>. <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.15">
+            <p id="section-toc.1-1.15.1"><a href="#section-15" class="auto internal xref">15</a>. <a href="#name-references" class="internal xref">References</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.15.2.1">
+                <p id="section-toc.1-1.15.2.1.1"><a href="#section-15.1" class="auto internal xref">15.1</a>.  <a href="#name-normative-references" class="internal xref">Normative References</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.15.2.2">
+                <p id="section-toc.1-1.15.2.2.1"><a href="#section-15.2" class="auto internal xref">15.2</a>.  <a href="#name-informative-references" class="internal xref">Informative References</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.16">
+            <p id="section-toc.1-1.16.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-acknowledgments" class="internal xref">Acknowledgments</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.17">
+            <p id="section-toc.1-1.17.1"><a href="#appendix-B" class="auto internal xref"></a><a href="#name-authors-addresses" class="internal xref">Authors' Addresses</a></p>
 </li>
         </ul>
 </nav>
@@ -1334,7 +1347,26 @@ provider-internal client-server communication up to the provider.<a href="#secti
       <h2 id="name-introduction">
 <a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
       </h2>
-<p id="section-1-1">TODO Introduction<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-1">The goal of the More Instant Messaging Interoperability (MIMI) Working Group is
+to enable multiple providers of end-to-end encrypted instant messaging to
+interoperate. As described in the MIMI architecture, group chats and direct
+messages are described in terms of "rooms". Each MIMI protocol room is hosted at
+a single provider (the "hub" provider"), but allows users from different
+providers to become participants in the room. The hub provider maintains the
+policy and participation for the room, authorizes messages, and is responsible
+for message ordering, the participation list, and policy of its rooms. Each
+provider also stores initial keying material and consent for its users (who may
+be offline).<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-2">This document describes the communication between and among different providers
+necessary to send and receive encrypted messages, share room policy, and add
+participants to and remove participants from rooms. In support of these
+functions, the protocol also has primitives to fetch initial keying material,
+fetch the current MLS GroupInfo, and request, grant, and reject consent to
+communicate with users on other providers.<a href="#section-1-2" class="pilcrow">¶</a></p>
+<p id="section-1-3">Messages sent inside each room are end-to-end encrypted using the Messaging
+Layer Security (MLS) protocol <span>[<a href="#RFC9420" class="cite xref">RFC9420</a>]</span>, and each room is associated with an
+MLS group. MLS also ensures that clients in a room agree on the room policy and
+participation.<a href="#section-1-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="conventions-and-definitions">
@@ -1346,6 +1378,11 @@ provider-internal client-server communication up to the provider.<a href="#secti
 "<span class="bcp14">MAY</span>", and "<span class="bcp14">OPTIONAL</span>" in this document are to be interpreted as
 described in BCP 14 <span>[<a href="#RFC2119" class="cite xref">RFC2119</a>]</span> <span>[<a href="#RFC8174" class="cite xref">RFC8174</a>]</span> when, and only when, they
 appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶</a></p>
+<p id="section-2-2">Most MIMI-related terms are inherited from <span>[<a href="#I-D.barnes-mimi-arch" class="cite xref">I-D.barnes-mimi-arch</a>]</span>. Readers
+of this document should be familiar with the Terminology section of the MLS protocol <span>[<a href="#RFC9420" class="cite xref">RFC9420</a>]</span>.<a href="#section-2-2" class="pilcrow">¶</a></p>
+<p id="section-2-3">Throughout this document, the examples use the TLS Presentation Language
+<span>[<a href="#RFC8446" class="cite xref">RFC8446</a>]</span> and the semantics of HTTP <span>[<a href="#RFC7231" class="cite xref">RFC7231</a>]</span> respectively as
+placeholders for a binary encoding mechanism and transport semantics.<a href="#section-2-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="protocol-overview">
@@ -1354,124 +1391,186 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
 <a href="#section-3" class="section-number selfRef">3. </a><a href="#name-protocol-overview" class="section-name selfRef">Protocol Overview</a>
       </h2>
 <p id="section-3-1">[[ Layering: State control; security; transport ]]<a href="#section-3-1" class="pilcrow">¶</a></p>
-<div id="creating-a-room">
+<div id="dramatis-personae">
 <section id="section-3.1">
-        <h3 id="name-creating-a-room">
-<a href="#section-3.1" class="section-number selfRef">3.1. </a><a href="#name-creating-a-room" class="section-name selfRef">Creating a Room</a>
+        <h3 id="name-dramatis-personae">
+<a href="#section-3.1" class="section-number selfRef">3.1. </a><a href="#name-dramatis-personae" class="section-name selfRef">Dramatis Personae</a>
         </h3>
-<p id="section-3.1-1">[[ Alice creates room; No protocol interaction; what state is initialized ]]<a href="#section-3.1-1" class="pilcrow">¶</a></p>
+<p id="section-3.1-1">## Alice Creates a Room
+## Alice adds Bob to the Room
+## Bob adds Charlie to the Room
+## Cathy sends a Message<a href="#section-3.1-1" class="pilcrow">¶</a></p>
 </section>
 </div>
+</section>
+</div>
+<div id="transport-layer">
+<section id="section-4">
+      <h2 id="name-transport-layer">
+<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-transport-layer" class="section-name selfRef">Transport layer</a>
+      </h2>
+<ul class="normal">
+<li class="normal" id="section-4-1.1">
+          <p id="section-4-1.1.1">Server for user identified by domain half of identifier<a href="#section-4-1.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-4-1.2">
+          <p id="section-4-1.2.1">HTTPS over mutually-authenticated TLS<a href="#section-4-1.2.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-4-1.3">
+          <p id="section-4-1.3.1">Transport framing needs to identify intended src/dst domains<a href="#section-4-1.3.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-4-1.4">
+          <p id="section-4-1.4.1">TLS certificates need to authenticate src/dst domains<a href="#section-4-1.4.1" class="pilcrow">¶</a></p>
+</li>
+      </ul>
+</section>
+</div>
+<div id="e2e-security-layer">
+<section id="section-5">
+      <h2 id="name-e2e-security-layer">
+<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-e2e-security-layer" class="section-name selfRef">E2E Security Layer</a>
+      </h2>
+<ul class="normal">
+<li class="normal" id="section-5-1.1">
+          <p id="section-5-1.1.1">All actions within a room are E2E-authenticated<a href="#section-5-1.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-5-1.2">
+          <p id="section-5-1.2.1">Each room has an associated MLS group<a href="#section-5-1.2.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-5-1.3">
+          <p id="section-5-1.3.1">Messages are protected as PrivateMessage<a href="#section-5-1.3.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-5-1.4">
+          <p id="section-5-1.4.1">Room changes are protected as PublicMessage(Proposal)<a href="#section-5-1.4.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-5-1.5">
+          <p id="section-5-1.5.1">... incl. origination by servers<a href="#section-5-1.5.1" class="pilcrow">¶</a></p>
+</li>
+      </ul>
+</section>
+</div>
+<div id="application-layer">
+<section id="section-6">
+      <h2 id="name-application-layer">
+<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-application-layer" class="section-name selfRef">Application Layer</a>
+      </h2>
+<div id="room-state">
+<section id="section-6.1">
+        <h3 id="name-room-state">
+<a href="#section-6.1" class="section-number selfRef">6.1. </a><a href="#name-room-state" class="section-name selfRef">Room State</a>
+        </h3>
+<p id="section-6.1-1">[[ Only room state right now is a list of participant IDs, MLS group ID ]]
+[[ Hub and followers track KP hashes for Welcome routing ]]<a href="#section-6.1-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="application-endpoints">
+<section id="section-6.2">
+        <h3 id="name-application-endpoints">
+<a href="#section-6.2" class="section-number selfRef">6.2. </a><a href="#name-application-endpoints" class="section-name selfRef">Application Endpoints</a>
+        </h3>
+<p id="section-6.2-1">[[ keyMaterial / notify / update / message ]]
+[[ Discovery from domain via .well-known ]]<a href="#section-6.2-1" class="pilcrow">¶</a></p>
 <div id="fetching-key-material-for-a-user">
-<section id="section-3.2">
-        <h3 id="name-fetching-key-material-for-a">
-<a href="#section-3.2" class="section-number selfRef">3.2. </a><a href="#name-fetching-key-material-for-a" class="section-name selfRef">Fetching Key Material for a User</a>
-        </h3>
-<p id="section-3.2-1">[[ HTTP request / response ]]<a href="#section-3.2-1" class="pilcrow">¶</a></p>
+<section id="section-6.2.1">
+          <h4 id="name-fetching-key-material-for-a">
+<a href="#section-6.2.1" class="section-number selfRef">6.2.1. </a><a href="#name-fetching-key-material-for-a" class="section-name selfRef">Fetching Key Material for a User</a>
+          </h4>
+<p id="section-6.2.1-1">### Updating Room State
+### Notifying Followers of Room Events
+### Sending Messages<a href="#section-6.2.1-1" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="adding-and-removing-participants-to-a-room">
-<section id="section-3.3">
-        <h3 id="name-adding-and-removing-partici">
-<a href="#section-3.3" class="section-number selfRef">3.3. </a><a href="#name-adding-and-removing-partici" class="section-name selfRef">Adding and Removing Participants to a Room</a>
-      </h3>
 </section>
 </div>
-<div id="adding-and-removing-participants-clients">
-<section id="section-3.4">
-        <h3 id="name-adding-and-removing-particip">
-<a href="#section-3.4" class="section-number selfRef">3.4. </a><a href="#name-adding-and-removing-particip" class="section-name selfRef">Adding and Removing Participants' Clients</a>
-      </h3>
 </section>
 </div>
-<div id="exchanging-messages">
-<section id="section-3.5">
-        <h3 id="name-exchanging-messages">
-<a href="#section-3.5" class="section-number selfRef">3.5. </a><a href="#name-exchanging-messages" class="section-name selfRef">Exchanging Messages</a>
-      </h3>
-</section>
-</div>
+<div id="consent-sketch">
+<section id="section-7">
+      <h2 id="name-consent-sketch">
+<a href="#section-7" class="section-number selfRef">7. </a><a href="#name-consent-sketch" class="section-name selfRef">Consent Sketch</a>
+      </h2>
+<p id="section-7-1">[[ Consent is important, so we include a preliminary sketch here ]]<a href="#section-7-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="hedgedoc-content-below-this-line">
-<section id="section-4">
+<section id="section-8">
       <h2 id="name-hedgedoc-content-below-this">
-<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-hedgedoc-content-below-this" class="section-name selfRef">HEDGEDOC CONTENT BELOW THIS LINE</a>
+<a href="#section-8" class="section-number selfRef">8. </a><a href="#name-hedgedoc-content-below-this" class="section-name selfRef">HEDGEDOC CONTENT BELOW THIS LINE</a>
     </h2>
 </section>
 </div>
 <div id="operational-model">
-<section id="section-5">
+<section id="section-9">
       <h2 id="name-operational-model">
-<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-operational-model" class="section-name selfRef">Operational Model</a>
+<a href="#section-9" class="section-number selfRef">9. </a><a href="#name-operational-model" class="section-name selfRef">Operational Model</a>
       </h2>
-<p id="section-5-1">[[ RLB: This might be better to pull up into the architecture. ]]<a href="#section-5-1" class="pilcrow">¶</a></p>
+<p id="section-9-1">[[ RLB: This might be better to pull up into the architecture. ]]<a href="#section-9-1" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-5-2.1">
-          <p id="section-5-2.1.1">Goal of MIMI protocol is to allow control of room state<a href="#section-5-2.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-9-2.1">
+          <p id="section-9-2.1.1">Goal of MIMI protocol is to allow control of room state<a href="#section-9-2.1.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-5-2.2">
-          <p id="section-5-2.2.1">State stored on hub for room<a href="#section-5-2.2.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-9-2.2">
+          <p id="section-9-2.2.1">State stored on hub for room<a href="#section-9-2.2.1" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-5-2.2.2.1">
-              <p id="section-5-2.2.2.1.1">Confirmed state<a href="#section-5-2.2.2.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-9-2.2.2.1">
+              <p id="section-9-2.2.2.1.1">Confirmed state<a href="#section-9-2.2.2.1.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-5-2.2.2.2">
-              <p id="section-5-2.2.2.2.1">List of outstanding proposals<a href="#section-5-2.2.2.2.1" class="pilcrow">¶</a></p>
+            <li class="normal" id="section-9-2.2.2.2">
+              <p id="section-9-2.2.2.2.1">List of outstanding proposals<a href="#section-9-2.2.2.2.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-5-2.2.2.3">
-              <p id="section-5-2.2.2.3.1">Proposed state = Confirmed + proposals<a href="#section-5-2.2.2.3.1" class="pilcrow">¶</a></p>
+            <li class="normal" id="section-9-2.2.2.3">
+              <p id="section-9-2.2.2.3.1">Proposed state = Confirmed + proposals<a href="#section-9-2.2.2.3.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
 </li>
-        <li class="normal" id="section-5-2.3">
-          <p id="section-5-2.3.1">Clients take action "in immediate mode" ~ Proposals + Commit<a href="#section-5-2.3.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-9-2.3">
+          <p id="section-9-2.3.1">Clients take action "in immediate mode" ~ Proposals + Commit<a href="#section-9-2.3.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-5-2.4">
-          <p id="section-5-2.4.1">Some actions cannot be committed immediately<a href="#section-5-2.4.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-9-2.4">
+          <p id="section-9-2.4.1">Some actions cannot be committed immediately<a href="#section-9-2.4.1" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-5-2.4.2.1">
-              <p id="section-5-2.4.2.1.1">Self-remove<a href="#section-5-2.4.2.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-9-2.4.2.1">
+              <p id="section-9-2.4.2.1.1">Self-remove<a href="#section-9-2.4.2.1.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-5-2.4.2.2">
-              <p id="section-5-2.4.2.2.1">Any action intiated by a server<a href="#section-5-2.4.2.2.1" class="pilcrow">¶</a></p>
+            <li class="normal" id="section-9-2.4.2.2">
+              <p id="section-9-2.4.2.2.1">Any action intiated by a server<a href="#section-9-2.4.2.2.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
 </li>
-        <li class="normal" id="section-5-2.5">
-          <p id="section-5-2.5.1">If an action cannot be committed immediately, the hub enqueues it and assures it is committed as soon as possible<a href="#section-5-2.5.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-9-2.5">
+          <p id="section-9-2.5.1">If an action cannot be committed immediately, the hub enqueues it and assures it is committed as soon as possible<a href="#section-9-2.5.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-5-2.6">
-          <p id="section-5-2.6.1">Some actions happen outside a room: Consent, claim key material, identifier resolution<a href="#section-5-2.6.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-9-2.6">
+          <p id="section-9-2.6.1">Some actions happen outside a room: Consent, claim key material, identifier resolution<a href="#section-9-2.6.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
-<p id="section-5-3">Functional/layering model of MIMI protocol:<a href="#section-5-3" class="pilcrow">¶</a></p>
+<p id="section-9-3">Functional/layering model of MIMI protocol:<a href="#section-9-3" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-5-4.1">
-          <p id="section-5-4.1.1">Transport ~ authenticated, request/response connection between servers<a href="#section-5-4.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-9-4.1">
+          <p id="section-9-4.1.1">Transport ~ authenticated, request/response connection between servers<a href="#section-9-4.1.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-5-4.2">
-          <p id="section-5-4.2.1">Identifier resolution request / response<a href="#section-5-4.2.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-9-4.2">
+          <p id="section-9-4.2.1">Identifier resolution request / response<a href="#section-9-4.2.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-5-4.3">
-          <p id="section-5-4.3.1">Consent request / response<a href="#section-5-4.3.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-9-4.3">
+          <p id="section-9-4.3.1">Consent request / response<a href="#section-9-4.3.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-5-4.4">
-          <p id="section-5-4.4.1">Room state change request / response<a href="#section-5-4.4.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-9-4.4">
+          <p id="section-9-4.4.1">Room state change request / response<a href="#section-9-4.4.1" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-5-4.4.2.1">
-              <p id="section-5-4.4.2.1.1">Proposal* + [CommitBundle]<a href="#section-5-4.4.2.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-9-4.4.2.1">
+              <p id="section-9-4.4.2.1.1">Proposal* + [CommitBundle]<a href="#section-9-4.4.2.1.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-5-4.4.2.2">
-              <p id="section-5-4.4.2.2.1">Proposal = Add / Update / Remove / MIMI<a href="#section-5-4.4.2.2.1" class="pilcrow">¶</a></p>
+            <li class="normal" id="section-9-4.4.2.2">
+              <p id="section-9-4.4.2.2.1">Proposal = Add / Update / Remove / MIMI<a href="#section-9-4.4.2.2.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
 </li>
-        <li class="normal" id="section-5-4.5">
-          <p id="section-5-4.5.1">Message submission request / response<a href="#section-5-4.5.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-9-4.5">
+          <p id="section-9-4.5.1">Message submission request / response<a href="#section-9-4.5.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
-<p id="section-5-5"><code>
+<p id="section-9-5"><code>
                    +---------------+-------------+
                    | MIMI Proposal | Content Fmt |
 +--------+---------+---------------+-------------+
@@ -1481,8 +1580,8 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
 +------------------------------------------------+
 </code>
 ```
-POST /updateRoom/dxzxxDuvMOTsUD4D_YdSyQ<a href="#section-5-5" class="pilcrow">¶</a></p>
-<p id="section-5-6">PublicMessage{
+POST /updateRoom/dxzxxDuvMOTsUD4D_YdSyQ<a href="#section-9-5" class="pilcrow">¶</a></p>
+<p id="section-9-6">PublicMessage{
   /* MLS Commit - inside is a list of Proposals <em>/
   Commit[
     ParticipantListPatch{
@@ -1507,22 +1606,22 @@ POST /updateRoom/dxzxxDuvMOTsUD4D_YdSyQ<a href="#section-5-5" class="pilcrow">¶
   /*
   RatchetTree
 }
-```<a href="#section-5-6" class="pilcrow">¶</a></p>
-<p id="section-5-7">Removing yourself
+```<a href="#section-9-6" class="pilcrow">¶</a></p>
+<p id="section-9-7">Removing yourself
 ```
-POST /updateRoom/dxzxxDuvMOTsUD4D_YdSyQ<a href="#section-5-7" class="pilcrow">¶</a></p>
-<p id="section-5-8">/* concatenated MLS Proposals (each inside a PublicMessage) */
+POST /updateRoom/dxzxxDuvMOTsUD4D_YdSyQ<a href="#section-9-7" class="pilcrow">¶</a></p>
+<p id="section-9-8">/* concatenated MLS Proposals (each inside a PublicMessage) */
 ParticipantListPatch{
   removeUsers [Alice]
 },
 Remove(Alice1),
 SelfRemove(Alice2),
-Remove(Alice3)<a href="#section-5-8" class="pilcrow">¶</a></p>
-<p id="section-5-9">```<a href="#section-5-9" class="pilcrow">¶</a></p>
-<p id="section-5-10">Charlie1 commits Alice's pending proposals. This is accepted even though Charlie wouldn't have permission to remove Alice himself.
+Remove(Alice3)<a href="#section-9-8" class="pilcrow">¶</a></p>
+<p id="section-9-9">```<a href="#section-9-9" class="pilcrow">¶</a></p>
+<p id="section-9-10">Charlie1 commits Alice's pending proposals. This is accepted even though Charlie wouldn't have permission to remove Alice himself.
 ```
-POST /updateRoom/dxzxxDuvMOTsUD4D_YdSyQ<a href="#section-5-10" class="pilcrow">¶</a></p>
-<p id="section-5-11">PublicMessage{
+POST /updateRoom/dxzxxDuvMOTsUD4D_YdSyQ<a href="#section-9-10" class="pilcrow">¶</a></p>
+<p id="section-9-11">PublicMessage{
   /* MLS Commit - inside is a list of Proposals <em>/
   Commit[
     ParticipantListPatch{
@@ -1538,186 +1637,186 @@ POST /updateRoom/dxzxxDuvMOTsUD4D_YdSyQ<a href="#section-5-10" class="pilcrow">�
   /</em> ratchet_tree or some other representation */
   RatchetTree
 }
-```<a href="#section-5-11" class="pilcrow">¶</a></p>
+```<a href="#section-9-11" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="abcs-of-the-protocol">
-<section id="section-6">
+<section id="section-10">
       <h2 id="name-abcs-of-the-protocol">
-<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-abcs-of-the-protocol" class="section-name selfRef">ABCs of the Protocol</a>
+<a href="#section-10" class="section-number selfRef">10. </a><a href="#name-abcs-of-the-protocol" class="section-name selfRef">ABCs of the Protocol</a>
       </h2>
-<p id="section-6-1">The MIMI transport protocol is designed to allow users of instant messaging
+<p id="section-10-1">The MIMI transport protocol is designed to allow users of instant messaging
 on different providers to participate together in group chats using
 a common end-to-end encryption protocol and content format. It does not specify the transport protocol between clients and their providers, but it does
-constrain them to faithfully implement the end-to-end encryption protocol and the MIMI content format.<a href="#section-6-1" class="pilcrow">¶</a></p>
-<p id="section-6-2">We explain the protocol by walking through various scenarios, starting with the most commonly used. First we will show how Alice adds Bob to an existing room. For this case we assume that Room1 exists and Alice is room administrator (she can add and remove users and change roles), Alice already has a stable identifier for the user Bob, and that Bob has somehow indicated consent for Alice to add him to this room (or rooms in general).<a href="#section-6-2" class="pilcrow">¶</a></p>
-<p id="section-6-3">Throughout this section, we will detail the individual operations from the
+constrain them to faithfully implement the end-to-end encryption protocol and the MIMI content format.<a href="#section-10-1" class="pilcrow">¶</a></p>
+<p id="section-10-2">We explain the protocol by walking through various scenarios, starting with the most commonly used. First we will show how Alice adds Bob to an existing room. For this case we assume that Room1 exists and Alice is room administrator (she can add and remove users and change roles), Alice already has a stable identifier for the user Bob, and that Bob has somehow indicated consent for Alice to add him to this room (or rooms in general).<a href="#section-10-2" class="pilcrow">¶</a></p>
+<p id="section-10-3">Throughout this section, we will detail the individual operations from the
 perspective of the user Alice. All actions by Alice are taken through Alice's
 client and her server's proprietary API. While some parts of the individual
 messages originate from Alice's clients, the MIMI protocol is only concerned
 with the communication between Alice's, Bob's and Cathy's servers. So whenever
 users are referenced throughout this section, it is implied that they are
 communicating with their respective servers, which then communicate with
-one another.<a href="#section-6-3" class="pilcrow">¶</a></p>
-<div id="dramatis-personae">
-<section id="section-6.1">
-        <h3 id="name-dramatis-personae">
-<a href="#section-6.1" class="section-number selfRef">6.1. </a><a href="#name-dramatis-personae" class="section-name selfRef">Dramatis Personae</a>
+one another.<a href="#section-10-3" class="pilcrow">¶</a></p>
+<div id="dramatis-personae-1">
+<section id="section-10.1">
+        <h3 id="name-dramatis-personae-2">
+<a href="#section-10.1" class="section-number selfRef">10.1. </a><a href="#name-dramatis-personae-2" class="section-name selfRef">Dramatis Personae</a>
         </h3>
 <ul class="normal">
-<li class="normal" id="section-6.1-1.1">
-            <p id="section-6.1-1.1.1">Alice, Bob: Users<a href="#section-6.1-1.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-10.1-1.1">
+            <p id="section-10.1-1.1.1">Alice, Bob: Users<a href="#section-10.1-1.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-6.1-1.2">
-            <p id="section-6.1-1.2.1">Alice1, Alice2, etc. are Alice's devices; likewise for Bob and other users<a href="#section-6.1-1.2.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-10.1-1.2">
+            <p id="section-10.1-1.2.1">Alice1, Alice2, etc. are Alice's devices; likewise for Bob and other users<a href="#section-10.1-1.2.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-6.1-1.3">
-            <p id="section-6.1-1.3.1">ProviderA is Alice's provider, ProviderB is Bob's provider, etc.<a href="#section-6.1-1.3.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-10.1-1.3">
+            <p id="section-10.1-1.3.1">ProviderA is Alice's provider, ProviderB is Bob's provider, etc.<a href="#section-10.1-1.3.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-6.1-1.4">
-            <p id="section-6.1-1.4.1">Room1 is a room in which the users are interacting<a href="#section-6.1-1.4.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-10.1-1.4">
+            <p id="section-10.1-1.4.1">Room1 is a room in which the users are interacting<a href="#section-10.1-1.4.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 </section>
 </div>
 <div id="alice-creates-a-room">
-<section id="section-6.2">
+<section id="section-10.2">
         <h3 id="name-alice-creates-a-room">
-<a href="#section-6.2" class="section-number selfRef">6.2. </a><a href="#name-alice-creates-a-room" class="section-name selfRef">Alice creates a room</a>
+<a href="#section-10.2" class="section-number selfRef">10.2. </a><a href="#name-alice-creates-a-room" class="section-name selfRef">Alice creates a room</a>
         </h3>
-<p id="section-6.2-1">We assume that someone on ProviderA (possibly Alice) has created Room1, that ProviderA is the <em>hub provider</em> for the room, and that the room policy means that if you have the "admin" role in the room you can add and remove users to the participant list and change the roles of participants.<a href="#section-6.2-1" class="pilcrow">¶</a></p>
-<p id="section-6.2-2">Creating a room is done between a client and its local provider and is
+<p id="section-10.2-1">We assume that someone on ProviderA (possibly Alice) has created Room1, that ProviderA is the <em>hub provider</em> for the room, and that the room policy means that if you have the "admin" role in the room you can add and remove users to the participant list and change the roles of participants.<a href="#section-10.2-1" class="pilcrow">¶</a></p>
+<p id="section-10.2-2">Creating a room is done between a client and its local provider and is
 out of scope of MIMI. However, we assume that Room1 has the following
-policies.<a href="#section-6.2-2" class="pilcrow">¶</a></p>
+policies.<a href="#section-10.2-2" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-6.2-3.1">
-            <p id="section-6.2-3.1.1">the room is for members only;<a href="#section-6.2-3.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-10.2-3.1">
+            <p id="section-10.2-3.1.1">the room is for members only;<a href="#section-10.2-3.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-6.2-3.2">
-            <p id="section-6.2-3.2.1">the room is not moderated;<a href="#section-6.2-3.2.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-10.2-3.2">
+            <p id="section-10.2-3.2.1">the room is not moderated;<a href="#section-10.2-3.2.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-6.2-3.3">
-            <p id="section-6.2-3.3.1">multiple MLS clients are allowed for each user;<a href="#section-6.2-3.3.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-10.2-3.3">
+            <p id="section-10.2-3.3.1">multiple MLS clients are allowed for each user;<a href="#section-10.2-3.3.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-6.2-3.4">
-            <p id="section-6.2-3.4.1">the administrator and owner roles are allowed to add and remove users, and to promote a user to be an administrator.<a href="#section-6.2-3.4.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-10.2-3.4">
+            <p id="section-10.2-3.4.1">the administrator and owner roles are allowed to add and remove users, and to promote a user to be an administrator.<a href="#section-10.2-3.4.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
-<p id="section-6.2-4">We also assume that Alice is the owner, and therefore an administrator,
-of the room. Alice has owner, administrator, and regular user roles in the room.<a href="#section-6.2-4" class="pilcrow">¶</a></p>
+<p id="section-10.2-4">We also assume that Alice is the owner, and therefore an administrator,
+of the room. Alice has owner, administrator, and regular user roles in the room.<a href="#section-10.2-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="alice-adds-bob">
-<section id="section-6.3">
+<section id="section-10.3">
         <h3 id="name-alice-adds-bob">
-<a href="#section-6.3" class="section-number selfRef">6.3. </a><a href="#name-alice-adds-bob" class="section-name selfRef">Alice adds Bob</a>
+<a href="#section-10.3" class="section-number selfRef">10.3. </a><a href="#name-alice-adds-bob" class="section-name selfRef">Alice adds Bob</a>
         </h3>
 <div id="alice-gets-initial-keying-material-for-bob">
-<section id="section-6.3.1">
+<section id="section-10.3.1">
           <h4 id="name-alice-gets-initial-keying-m">
-<a href="#section-6.3.1" class="section-number selfRef">6.3.1. </a><a href="#name-alice-gets-initial-keying-m" class="section-name selfRef">Alice gets initial keying material for Bob</a>
+<a href="#section-10.3.1" class="section-number selfRef">10.3.1. </a><a href="#name-alice-gets-initial-keying-m" class="section-name selfRef">Alice gets initial keying material for Bob</a>
           </h4>
-<p id="section-6.3.1-1">In end-to-end encryption protocols, there is typiclly some type of initial ephemeral keying material which clients generate. Clients often upload this keying information in care of their provider. This keying information is almost always designed to be used only once. In MLS this initial keying information is called
-a KeyPackage. We use the terminology "claim" to exclusively reserve keying information from the target user's provider.<a href="#section-6.3.1-1" class="pilcrow">¶</a></p>
-<p id="section-6.3.1-2">In MLS, in order for Alice to add Bob, her client needs to somehow obtain a KeyPackage unique for each group, for each of Bob's clients. In MLS, two rooms with the same client have separate keying information for that client, so even if Bob is already in another group with Alice, her client needs Bob's KeyPackages to add his clients to a new group.<a href="#section-6.3.1-2" class="pilcrow">¶</a></p>
-<p id="section-6.3.1-3">To create a conversation with Bob, Alice would like to get KeyPackages for all
+<p id="section-10.3.1-1">In end-to-end encryption protocols, there is typiclly some type of initial ephemeral keying material which clients generate. Clients often upload this keying information in care of their provider. This keying information is almost always designed to be used only once. In MLS this initial keying information is called
+a KeyPackage. We use the terminology "claim" to exclusively reserve keying information from the target user's provider.<a href="#section-10.3.1-1" class="pilcrow">¶</a></p>
+<p id="section-10.3.1-2">In MLS, in order for Alice to add Bob, her client needs to somehow obtain a KeyPackage unique for each group, for each of Bob's clients. In MLS, two rooms with the same client have separate keying information for that client, so even if Bob is already in another group with Alice, her client needs Bob's KeyPackages to add his clients to a new group.<a href="#section-10.3.1-2" class="pilcrow">¶</a></p>
+<p id="section-10.3.1-3">To create a conversation with Bob, Alice would like to get KeyPackages for all
 of Bob's clients (for example for clients on his laptop, his phone, and his tablet). Alice's client requests Bob's KeyPackages from her local provider (not specified by MIMI), then her provider sends a request to Bob's provider asking for KeyPackages for Bob's clients. That request may include the
 room ID in which Alice intends to use the KeyPackages, in case Bob's consent
-only applies to a single room.<a href="#section-6.3.1-3" class="pilcrow">¶</a></p>
-<p id="section-6.3.1-4"><code>
+only applies to a single room.<a href="#section-10.3.1-3" class="pilcrow">¶</a></p>
+<p id="section-10.3.1-4"><code>
 Bob* -&gt; ProviderB: KeyPackage
 Alice1 -&gt; ProviderA: Get key material for Bob@B in Room1
 ProviderA -&gt; ProviderB: KeyMaterialRequest(Bob@B in Room1)
 ProviderB -&gt; ProviderA: KeyMaterialResponse(Bob1, Bob2, Bob3)
 ProviderA -&gt; Alice1: KeyPackages for Bob1, Bob2, Bob3
-</code><a href="#section-6.3.1-4" class="pilcrow">¶</a></p>
-<p id="section-6.3.1-5">Like all operations that are not authorized based on room policy, claiming a key material is subject to complying with Bob's consent policy (often as delegated to Bob's provider). Consent is discussed more in [[consent section]]. For the purpose of this simple example, we assume that Alice already has appropriate consent.<a href="#section-6.3.1-5" class="pilcrow">¶</a></p>
+</code><a href="#section-10.3.1-4" class="pilcrow">¶</a></p>
+<p id="section-10.3.1-5">Like all operations that are not authorized based on room policy, claiming a key material is subject to complying with Bob's consent policy (often as delegated to Bob's provider). Consent is discussed more in [[consent section]]. For the purpose of this simple example, we assume that Alice already has appropriate consent.<a href="#section-10.3.1-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="alice-adds-bob-to-the-participant-list-and-mls-group">
-<section id="section-6.3.2">
+<section id="section-10.3.2">
           <h4 id="name-alice-adds-bob-to-the-parti">
-<a href="#section-6.3.2" class="section-number selfRef">6.3.2. </a><a href="#name-alice-adds-bob-to-the-parti" class="section-name selfRef">Alice adds Bob to the participant list and MLS group</a>
+<a href="#section-10.3.2" class="section-number selfRef">10.3.2. </a><a href="#name-alice-adds-bob-to-the-parti" class="section-name selfRef">Alice adds Bob to the participant list and MLS group</a>
           </h4>
-<p id="section-6.3.2-1">In MIMI, the room policy consists of the base policy (which can refer to roles,
+<p id="section-10.3.2-1">In MIMI, the room policy consists of the base policy (which can refer to roles,
 but does not refer to specific participants), the participant list, and the
 cryptographic state of the end-to-end protocol (in MLS, the corresponding MLS
 group state). The participant list also contains the roles associated with each
-participant.<a href="#section-6.3.2-1" class="pilcrow">¶</a></p>
-<p id="section-6.3.2-2">The base policy is expected to be modified infrequently and therefore it can
+participant.<a href="#section-10.3.2-1" class="pilcrow">¶</a></p>
+<p id="section-10.3.2-2">The base policy is expected to be modified infrequently and therefore it can
 only be updated in its entirety. The participant list, however is expected to
 change frequently in busy rooms. Each change to the participant list contains
 a list of users who are added (with their roles), a list of users who are removed, and a list of
-users whose roles have changed.<a href="#section-6.3.2-2" class="pilcrow">¶</a></p>
-<p id="section-6.3.2-3">In MLS, the base policy document is communicated in an MLS GroupContext
+users whose roles have changed.<a href="#section-10.3.2-2" class="pilcrow">¶</a></p>
+<p id="section-10.3.2-3">In MLS, the base policy document is communicated in an MLS GroupContext
 extension. Any change to the base policy document (which is likely to be rare)
-is made by committing an MLS GroupContextExtensions proposal.<a href="#section-6.3.2-3" class="pilcrow">¶</a></p>
-<p id="section-6.3.2-4">Changes to the participant list are maintained by patching the participation
+is made by committing an MLS GroupContextExtensions proposal.<a href="#section-10.3.2-3" class="pilcrow">¶</a></p>
+<p id="section-10.3.2-4">Changes to the participant list are maintained by patching the participation
 list. In MLS this accomplished by committing a <code>ParticipantListPatch</code> proposal
-(defined in this document).<a href="#section-6.3.2-4" class="pilcrow">¶</a></p>
-<p id="section-6.3.2-5">Unless the base policy document defines otherwise, an MLS client who makes a
+(defined in this document).<a href="#section-10.3.2-4" class="pilcrow">¶</a></p>
+<p id="section-10.3.2-5">Unless the base policy document defines otherwise, an MLS client who makes a
 change to the participant list is expected to simultaneously effect the
 corresponding change to the MLS group state (to the extent allowed by the
 protocol). Except for active participants committing valid pending remove
 proposals, a client making a change to the participant list should not expect
 any other client to take any immediate action based on updating the participant
-list alone.<a href="#section-6.3.2-5" class="pilcrow">¶</a></p>
-<p id="section-6.3.2-6">Making any of these changes, the client sends either a set of proposals,
+list alone.<a href="#section-10.3.2-5" class="pilcrow">¶</a></p>
+<p id="section-10.3.2-6">Making any of these changes, the client sends either a set of proposals,
 or sends a Commit bundle, which consists of a Commit, a Welcome if there were
 any new clients added, a GroupInfo, and any changes to the ratchet tree. This is
-described in more detail in the syntax section.<a href="#section-6.3.2-6" class="pilcrow">¶</a></p>
-<p id="section-6.3.2-7">If Alice wants to add Bob, her client generates an MLS commit
+described in more detail in the syntax section.<a href="#section-10.3.2-6" class="pilcrow">¶</a></p>
+<p id="section-10.3.2-7">If Alice wants to add Bob, her client generates an MLS commit
 with a <code>ParticipantListPatch</code> proposal adding Bob as a participant and <code>Add</code>
-proposals for each of Bob's clients; and an MLS Welcome message including Bob's clients. Between Alice's client and Alice's provider they also must insure Alice's provider (which is the hub for this room) has the GroupInfo and ratchet tree for the room if the commit is accepted. If the hub provider accepts this "commit bundle", it will forward (fan out) the commit to the current members of the MLS group, and forward a welcome message to any new MLS clients just added to the group.<a href="#section-6.3.2-7" class="pilcrow">¶</a></p>
-<p id="section-6.3.2-8">Note that there are other ways for Bob to eventually participate in the room, but the method just dicsussed is the most straightforward and is preferred. Alice could commit a <code>ParticipantListPatch</code>
+proposals for each of Bob's clients; and an MLS Welcome message including Bob's clients. Between Alice's client and Alice's provider they also must insure Alice's provider (which is the hub for this room) has the GroupInfo and ratchet tree for the room if the commit is accepted. If the hub provider accepts this "commit bundle", it will forward (fan out) the commit to the current members of the MLS group, and forward a welcome message to any new MLS clients just added to the group.<a href="#section-10.3.2-7" class="pilcrow">¶</a></p>
+<p id="section-10.3.2-8">Note that there are other ways for Bob to eventually participate in the room, but the method just dicsussed is the most straightforward and is preferred. Alice could commit a <code>ParticipantListPatch</code>
 just adding Bob as an inactive participant, and may need to if she cannot obtain
 KeyPackages for Bob's clients (for example, if she is waiting for consent from
 Bob), but Alice should not expect another participant, Bob, or some provider to
 react to Bob being added, unless some specific policy arrangement is specified
-in the base policy.<a href="#section-6.3.2-8" class="pilcrow">¶</a></p>
-<p id="section-6.3.2-9"><code>
+in the base policy.<a href="#section-10.3.2-8" class="pilcrow">¶</a></p>
+<p id="section-10.3.2-9"><code>
 Alice1 -&gt; ProviderA: CommitBundle(PLP, Add*)
 ProviderA: Validate commit sequencing; PLP authz by policy; Add authz by PL
 ProviderA -&gt; Alice1: Commit accepted
-</code><a href="#section-6.3.2-9" class="pilcrow">¶</a></p>
+</code><a href="#section-10.3.2-9" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="alice-and-bob-exchange-messages">
-<section id="section-6.3.3">
+<section id="section-10.3.3">
           <h4 id="name-alice-and-bob-exchange-mess">
-<a href="#section-6.3.3" class="section-number selfRef">6.3.3. </a><a href="#name-alice-and-bob-exchange-mess" class="section-name selfRef">Alice and Bob exchange messages</a>
+<a href="#section-10.3.3" class="section-number selfRef">10.3.3. </a><a href="#name-alice-and-bob-exchange-mess" class="section-name selfRef">Alice and Bob exchange messages</a>
           </h4>
-<p id="section-6.3.3-1">Any of Alice's or Bob's clients can try to send a instant message to the room. For an MLS room, Alice's or Bob's provider just sends the appropriate MLS application message to the hub provider. The hub provider verifies that the sender is an active participant of the room (and therefore a member of the corresponding MLS group), has permission to send messages in the room, and is valid according to some other MLS-specific checks.<a href="#section-6.3.3-1" class="pilcrow">¶</a></p>
-<p id="section-6.3.3-2">If the hub accepts the message, it fans the message out to any other providers (and to its local clients).<a href="#section-6.3.3-2" class="pilcrow">¶</a></p>
-<p id="section-6.3.3-3"><code>
+<p id="section-10.3.3-1">Any of Alice's or Bob's clients can try to send a instant message to the room. For an MLS room, Alice's or Bob's provider just sends the appropriate MLS application message to the hub provider. The hub provider verifies that the sender is an active participant of the room (and therefore a member of the corresponding MLS group), has permission to send messages in the room, and is valid according to some other MLS-specific checks.<a href="#section-10.3.3-1" class="pilcrow">¶</a></p>
+<p id="section-10.3.3-2">If the hub accepts the message, it fans the message out to any other providers (and to its local clients).<a href="#section-10.3.3-2" class="pilcrow">¶</a></p>
+<p id="section-10.3.3-3"><code>
 Alice1 -&gt; ProviderA: Submit message
 ProviderA: Validate message (e.g., Alice authz to send)
 ProviderA -&gt; Alice*: Message notification
 ProviderA -&gt; ProviderB: Message notification
 ProviderB -&gt; Bob*: Message notification
-</code><a href="#section-6.3.3-3" class="pilcrow">¶</a></p>
+</code><a href="#section-10.3.3-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
 </div>
 <div id="alice-makes-bob-a-room-administrator">
-<section id="section-6.4">
+<section id="section-10.4">
         <h3 id="name-alice-makes-bob-a-room-admi">
-<a href="#section-6.4" class="section-number selfRef">6.4. </a><a href="#name-alice-makes-bob-a-room-admi" class="section-name selfRef">Alice makes Bob a room administrator</a>
+<a href="#section-10.4" class="section-number selfRef">10.4. </a><a href="#name-alice-makes-bob-a-room-admi" class="section-name selfRef">Alice makes Bob a room administrator</a>
         </h3>
-<p id="section-6.4-1">Digress to talk about room policy here...<a href="#section-6.4-1" class="pilcrow">¶</a></p>
-<p id="section-6.4-2">Since Alice is the owner of the room and the room policy is that administrators have to Alice commits a <code>ParticipantListPatch</code> proposal updating Bob's roles in the room to <code>[regular_user, admin]</code>.<a href="#section-6.4-2" class="pilcrow">¶</a></p>
-<p id="section-6.4-3">If the hub provider accepts the commit, it fans it out so all the active participants receive it.<a href="#section-6.4-3" class="pilcrow">¶</a></p>
-<p id="section-6.4-4"><code>
+<p id="section-10.4-1">Digress to talk about room policy here...<a href="#section-10.4-1" class="pilcrow">¶</a></p>
+<p id="section-10.4-2">Since Alice is the owner of the room and the room policy is that administrators have to Alice commits a <code>ParticipantListPatch</code> proposal updating Bob's roles in the room to <code>[regular_user, admin]</code>.<a href="#section-10.4-2" class="pilcrow">¶</a></p>
+<p id="section-10.4-3">If the hub provider accepts the commit, it fans it out so all the active participants receive it.<a href="#section-10.4-3" class="pilcrow">¶</a></p>
+<p id="section-10.4-4"><code>
 Alice1 -&gt; ProviderA: CommitBundle(PLP)
 ProviderA: Validate commit sequencing; PLP authz by policy
 ProviderA -&gt; Alice1: Commit accepted
 </code>
-## Bob adds Cathy and Doug<a href="#section-6.4-4" class="pilcrow">¶</a></p>
-<p id="section-6.4-5">Since Bob is now an admin, Bob wants to Cathy and Doug. Bob starts by fetching their KeyPackages (assuming Bob already has consent from Cathy and Doug). Then Bob commits a <code>ParticipantListPatch</code> proposal adding Cathy as both a regular user and administrator, and Doug as a regular user; and Add proposals for all of Cathy's and Doug's KeyPackages.<a href="#section-6.4-5" class="pilcrow">¶</a></p>
-<p id="section-6.4-6">If the hub provider accepts the commit, it fans it out so all the active participants receive it, and also forwards the welcome message to Cathy's and Doug's providers.<a href="#section-6.4-6" class="pilcrow">¶</a></p>
-<p id="section-6.4-7">Once any of the other clients in group receive the commit, or the newcomers receive the welcome, that client can send a message which will be received by the newcomers (assuming it is acceptable to the hub provider).<a href="#section-6.4-7" class="pilcrow">¶</a></p>
-<p id="section-6.4-8"><code>
+## Bob adds Cathy and Doug<a href="#section-10.4-4" class="pilcrow">¶</a></p>
+<p id="section-10.4-5">Since Bob is now an admin, Bob wants to Cathy and Doug. Bob starts by fetching their KeyPackages (assuming Bob already has consent from Cathy and Doug). Then Bob commits a <code>ParticipantListPatch</code> proposal adding Cathy as both a regular user and administrator, and Doug as a regular user; and Add proposals for all of Cathy's and Doug's KeyPackages.<a href="#section-10.4-5" class="pilcrow">¶</a></p>
+<p id="section-10.4-6">If the hub provider accepts the commit, it fans it out so all the active participants receive it, and also forwards the welcome message to Cathy's and Doug's providers.<a href="#section-10.4-6" class="pilcrow">¶</a></p>
+<p id="section-10.4-7">Once any of the other clients in group receive the commit, or the newcomers receive the welcome, that client can send a message which will be received by the newcomers (assuming it is acceptable to the hub provider).<a href="#section-10.4-7" class="pilcrow">¶</a></p>
+<p id="section-10.4-8"><code>
 Bob1 -&gt; ProviderB: Get key material for Cathy@C and Doug@D in Room1
 ProviderA -&gt; ProviderA (Hub): KeyMaterialRequest([Cathy], C, for Room1)
 ProviderA -&gt; ProviderA (Hub): KeyMaterialRequest([Doug], D, for Room1)
@@ -1738,45 +1837,45 @@ ProviderA -&gt; ProviderD: Commit
 ProviderB -&gt; Bob's other clients: Commit
 ProviderC -&gt; Cathy*: Commit
 ProviderD -&gt; Doug*: Commit
-</code><a href="#section-6.4-8" class="pilcrow">¶</a></p>
+</code><a href="#section-10.4-8" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="bob-leaves-the-room">
-<section id="section-6.5">
+<section id="section-10.5">
         <h3 id="name-bob-leaves-the-room">
-<a href="#section-6.5" class="section-number selfRef">6.5. </a><a href="#name-bob-leaves-the-room" class="section-name selfRef">Bob leaves the room</a>
+<a href="#section-10.5" class="section-number selfRef">10.5. </a><a href="#name-bob-leaves-the-room" class="section-name selfRef">Bob leaves the room</a>
         </h3>
-<p id="section-6.5-1">Removing oneself from a room deserves a special mention. In MLS a client cannot send a commit which removes itself from the group. Instead the leaver needs to send proposals that will be committed by a remaining member of the group.<a href="#section-6.5-1" class="pilcrow">¶</a></p>
-<p id="section-6.5-2">Bob sends a single <code>ParticipantListPatch</code> proposal
-removing himself, a <code>SelfRemove</code> proposal for his initiating client, and <code>Remove</code> proposals for any of his other clients. An active participant then sends a commit referencing all those proposals together in a timely fashion.<a href="#section-6.5-2" class="pilcrow">¶</a></p>
-<p id="section-6.5-3">If the commit is accepted by the hub provider, Bob's clients all receive the commit message, so they are aware that they have been removed. This is safe to do because they no longer have the information nececssary to calculate the new decryption key for the group, as it was encrypted only to the remaining members of the group.<a href="#section-6.5-3" class="pilcrow">¶</a></p>
-<p id="section-6.5-4"><code>
+<p id="section-10.5-1">Removing oneself from a room deserves a special mention. In MLS a client cannot send a commit which removes itself from the group. Instead the leaver needs to send proposals that will be committed by a remaining member of the group.<a href="#section-10.5-1" class="pilcrow">¶</a></p>
+<p id="section-10.5-2">Bob sends a single <code>ParticipantListPatch</code> proposal
+removing himself, a <code>SelfRemove</code> proposal for his initiating client, and <code>Remove</code> proposals for any of his other clients. An active participant then sends a commit referencing all those proposals together in a timely fashion.<a href="#section-10.5-2" class="pilcrow">¶</a></p>
+<p id="section-10.5-3">If the commit is accepted by the hub provider, Bob's clients all receive the commit message, so they are aware that they have been removed. This is safe to do because they no longer have the information nececssary to calculate the new decryption key for the group, as it was encrypted only to the remaining members of the group.<a href="#section-10.5-3" class="pilcrow">¶</a></p>
+<p id="section-10.5-4"><code>
 Bob2 -&gt; ProviderB: CommitBundle(Rem(B1, B3)); ProposalBundle(Rem(B2), PLP)
 ProviderB -&gt; ProviderA: CommitBundle(Rem(B1, B2, B3), PLP)
 ProviderA: Validate commit sequencing; PLP authz by policy; Rem authz by PL
 ProviderA: Enqueue Rem(B2), PLP
 ProviderA: [[ fanout Commit ]]
-</code><a href="#section-6.5-4" class="pilcrow">¶</a></p>
+</code><a href="#section-10.5-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="cathy-removes-doug">
-<section id="section-6.6">
+<section id="section-10.6">
         <h3 id="name-cathy-removes-doug">
-<a href="#section-6.6" class="section-number selfRef">6.6. </a><a href="#name-cathy-removes-doug" class="section-name selfRef">Cathy removes Doug</a>
+<a href="#section-10.6" class="section-number selfRef">10.6. </a><a href="#name-cathy-removes-doug" class="section-name selfRef">Cathy removes Doug</a>
         </h3>
-<p id="section-6.6-1">For Cathy to remove Doug, she commits a <code>ParticipantListPatch</code> proposal removing Doug, and <code>Remove</code> proposals for each of Doug's clients. Assuming the commit is accepted by the hub, both Doug's clients and the remaining members of the group recieve the commit, but Doug's clients can no longer decrypt messages sent for the group.<a href="#section-6.6-1" class="pilcrow">¶</a></p>
-<p id="section-6.6-2"><code>
+<p id="section-10.6-1">For Cathy to remove Doug, she commits a <code>ParticipantListPatch</code> proposal removing Doug, and <code>Remove</code> proposals for each of Doug's clients. Assuming the commit is accepted by the hub, both Doug's clients and the remaining members of the group recieve the commit, but Doug's clients can no longer decrypt messages sent for the group.<a href="#section-10.6-1" class="pilcrow">¶</a></p>
+<p id="section-10.6-2"><code>
 (similar Commit flow)
-</code><a href="#section-6.6-2" class="pilcrow">¶</a></p>
+</code><a href="#section-10.6-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="cathy-gets-a-new-client">
-<section id="section-6.7">
+<section id="section-10.7">
         <h3 id="name-cathy-gets-a-new-client">
-<a href="#section-6.7" class="section-number selfRef">6.7. </a><a href="#name-cathy-gets-a-new-client" class="section-name selfRef">Cathy gets a new client</a>
+<a href="#section-10.7" class="section-number selfRef">10.7. </a><a href="#name-cathy-gets-a-new-client" class="section-name selfRef">Cathy gets a new client</a>
         </h3>
-<p id="section-6.7-1">When a user is already a participant of a room, but a specific client is not yet a member of the corresponding MLS group, the client can join by generating an external commit and sending it and the rest of the commit bundle to the hub provider for the room. To construct an external commit, the client needs to first obtain the current GroupInfo object and the <code>ratchet_tree</code> for the group. Being an existing participant in the room is a simple way to authorize getting a GroupInfo object.<a href="#section-6.7-1" class="pilcrow">¶</a></p>
-<p id="section-6.7-2"><code>
+<p id="section-10.7-1">When a user is already a participant of a room, but a specific client is not yet a member of the corresponding MLS group, the client can join by generating an external commit and sending it and the rest of the commit bundle to the hub provider for the room. To construct an external commit, the client needs to first obtain the current GroupInfo object and the <code>ratchet_tree</code> for the group. Being an existing participant in the room is a simple way to authorize getting a GroupInfo object.<a href="#section-10.7-1" class="pilcrow">¶</a></p>
+<p id="section-10.7-2"><code>
 Cathy3 -&gt; ProviderC: Request to join [proof of identity]
 ProviderC -&gt; ProviderA: Request to join [proof of idenitty]
 ProviderA -&gt; ProviderC: GroupInfo
@@ -1790,121 +1889,121 @@ ProviderA -&gt; ProviderB, ProviderC, ProviderD: Commit notification
 ProviderA -&gt; Alice*: Commit notification
 ProviderB -&gt; Bob*: Commit notification
 ProviderD -&gt; Doug*: Commit notification
-</code><a href="#section-6.7-2" class="pilcrow">¶</a></p>
+</code><a href="#section-10.7-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="consent">
-<section id="section-6.8">
+<section id="section-10.8">
         <h3 id="name-consent">
-<a href="#section-6.8" class="section-number selfRef">6.8. </a><a href="#name-consent" class="section-name selfRef">Consent</a>
+<a href="#section-10.8" class="section-number selfRef">10.8. </a><a href="#name-consent" class="section-name selfRef">Consent</a>
         </h3>
-<p id="section-6.8-1">Most instant messaging systems have some notion of how a user consents to be added to a room, and how they manipulate this consent.<a href="#section-6.8-1" class="pilcrow">¶</a></p>
-<p id="section-6.8-2">In the connection-oriented model, once two users are connected, either user can add the other to any number of rooms. In other systems (often with many large and/or public rooms), a user needs to consent individually to be added to a room.<a href="#section-6.8-2" class="pilcrow">¶</a></p>
-<p id="section-6.8-3">The MIMI consent mechanism supports both models and allows them to coexist. It allows a user to request consent, grant consent, revoke consent, and cancel a request for consent. Each of these consent operations can indicate a specific room, or indicate any room.<a href="#section-6.8-3" class="pilcrow">¶</a></p>
-<p id="section-6.8-4">A connection grant or revoke does not need to specify a room if a connection request did, or vice versa. A connection grant or revoke does not even need to follow a connection request.<a href="#section-6.8-4" class="pilcrow">¶</a></p>
-<p id="section-6.8-5">For example, Alice could ask for consent to add Bob to a specific room. Bob could send a connection grant for Alice to add him to any room, or a connection revoke preventing Alice from adding him to any room. Similarly, Alice might have sent a connection request to add Bob for any room (as a connection request), which Bob ignored or did not see. Later, Bob wants to join a specific room administered by Alice. Bob sends a connection grant for the specific room for Alice and sends a Knock request to Alice asking to be added. Finally, Cathy could send a connection grant for Bob (even if Bob did not initiate a connection request to Cathy), and Alice could recognize Cathy on the system and send a connection revoke for her preemptively.<a href="#section-6.8-5" class="pilcrow">¶</a></p>
-<p id="section-6.8-6"><strong>NOTE:</strong> Many providers use additional factors to apply default consent within their service such as a user belonging to a specific workgroup or employer, participating in a related room (ex: WhatsApp "communities"), or presence of a user in the other user's contact list. MIMI does not need to provide a way to replicate or describe these supplemental mechanisms, since they are strongly linked to specific provider policies.<a href="#section-6.8-6" class="pilcrow">¶</a></p>
-<p id="section-6.8-7">Consent requests have sensitive privacy implications. The sender of a consent request should receive an acknowledgement that the request was received by the <em>provider</em> of the target user. For privacy reasons, the requestor should not know if the target user received or viewed the request. The original requestor will obviously find out if the target grants consent, but a consent revocation/rejection is typically not communicated to the revoked/rejected user (again for privacy reasons).<a href="#section-6.8-7" class="pilcrow">¶</a></p>
-<p id="section-6.8-8">Consent operations are only sent directly between the acting provider (sending the request, grant, revoke, or cancel) and the target provider (the object of the consent). In other words, the two providers must have a direct peering relationship.<a href="#section-6.8-8" class="pilcrow">¶</a></p>
-<p id="section-6.8-9">In our example, Alice requests consent from Bob for any room. Later, Bob sends a grants consent to Alice to add him to any room. At the same time as sending the consent request, Alice grants consent to Bob to add her to any room.<a href="#section-6.8-9" class="pilcrow">¶</a></p>
-<p id="section-6.8-10"><strong>TODO:</strong> decide if we like any of the text below better:<a href="#section-6.8-10" class="pilcrow">¶</a></p>
-<p id="section-6.8-11">The consent primitive needs to include the following:
+<p id="section-10.8-1">Most instant messaging systems have some notion of how a user consents to be added to a room, and how they manipulate this consent.<a href="#section-10.8-1" class="pilcrow">¶</a></p>
+<p id="section-10.8-2">In the connection-oriented model, once two users are connected, either user can add the other to any number of rooms. In other systems (often with many large and/or public rooms), a user needs to consent individually to be added to a room.<a href="#section-10.8-2" class="pilcrow">¶</a></p>
+<p id="section-10.8-3">The MIMI consent mechanism supports both models and allows them to coexist. It allows a user to request consent, grant consent, revoke consent, and cancel a request for consent. Each of these consent operations can indicate a specific room, or indicate any room.<a href="#section-10.8-3" class="pilcrow">¶</a></p>
+<p id="section-10.8-4">A connection grant or revoke does not need to specify a room if a connection request did, or vice versa. A connection grant or revoke does not even need to follow a connection request.<a href="#section-10.8-4" class="pilcrow">¶</a></p>
+<p id="section-10.8-5">For example, Alice could ask for consent to add Bob to a specific room. Bob could send a connection grant for Alice to add him to any room, or a connection revoke preventing Alice from adding him to any room. Similarly, Alice might have sent a connection request to add Bob for any room (as a connection request), which Bob ignored or did not see. Later, Bob wants to join a specific room administered by Alice. Bob sends a connection grant for the specific room for Alice and sends a Knock request to Alice asking to be added. Finally, Cathy could send a connection grant for Bob (even if Bob did not initiate a connection request to Cathy), and Alice could recognize Cathy on the system and send a connection revoke for her preemptively.<a href="#section-10.8-5" class="pilcrow">¶</a></p>
+<p id="section-10.8-6"><strong>NOTE:</strong> Many providers use additional factors to apply default consent within their service such as a user belonging to a specific workgroup or employer, participating in a related room (ex: WhatsApp "communities"), or presence of a user in the other user's contact list. MIMI does not need to provide a way to replicate or describe these supplemental mechanisms, since they are strongly linked to specific provider policies.<a href="#section-10.8-6" class="pilcrow">¶</a></p>
+<p id="section-10.8-7">Consent requests have sensitive privacy implications. The sender of a consent request should receive an acknowledgement that the request was received by the <em>provider</em> of the target user. For privacy reasons, the requestor should not know if the target user received or viewed the request. The original requestor will obviously find out if the target grants consent, but a consent revocation/rejection is typically not communicated to the revoked/rejected user (again for privacy reasons).<a href="#section-10.8-7" class="pilcrow">¶</a></p>
+<p id="section-10.8-8">Consent operations are only sent directly between the acting provider (sending the request, grant, revoke, or cancel) and the target provider (the object of the consent). In other words, the two providers must have a direct peering relationship.<a href="#section-10.8-8" class="pilcrow">¶</a></p>
+<p id="section-10.8-9">In our example, Alice requests consent from Bob for any room. Later, Bob sends a grants consent to Alice to add him to any room. At the same time as sending the consent request, Alice grants consent to Bob to add her to any room.<a href="#section-10.8-9" class="pilcrow">¶</a></p>
+<p id="section-10.8-10"><strong>TODO:</strong> decide if we like any of the text below better:<a href="#section-10.8-10" class="pilcrow">¶</a></p>
+<p id="section-10.8-11">The consent primitive needs to include the following:
 - the specific operation (a request for consent, a grant of consent, or a rejection/revocation of consent);
 - the user ID of the user requesting consent;
 - the user ID of the target user; and
-- optionally, the room ID for which the consent was requested.<a href="#section-6.8-11" class="pilcrow">¶</a></p>
-<p id="section-6.8-12">If the consent primitive does not specify a room, it implies consent for any room. This is a common model for systems that use connection requests. Once a user accepts a connection request, either party is consenting to add the other to any number of rooms (connection requests involve granting two unidirectional consents). In other systems, consent for Alice to add Bob to a soccer fans room does not imply that Alice has permission to add Bob to a timeshare presentations room. Both models are common, so MIMI should be able to support both models.<a href="#section-6.8-12" class="pilcrow">¶</a></p>
-<p id="section-6.8-13">Note that a user could reject consent for all rooms from a user even if there was a consent request for a specific room, or even no consent request.<a href="#section-6.8-13" class="pilcrow">¶</a></p>
+- optionally, the room ID for which the consent was requested.<a href="#section-10.8-11" class="pilcrow">¶</a></p>
+<p id="section-10.8-12">If the consent primitive does not specify a room, it implies consent for any room. This is a common model for systems that use connection requests. Once a user accepts a connection request, either party is consenting to add the other to any number of rooms (connection requests involve granting two unidirectional consents). In other systems, consent for Alice to add Bob to a soccer fans room does not imply that Alice has permission to add Bob to a timeshare presentations room. Both models are common, so MIMI should be able to support both models.<a href="#section-10.8-12" class="pilcrow">¶</a></p>
+<p id="section-10.8-13">Note that a user could reject consent for all rooms from a user even if there was a consent request for a specific room, or even no consent request.<a href="#section-10.8-13" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="other-ways-to-join">
-<section id="section-6.9">
+<section id="section-10.9">
         <h3 id="name-other-ways-to-join">
-<a href="#section-6.9" class="section-number selfRef">6.9. </a><a href="#name-other-ways-to-join" class="section-name selfRef">Other ways to join</a>
+<a href="#section-10.9" class="section-number selfRef">10.9. </a><a href="#name-other-ways-to-join" class="section-name selfRef">Other ways to join</a>
         </h3>
-<p id="section-6.9-1">[[ RWM: TBC ]]<a href="#section-6.9-1" class="pilcrow">¶</a></p>
+<p id="section-10.9-1">[[ RWM: TBC ]]<a href="#section-10.9-1" class="pilcrow">¶</a></p>
 <div id="joining-with-an-join-url-code">
-<section id="section-6.9.1">
+<section id="section-10.9.1">
           <h4 id="name-joining-with-an-join-url-co">
-<a href="#section-6.9.1" class="section-number selfRef">6.9.1. </a><a href="#name-joining-with-an-join-url-co" class="section-name selfRef">Joining with an join URL / code</a>
+<a href="#section-10.9.1" class="section-number selfRef">10.9.1. </a><a href="#name-joining-with-an-join-url-co" class="section-name selfRef">Joining with an join URL / code</a>
         </h4>
 </section>
 </div>
 <div id="joining-an-open-room">
-<section id="section-6.9.2">
+<section id="section-10.9.2">
           <h4 id="name-joining-an-open-room">
-<a href="#section-6.9.2" class="section-number selfRef">6.9.2. </a><a href="#name-joining-an-open-room" class="section-name selfRef">Joining an open room</a>
+<a href="#section-10.9.2" class="section-number selfRef">10.9.2. </a><a href="#name-joining-an-open-room" class="section-name selfRef">Joining an open room</a>
         </h4>
 </section>
 </div>
 <div id="knocks">
-<section id="section-6.9.3">
+<section id="section-10.9.3">
           <h4 id="name-knocks">
-<a href="#section-6.9.3" class="section-number selfRef">6.9.3. </a><a href="#name-knocks" class="section-name selfRef">Knocks</a>
+<a href="#section-10.9.3" class="section-number selfRef">10.9.3. </a><a href="#name-knocks" class="section-name selfRef">Knocks</a>
         </h4>
 </section>
 </div>
 <div id="invites">
-<section id="section-6.9.4">
+<section id="section-10.9.4">
           <h4 id="name-invites">
-<a href="#section-6.9.4" class="section-number selfRef">6.9.4. </a><a href="#name-invites" class="section-name selfRef">Invites</a>
+<a href="#section-10.9.4" class="section-number selfRef">10.9.4. </a><a href="#name-invites" class="section-name selfRef">Invites</a>
         </h4>
 </section>
 </div>
 </section>
 </div>
 <div id="reporting-abusespam">
-<section id="section-6.10">
+<section id="section-10.10">
         <h3 id="name-reporting-abuse-spam">
-<a href="#section-6.10" class="section-number selfRef">6.10. </a><a href="#name-reporting-abuse-spam" class="section-name selfRef">Reporting abuse/spam</a>
+<a href="#section-10.10" class="section-number selfRef">10.10. </a><a href="#name-reporting-abuse-spam" class="section-name selfRef">Reporting abuse/spam</a>
         </h3>
-<p id="section-6.10-1">[[ RWM: TBC ]]<a href="#section-6.10-1" class="pilcrow">¶</a></p>
+<p id="section-10.10-1">[[ RWM: TBC ]]<a href="#section-10.10-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="alice-sends-an-attachment-which-cathy-downloads">
-<section id="section-6.11">
+<section id="section-10.11">
         <h3 id="name-alice-sends-an-attachment-w">
-<a href="#section-6.11" class="section-number selfRef">6.11. </a><a href="#name-alice-sends-an-attachment-w" class="section-name selfRef">Alice sends an attachment which Cathy downloads</a>
+<a href="#section-10.11" class="section-number selfRef">10.11. </a><a href="#name-alice-sends-an-attachment-w" class="section-name selfRef">Alice sends an attachment which Cathy downloads</a>
         </h3>
-<p id="section-6.11-1">[[ RWM: TBC ]]<a href="#section-6.11-1" class="pilcrow">¶</a></p>
+<p id="section-10.11-1">[[ RWM: TBC ]]<a href="#section-10.11-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="getting-the-internal-identitifier-for-a-user">
-<section id="section-6.12">
+<section id="section-10.12">
         <h3 id="name-getting-the-internal-identi">
-<a href="#section-6.12" class="section-number selfRef">6.12. </a><a href="#name-getting-the-internal-identi" class="section-name selfRef">Getting the internal identitifier for a user</a>
+<a href="#section-10.12" class="section-number selfRef">10.12. </a><a href="#name-getting-the-internal-identi" class="section-name selfRef">Getting the internal identitifier for a user</a>
         </h3>
-<p id="section-6.12-1">[[ RWM: TBC ]]<a href="#section-6.12-1" class="pilcrow">¶</a></p>
+<p id="section-10.12-1">[[ RWM: TBC ]]<a href="#section-10.12-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="moderation">
-<section id="section-6.13">
+<section id="section-10.13">
         <h3 id="name-moderation">
-<a href="#section-6.13" class="section-number selfRef">6.13. </a><a href="#name-moderation" class="section-name selfRef">Moderation</a>
+<a href="#section-10.13" class="section-number selfRef">10.13. </a><a href="#name-moderation" class="section-name selfRef">Moderation</a>
         </h3>
-<p id="section-6.13-1">out of scope<a href="#section-6.13-1" class="pilcrow">¶</a></p>
+<p id="section-10.13-1">out of scope<a href="#section-10.13-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
 </div>
 <div id="definition-of-primitives">
-<section id="section-7">
+<section id="section-11">
       <h2 id="name-definition-of-primitives">
-<a href="#section-7" class="section-number selfRef">7. </a><a href="#name-definition-of-primitives" class="section-name selfRef">Definition of Primitives</a>
+<a href="#section-11" class="section-number selfRef">11. </a><a href="#name-definition-of-primitives" class="section-name selfRef">Definition of Primitives</a>
       </h2>
 <div id="mimi-url-directory">
-<section id="section-7.1">
+<section id="section-11.1">
         <h3 id="name-mimi-url-directory">
-<a href="#section-7.1" class="section-number selfRef">7.1. </a><a href="#name-mimi-url-directory" class="section-name selfRef">MIMI URL directory</a>
+<a href="#section-11.1" class="section-number selfRef">11.1. </a><a href="#name-mimi-url-directory" class="section-name selfRef">MIMI URL directory</a>
         </h3>
-<p id="section-7.1-1">Like the ACME protocol <span>[<a href="#RFC8555" class="cite xref">RFC8555</a>]</span>, the MIMI protocol uses a directory document to convey the HTTPS URLs used to reach certain endpoints (as opposed to hard coding the endpoints).<a href="#section-7.1-1" class="pilcrow">¶</a></p>
-<p id="section-7.1-2">The directory URL is discovered using the <code>mimi-protocol-directory</code> well-known URI.<a href="#section-7.1-2" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-7.1-3">
+<p id="section-11.1-1">Like the ACME protocol <span>[<a href="#RFC8555" class="cite xref">RFC8555</a>]</span>, the MIMI protocol uses a directory document to convey the HTTPS URLs used to reach certain endpoints (as opposed to hard coding the endpoints).<a href="#section-11.1-1" class="pilcrow">¶</a></p>
+<p id="section-11.1-2">The directory URL is discovered using the <code>mimi-protocol-directory</code> well-known URI.<a href="#section-11.1-2" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-11.1-3">
 <pre>
 GET /.well-known/mimi-protocol-directory
-</pre><a href="#section-7.1-3" class="pilcrow">¶</a>
+</pre><a href="#section-11.1-3" class="pilcrow">¶</a>
 </div>
-<div class="alignLeft art-text artwork" id="section-7.1-4">
+<div class="alignLeft art-text artwork" id="section-11.1-4">
 <pre>
 enum {
   get(1),
@@ -1935,17 +2034,17 @@ struct {
 struct {
   MimiDirectoryEntry directory&lt;V&gt;;
 } MimiDirectory;
-</pre><a href="#section-7.1-4" class="pilcrow">¶</a>
+</pre><a href="#section-11.1-4" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
 <div id="obtain-consent">
-<section id="section-7.2">
+<section id="section-11.2">
         <h3 id="name-obtain-consent">
-<a href="#section-7.2" class="section-number selfRef">7.2. </a><a href="#name-obtain-consent" class="section-name selfRef">Obtain consent</a>
+<a href="#section-11.2" class="section-number selfRef">11.2. </a><a href="#name-obtain-consent" class="section-name selfRef">Obtain consent</a>
         </h3>
-<p id="section-7.2-1">Alice can request consent for Bob in the context of a room, or in general. Bob can grant or refuse consent to Alice in the context of a room or in general.<a href="#section-7.2-1" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-7.2-2">
+<p id="section-11.2-1">Alice can request consent for Bob in the context of a room, or in general. Bob can grant or refuse consent to Alice in the context of a room or in general.<a href="#section-11.2-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-11.2-2">
 <pre>
 POST /requestConsent/{targetDomain}
 POST /updateConsent/{requesterDomain}
@@ -1968,38 +2067,38 @@ struct {
           KeyPackage clientKeyPackages&lt;V&gt;;
   }
 } ConsentEntry;
-</pre><a href="#section-7.2-2" class="pilcrow">¶</a>
+</pre><a href="#section-11.2-2" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
 <div id="claim-keys">
-<section id="section-7.3">
+<section id="section-11.3">
         <h3 id="name-claim-keys">
-<a href="#section-7.3" class="section-number selfRef">7.3. </a><a href="#name-claim-keys" class="section-name selfRef">Claim keys</a>
+<a href="#section-11.3" class="section-number selfRef">11.3. </a><a href="#name-claim-keys" class="section-name selfRef">Claim keys</a>
         </h3>
-<p id="section-7.3-1">This action attempts to claim initial keying material for all the clients
+<p id="section-11.3-1">This action attempts to claim initial keying material for all the clients
 of a list of users at a single provider. The keying material may not be
-reused unless identified as "last resort" keying material.<a href="#section-7.3-1" class="pilcrow">¶</a></p>
-<p id="section-7.3-2">The target provider's domain name is listed in the request path. KeyPackages
+reused unless identified as "last resort" keying material.<a href="#section-11.3-1" class="pilcrow">¶</a></p>
+<p id="section-11.3-2">The target provider's domain name is listed in the request path. KeyPackages
 requested using this primitive <span class="bcp14">MUST</span> be sent via the hub provider of whatever
 room they will be used in. (If this is not the case, the hub provider will be
-unable to forward a Welcome message to the target provider).<a href="#section-7.3-2" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-7.3-3">
+unable to forward a Welcome message to the target provider).<a href="#section-11.3-2" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-11.3-3">
 <pre>
 POST /claimKeymaterial/{domain}
-</pre><a href="#section-7.3-3" class="pilcrow">¶</a>
+</pre><a href="#section-11.3-3" class="pilcrow">¶</a>
 </div>
-<p id="section-7.3-4">The request body includes the protocol (currently just MLS 1.0), the requesting
+<p id="section-11.3-4">The request body includes the protocol (currently just MLS 1.0), the requesting
 user, and one or more target users hosted at the target provider domain. The
 request <span class="bcp14">SHOULD</span> include the room ID for which the KeyPackage is intended, as the
-target may have only granted consent for a specific room.<a href="#section-7.3-4" class="pilcrow">¶</a></p>
-<p id="section-7.3-5">For MLS, the request
+target may have only granted consent for a specific room.<a href="#section-11.3-4" class="pilcrow">¶</a></p>
+<p id="section-11.3-5">For MLS, the request
 includes a non-empty list of acceptable MLS ciphersuites, and an MLS
 <code>RequiredCapabilities</code> object (which contains credential types, non-default
 proposal types, and extensions) required by the requesting provider (these lists
-can be an empty). The <code>lastResortAllowed</code> field <span class="bcp14">SHOULD</span> be false.<a href="#section-7.3-5" class="pilcrow">¶</a></p>
-<p id="section-7.3-6">The request body has the following form.<a href="#section-7.3-6" class="pilcrow">¶</a></p>
-<div class="lang-tls sourcecode" id="section-7.3-7">
+can be an empty). The <code>lastResortAllowed</code> field <span class="bcp14">SHOULD</span> be false.<a href="#section-11.3-5" class="pilcrow">¶</a></p>
+<p id="section-11.3-6">The request body has the following form.<a href="#section-11.3-6" class="pilcrow">¶</a></p>
+<div class="lang-tls sourcecode" id="section-11.3-7">
 <pre>
 enum {
     reserved(0),
@@ -2023,9 +2122,9 @@ struct {
             bool lastResortAllowed;
     };
 } KeyMaterialRequest;
-</pre><a href="#section-7.3-7" class="pilcrow">¶</a>
+</pre><a href="#section-11.3-7" class="pilcrow">¶</a>
 </div>
-<p id="section-7.3-8">A successful response contains a list of users.
+<p id="section-11.3-8">A successful response contains a list of users.
 For each user in the original request, there is a user status code that
 indicates keying material was returned for all the user's clients (<code>success</code>),
 that keying material was returned for some of their clients (<code>partialSuccess</code>),
@@ -2034,16 +2133,16 @@ partialSuccess, each client is enumerated in the response. Then for each client
 with a <em>client</em> success code, the structure includes initial keying material (a
 KeyPackage for MLS 1.0). If the client's code is <code>nothingCompatible</code>, the
 client's capabilities are optionally included (The client's capabilities could
-be omitted for privacy reasons.)<a href="#section-7.3-8" class="pilcrow">¶</a></p>
-<p id="section-7.3-9">If the <em>user</em> code is <code>noCompatibleMaterial</code>, the provider <span class="bcp14">MAY</span> populate the
+be omitted for privacy reasons.)<a href="#section-11.3-8" class="pilcrow">¶</a></p>
+<p id="section-11.3-9">If the <em>user</em> code is <code>noCompatibleMaterial</code>, the provider <span class="bcp14">MAY</span> populate the
 <code>clients</code> list. For any other user code, the provider <span class="bcp14">MUST NOT</span> populate the
-<code>clients</code> list.<a href="#section-7.3-9" class="pilcrow">¶</a></p>
-<p id="section-7.3-10">Keying material provided from one response <span class="bcp14">MUST NOT</span> be provided in any other
+<code>clients</code> list.<a href="#section-11.3-9" class="pilcrow">¶</a></p>
+<p id="section-11.3-10">Keying material provided from one response <span class="bcp14">MUST NOT</span> be provided in any other
 response unless the <code>lastResortAllowed</code> field was set in the requests.
 The target provider <span class="bcp14">MUST NOT</span> provide expired keying material (ex: an MLS
 KeyPackage containing a LeafNode with a <code>notAfter</code> time past the current date
-and time).<a href="#section-7.3-10" class="pilcrow">¶</a></p>
-<div class="lang-tls sourcecode" id="section-7.3-11">
+and time).<a href="#section-11.3-10" class="pilcrow">¶</a></p>
+<div class="lang-tls sourcecode" id="section-11.3-11">
 <pre>
 enum {
     success(0);
@@ -2090,39 +2189,39 @@ struct {
     Protocol protocol;
     UserKeyMaterial users&lt;V&gt;;
 } KeyMaterialResponse;
-</pre><a href="#section-7.3-11" class="pilcrow">¶</a>
+</pre><a href="#section-11.3-11" class="pilcrow">¶</a>
 </div>
-<p id="section-7.3-12">At minimum, as each MLS KeyPackage is returned to a requesting provider (on
+<p id="section-11.3-12">At minimum, as each MLS KeyPackage is returned to a requesting provider (on
 behalf of a requesting IM client), the target provider needs to associate its
 <code>KeyPackageRef</code> with the target client and the hub provider needs to associate
 its <code>KeyPackageRef</code> with the target provider. This insures that Welcome
 messages can be correctly routed to the target provider and client. These
 associations can be deleted after a Welcome message is forwarded or after the
-KeyPackage <code>leaf_node.lifetime.not_after</code> time has passed.<a href="#section-7.3-12" class="pilcrow">¶</a></p>
-<p id="section-7.3-13"><strong>ISSUE</strong>: Do we want key material requests to be combined for multiple users?<a href="#section-7.3-13" class="pilcrow">¶</a></p>
+KeyPackage <code>leaf_node.lifetime.not_after</code> time has passed.<a href="#section-11.3-12" class="pilcrow">¶</a></p>
+<p id="section-11.3-13"><strong>ISSUE</strong>: Do we want key material requests to be combined for multiple users?<a href="#section-11.3-13" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="change-room-policyparticipation">
-<section id="section-7.4">
+<section id="section-11.4">
         <h3 id="name-change-room-policy-particip">
-<a href="#section-7.4" class="section-number selfRef">7.4. </a><a href="#name-change-room-policy-particip" class="section-name selfRef">Change room policy/participation</a>
+<a href="#section-11.4" class="section-number selfRef">11.4. </a><a href="#name-change-room-policy-particip" class="section-name selfRef">Change room policy/participation</a>
         </h3>
-<p id="section-7.4-1">Adds, removes, and policy changes to the room are all forms of updating the
+<p id="section-11.4-1">Adds, removes, and policy changes to the room are all forms of updating the
 room state. They are accomplished using the updateRoom transaction which is
-used for updating the room base policy, participation list, or its underlying MLS group.<a href="#section-7.4-1" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-7.4-2">
+used for updating the room base policy, participation list, or its underlying MLS group.<a href="#section-11.4-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-11.4-2">
 <pre>
 POST /updateRoom/{roomId}
-</pre><a href="#section-7.4-2" class="pilcrow">¶</a>
+</pre><a href="#section-11.4-2" class="pilcrow">¶</a>
 </div>
-<p id="section-7.4-3">In MLS 1.0, any change to the room base policy document is always expressed
+<p id="section-11.4-3">In MLS 1.0, any change to the room base policy document is always expressed
 using a <code>GroupContextExtensions</code> proposal. Likewise, any change to the
 participant list is always communicated via a <code>ParticipantListPatch</code>
-proposal type. The participant list change needed to add a user <span class="bcp14">MUST</span> happen either before or simultaneously with the corresponding MLS operation.<a href="#section-7.4-3" class="pilcrow">¶</a></p>
-<p id="section-7.4-4">Removing an active user from a participant list or banning an active participant <span class="bcp14">SHOULD</span> happen simultaneously with any MLS changes made to the commit removing the participant.<a href="#section-7.4-4" class="pilcrow">¶</a></p>
-<p id="section-7.4-5">[[ RWM: TO REMOVE: "The provider is in an impossible situation handling users removed from the participation list but who are still active participants. It should forward the commit removing Bob as a participant to Bob's clients so that Bob is aware that it has been removed, but it should not forward the commit to Bob's clients because those clients would then be able to form the epoch secret for the new epoch." ]]<a href="#section-7.4-5" class="pilcrow">¶</a></p>
-<p id="section-7.4-6">A hub provider which observes that an active user has been removed or banned, but still has clients <span class="bcp14">MUST</span> prevent any of those clients from sending or receiving any additional application messages; <span class="bcp14">MUST</span> prevent any of those clients from sending Commit messages; and <span class="bcp14">MUST</span> prevent it from sending any proposals except for <code>Remove</code> and <code>SelfRemove</code> proposals.<a href="#section-7.4-6" class="pilcrow">¶</a></p>
-<div class="lang-tls sourcecode" id="section-7.4-7">
+proposal type. The participant list change needed to add a user <span class="bcp14">MUST</span> happen either before or simultaneously with the corresponding MLS operation.<a href="#section-11.4-3" class="pilcrow">¶</a></p>
+<p id="section-11.4-4">Removing an active user from a participant list or banning an active participant <span class="bcp14">SHOULD</span> happen simultaneously with any MLS changes made to the commit removing the participant.<a href="#section-11.4-4" class="pilcrow">¶</a></p>
+<p id="section-11.4-5">[[ RWM: TO REMOVE: "The provider is in an impossible situation handling users removed from the participation list but who are still active participants. It should forward the commit removing Bob as a participant to Bob's clients so that Bob is aware that it has been removed, but it should not forward the commit to Bob's clients because those clients would then be able to form the epoch secret for the new epoch." ]]<a href="#section-11.4-5" class="pilcrow">¶</a></p>
+<p id="section-11.4-6">A hub provider which observes that an active user has been removed or banned, but still has clients <span class="bcp14">MUST</span> prevent any of those clients from sending or receiving any additional application messages; <span class="bcp14">MUST</span> prevent any of those clients from sending Commit messages; and <span class="bcp14">MUST</span> prevent it from sending any proposals except for <code>Remove</code> and <code>SelfRemove</code> proposals.<a href="#section-11.4-6" class="pilcrow">¶</a></p>
+<div class="lang-tls sourcecode" id="section-11.4-7">
 <pre>
 enum {
   reserved(0),
@@ -2145,13 +2244,13 @@ struct {
     UserRoles updateUsers&lt;V&gt;;
     IdentifierUri removeUsers&lt;V&gt;;
 } ParticipantListPatch;
-</pre><a href="#section-7.4-7" class="pilcrow">¶</a>
+</pre><a href="#section-11.4-7" class="pilcrow">¶</a>
 </div>
-<p id="section-7.4-8">Each user can be added with one or more roles. This list of roles can be
+<p id="section-11.4-8">Each user can be added with one or more roles. This list of roles can be
 updated. Note that removing a user does not ban the user. To ban a user,
-update their role to <code>banned</code>.<a href="#section-7.4-8" class="pilcrow">¶</a></p>
-<p id="section-7.4-9">The updateRoom request body is described below:<a href="#section-7.4-9" class="pilcrow">¶</a></p>
-<div class="lang-tls sourcecode" id="section-7.4-10">
+update their role to <code>banned</code>.<a href="#section-11.4-8" class="pilcrow">¶</a></p>
+<p id="section-11.4-9">The updateRoom request body is described below:<a href="#section-11.4-9" class="pilcrow">¶</a></p>
+<div class="lang-tls sourcecode" id="section-11.4-10">
 <pre>
 select(room.protocol) {
   case mls10:
@@ -2165,13 +2264,13 @@ select(room.protocol) {
           PublicMessage moreProposals&lt;V&gt;; /* a list of additional proposals */
       };
 };
-</pre><a href="#section-7.4-10" class="pilcrow">¶</a>
+</pre><a href="#section-11.4-10" class="pilcrow">¶</a>
 </div>
-<p id="section-7.4-11">In this case Alice creates a Commit containing a ParticipantListPatch
+<p id="section-11.4-11">In this case Alice creates a Commit containing a ParticipantListPatch
 proposal adding Bob@b.example, and Add proposals for all Bob's MLS clients.
 Alice includes the Welcome message which will be sent for Bob, a
-GroupInfo object for the hub provider, and complete <code>ratchet_tree</code> extension.<a href="#section-7.4-11" class="pilcrow">¶</a></p>
-<div class="lang-tls sourcecode" id="section-7.4-12">
+GroupInfo object for the hub provider, and complete <code>ratchet_tree</code> extension.<a href="#section-11.4-11" class="pilcrow">¶</a></p>
+<div class="lang-tls sourcecode" id="section-11.4-12">
 <pre>
 enum {
   reserved(0),
@@ -2190,10 +2289,10 @@ struct {
       Node ratchet_tree&lt;V&gt;;
   };
 } RatchetTreeOption;
-</pre><a href="#section-7.4-12" class="pilcrow">¶</a>
+</pre><a href="#section-11.4-12" class="pilcrow">¶</a>
 </div>
-<p id="section-7.4-13">The response body is described below:<a href="#section-7.4-13" class="pilcrow">¶</a></p>
-<div class="lang-tls sourcecode" id="section-7.4-14">
+<p id="section-11.4-13">The response body is described below:<a href="#section-11.4-13" class="pilcrow">¶</a></p>
+<div class="lang-tls sourcecode" id="section-11.4-14">
 <pre>
 enum {
   success(0),
@@ -2208,69 +2307,69 @@ struct {
     UpdateResponseCode responseCode;
     string errorDescription;
 } UpdateRoomResponse
-</pre><a href="#section-7.4-14" class="pilcrow">¶</a>
+</pre><a href="#section-11.4-14" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
 <div id="send-provisional-message">
-<section id="section-7.5">
+<section id="section-11.5">
         <h3 id="name-send-provisional-message">
-<a href="#section-7.5" class="section-number selfRef">7.5. </a><a href="#name-send-provisional-message" class="section-name selfRef">Send provisional message</a>
+<a href="#section-11.5" class="section-number selfRef">11.5. </a><a href="#name-send-provisional-message" class="section-name selfRef">Send provisional message</a>
         </h3>
-<div class="alignLeft art-text artwork" id="section-7.5-1">
+<div class="alignLeft art-text artwork" id="section-11.5-1">
 <pre>
 POST /provisionalMessage/{roomId}
-</pre><a href="#section-7.5-1" class="pilcrow">¶</a>
+</pre><a href="#section-11.5-1" class="pilcrow">¶</a>
 </div>
-<p id="section-7.5-2">If the protocol is MLS 1.0, the request body is an MLSMessage with. a WireFormat of PrivateMessage (an application message).<a href="#section-7.5-2" class="pilcrow">¶</a></p>
-<p id="section-7.5-3">The response merely indicates if the message was accepted by the hub
-provider.<a href="#section-7.5-3" class="pilcrow">¶</a></p>
-<p id="section-7.5-4"><strong>ISSUE:</strong> Do we want to offer a distinction between regular application messages and ephemeral applications messages (for example "is typing" notifications), which do not need to be queued at the target provider.<a href="#section-7.5-4" class="pilcrow">¶</a></p>
+<p id="section-11.5-2">If the protocol is MLS 1.0, the request body is an MLSMessage with. a WireFormat of PrivateMessage (an application message).<a href="#section-11.5-2" class="pilcrow">¶</a></p>
+<p id="section-11.5-3">The response merely indicates if the message was accepted by the hub
+provider.<a href="#section-11.5-3" class="pilcrow">¶</a></p>
+<p id="section-11.5-4"><strong>ISSUE:</strong> Do we want to offer a distinction between regular application messages and ephemeral applications messages (for example "is typing" notifications), which do not need to be queued at the target provider.<a href="#section-11.5-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="fan-out-messages">
-<section id="section-7.6">
+<section id="section-11.6">
         <h3 id="name-fan-out-messages">
-<a href="#section-7.6" class="section-number selfRef">7.6. </a><a href="#name-fan-out-messages" class="section-name selfRef">Fan out messages</a>
+<a href="#section-11.6" class="section-number selfRef">11.6. </a><a href="#name-fan-out-messages" class="section-name selfRef">Fan out messages</a>
         </h3>
-<p id="section-7.6-1">If the hub provider accepts an application or handshake message (proposal or commit) message, it forward that message to all other providers with active participants in the room and all local clients which are active participants. This is described as fanning the message out. An MLS Welcome message is sent to the providers and local users associated with the <code>KeyPackageRef</code> values to which the bulk of the Welcome (the <code>encrypted_group_info</code>) was encrypted.<a href="#section-7.6-1" class="pilcrow">¶</a></p>
-<p id="section-7.6-2">The hub provider also fans out any messages which originate from itself (ex: MLS External Proposals).<a href="#section-7.6-2" class="pilcrow">¶</a></p>
-<p id="section-7.6-3">The hub can include multiple concatenated <code>FanoutMessage</code> objects relevant to the same room.<a href="#section-7.6-3" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-7.6-4">
+<p id="section-11.6-1">If the hub provider accepts an application or handshake message (proposal or commit) message, it forward that message to all other providers with active participants in the room and all local clients which are active participants. This is described as fanning the message out. An MLS Welcome message is sent to the providers and local users associated with the <code>KeyPackageRef</code> values to which the bulk of the Welcome (the <code>encrypted_group_info</code>) was encrypted.<a href="#section-11.6-1" class="pilcrow">¶</a></p>
+<p id="section-11.6-2">The hub provider also fans out any messages which originate from itself (ex: MLS External Proposals).<a href="#section-11.6-2" class="pilcrow">¶</a></p>
+<p id="section-11.6-3">The hub can include multiple concatenated <code>FanoutMessage</code> objects relevant to the same room.<a href="#section-11.6-3" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-11.6-4">
 <pre>
 POST /fanout/{roomId}
-</pre><a href="#section-7.6-4" class="pilcrow">¶</a>
+</pre><a href="#section-11.6-4" class="pilcrow">¶</a>
 </div>
-<div class="lang-tls sourcecode" id="section-7.6-5">
+<div class="lang-tls sourcecode" id="section-11.6-5">
 <pre>
 struct {
   MLSMessage message;
   /* the hub acceptance time (in milliseconds from the UNIX epoch) */
   uint64 timestamp;
 } FanoutMessage;
-</pre><a href="#section-7.6-5" class="pilcrow">¶</a>
+</pre><a href="#section-11.6-5" class="pilcrow">¶</a>
 </div>
-<p id="section-7.6-6">If the protocol is MLS 1.0, the request body is one or more of MLSMessage
+<p id="section-11.6-6">If the protocol is MLS 1.0, the request body is one or more of MLSMessage
 with wire_format one of PrivateMessage (application message), PublicMessage
-(Commit or Proposal), or Welcome.<a href="#section-7.6-6" class="pilcrow">¶</a></p>
-<p id="section-7.6-7"><strong>NOTE:</strong> Correctly fanning out Welcome messages relies on the hub and target providers storing the <code>KeyPackageRef</code> of claimed KeyPackages.<a href="#section-7.6-7" class="pilcrow">¶</a></p>
+(Commit or Proposal), or Welcome.<a href="#section-11.6-6" class="pilcrow">¶</a></p>
+<p id="section-11.6-7"><strong>NOTE:</strong> Correctly fanning out Welcome messages relies on the hub and target providers storing the <code>KeyPackageRef</code> of claimed KeyPackages.<a href="#section-11.6-7" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="claim-end-to-end-crypto-group-key-information">
-<section id="section-7.7">
+<section id="section-11.7">
         <h3 id="name-claim-end-to-end-crypto-gro">
-<a href="#section-7.7" class="section-number selfRef">7.7. </a><a href="#name-claim-end-to-end-crypto-gro" class="section-name selfRef">Claim end-to-end crypto group key information</a>
+<a href="#section-11.7" class="section-number selfRef">11.7. </a><a href="#name-claim-end-to-end-crypto-gro" class="section-name selfRef">Claim end-to-end crypto group key information</a>
         </h3>
-<p id="section-7.7-1">For Bob's new client to join the MLS group and therefore fully participate
-in the room with Alice, Bob needs to fetch the MLS GroupInfo (or analogous).<a href="#section-7.7-1" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-7.7-2">
+<p id="section-11.7-1">For Bob's new client to join the MLS group and therefore fully participate
+in the room with Alice, Bob needs to fetch the MLS GroupInfo (or analogous).<a href="#section-11.7-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-11.7-2">
 <pre>
 POST /claimGroupInfo/{roomId}
-</pre><a href="#section-7.7-2" class="pilcrow">¶</a>
+</pre><a href="#section-11.7-2" class="pilcrow">¶</a>
 </div>
-<p id="section-7.7-3">In the case of MLS 1.0, Bob provides a credential proving his client's
-real or pseudonymous identity (for permission to join the group).<a href="#section-7.7-3" class="pilcrow">¶</a></p>
-<div class="lang-tls sourcecode" id="section-7.7-4">
+<p id="section-11.7-3">In the case of MLS 1.0, Bob provides a credential proving his client's
+real or pseudonymous identity (for permission to join the group).<a href="#section-11.7-3" class="pilcrow">¶</a></p>
+<div class="lang-tls sourcecode" id="section-11.7-4">
 <pre>
 struct {
   select (protocol) {
@@ -2280,10 +2379,10 @@ struct {
   };
 } GroupInfoRequest;
 
-</pre><a href="#section-7.7-4" class="pilcrow">¶</a>
+</pre><a href="#section-11.7-4" class="pilcrow">¶</a>
 </div>
-<p id="section-7.7-5">The response body contains the GroupInfo and a way to get the ratchet_tree.<a href="#section-7.7-5" class="pilcrow">¶</a></p>
-<div class="lang-tls sourcecode" id="section-7.7-6">
+<p id="section-11.7-5">The response body contains the GroupInfo and a way to get the ratchet_tree.<a href="#section-11.7-5" class="pilcrow">¶</a></p>
+<div class="lang-tls sourcecode" id="section-11.7-6">
 <pre>
 struct {
   GroupInfoCode status;
@@ -2293,36 +2392,36 @@ struct {
       RatchetTreeOption ratchetTreeOption;
   };
 } GroupInfoResponse;
-</pre><a href="#section-7.7-6" class="pilcrow">¶</a>
+</pre><a href="#section-11.7-6" class="pilcrow">¶</a>
 </div>
-<p id="section-7.7-7"><strong>ISSUE</strong>: What security properties are needed to protect a
+<p id="section-11.7-7"><strong>ISSUE</strong>: What security properties are needed to protect a
 GroupInfo object in the MIMI context are still under discussion. It is
 possible that the requester only needs to prove possession of their private
 key. The GroupInfo in another context might be sufficiently sensitive that
 it should be encrypted from the end client to the hub provider (unreadable
-by the local provider).<a href="#section-7.7-7" class="pilcrow">¶</a></p>
+by the local provider).<a href="#section-11.7-7" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="download-files">
-<section id="section-7.8">
+<section id="section-11.8">
         <h3 id="name-download-files">
-<a href="#section-7.8" class="section-number selfRef">7.8. </a><a href="#name-download-files" class="section-name selfRef">Download files</a>
+<a href="#section-11.8" class="section-number selfRef">11.8. </a><a href="#name-download-files" class="section-name selfRef">Download files</a>
         </h3>
-<p id="section-7.8-1">[[ RWM: TBC ]]<a href="#section-7.8-1" class="pilcrow">¶</a></p>
+<p id="section-11.8-1">[[ RWM: TBC ]]<a href="#section-11.8-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="report-abuse">
-<section id="section-7.9">
+<section id="section-11.9">
         <h3 id="name-report-abuse">
-<a href="#section-7.9" class="section-number selfRef">7.9. </a><a href="#name-report-abuse" class="section-name selfRef">Report abuse</a>
+<a href="#section-11.9" class="section-number selfRef">11.9. </a><a href="#name-report-abuse" class="section-name selfRef">Report abuse</a>
         </h3>
-<p id="section-7.9-1">Abuse reports are only sent to the hub provider.<a href="#section-7.9-1" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-7.9-2">
+<p id="section-11.9-1">Abuse reports are only sent to the hub provider.<a href="#section-11.9-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-11.9-2">
 <pre>
 POST /reportAbuse/{roomId}
-</pre><a href="#section-7.9-2" class="pilcrow">¶</a>
+</pre><a href="#section-11.9-2" class="pilcrow">¶</a>
 </div>
-<div class="lang-tls sourcecode" id="section-7.9-3">
+<div class="lang-tls sourcecode" id="section-11.9-3">
 <pre>
 struct {
   /* an application message (wire_format = private_message and */
@@ -2344,23 +2443,23 @@ struct {
   string note;
   AbusiveMessage messages&lt;V&gt;;
 } AbuseReport;
-</pre><a href="#section-7.9-3" class="pilcrow">¶</a>
+</pre><a href="#section-11.9-3" class="pilcrow">¶</a>
 </div>
-<p id="section-7.9-4">The response code only indicates if the abuse report was accepted, not if any specific automated or human action was taken.<a href="#section-7.9-4" class="pilcrow">¶</a></p>
+<p id="section-11.9-4">The response code only indicates if the abuse report was accepted, not if any specific automated or human action was taken.<a href="#section-11.9-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="find-internal-address">
-<section id="section-7.10">
+<section id="section-11.10">
         <h3 id="name-find-internal-address">
-<a href="#section-7.10" class="section-number selfRef">7.10. </a><a href="#name-find-internal-address" class="section-name selfRef">Find internal address</a>
+<a href="#section-11.10" class="section-number selfRef">11.10. </a><a href="#name-find-internal-address" class="section-name selfRef">Find internal address</a>
         </h3>
-<div class="alignLeft art-text artwork" id="section-7.10-1">
+<div class="alignLeft art-text artwork" id="section-11.10-1">
 <pre>
 GET /identifierQuery/{domain}
-</pre><a href="#section-7.10-1" class="pilcrow">¶</a>
+</pre><a href="#section-11.10-1" class="pilcrow">¶</a>
 </div>
-<p id="section-7.10-2">The request body is described as:<a href="#section-7.10-2" class="pilcrow">¶</a></p>
-<div class="lang-tls sourcecode" id="section-7.10-3">
+<p id="section-11.10-2">The request body is described as:<a href="#section-11.10-2" class="pilcrow">¶</a></p>
+<div class="lang-tls sourcecode" id="section-11.10-3">
 <pre>
 enum {
   reserved(0),
@@ -2385,10 +2484,10 @@ struct {
       string fieldName;
   };
 } IdentifierRequest;
-</pre><a href="#section-7.10-3" class="pilcrow">¶</a>
+</pre><a href="#section-11.10-3" class="pilcrow">¶</a>
 </div>
-<p id="section-7.10-4">The response body is described as:<a href="#section-7.10-4" class="pilcrow">¶</a></p>
-<div class="lang-tls sourcecode" id="section-7.10-5">
+<p id="section-11.10-4">The response body is described as:<a href="#section-11.10-4" class="pilcrow">¶</a></p>
+<div class="lang-tls sourcecode" id="section-11.10-5">
 <pre>
 enum {
   success(0),
@@ -2422,66 +2521,82 @@ struct {
   IdentifierUri uri&lt;V&gt;;
   UserProfile foundProfiles&lt;V&gt;;
 } IdentifierResponse;
-</pre><a href="#section-7.10-5" class="pilcrow">¶</a>
+</pre><a href="#section-11.10-5" class="pilcrow">¶</a>
 </div>
-<p id="section-7.10-6"><strong>TODO</strong>: The format of specific identifiers is discussed in
+<p id="section-11.10-6"><strong>TODO</strong>: The format of specific identifiers is discussed in
 <span>[<a href="#I-D.mahy-mimi-identity" class="cite xref">I-D.mahy-mimi-identity</a>]</span>. Any specific conventions which are needed
-should be merged into this document.<a href="#section-7.10-6" class="pilcrow">¶</a></p>
+should be merged into this document.<a href="#section-11.10-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
 </div>
 <div id="use-of-mls-dsas">
-<section id="section-8">
+<section id="section-12">
       <h2 id="name-use-of-mls-ds-as">
-<a href="#section-8" class="section-number selfRef">8. </a><a href="#name-use-of-mls-ds-as" class="section-name selfRef">Use of MLS DS/AS</a>
+<a href="#section-12" class="section-number selfRef">12. </a><a href="#name-use-of-mls-ds-as" class="section-name selfRef">Use of MLS DS/AS</a>
       </h2>
-<p id="section-8-1">MLS defines an abstract Delivery Server (DS) and Authentication Server (AS). This abstract functionality is split across all the MLS clients and the providers, but an important function is provided specifically by the hub provider. The hub is responsible for the ordering of messages, fanning messages out to the appropriate providers, and maintaining the GroupInfo so authorized clients can add themselves to groups using an external commit.<a href="#section-8-1" class="pilcrow">¶</a></p>
-<p id="section-8-2">The MLS profile for MIMI requires a concept of a user identifier and a mechanism to associate credentials in MLS clients to MIMI users.<a href="#section-8-2" class="pilcrow">¶</a></p>
-<p id="section-8-3">Clients are free to fetch pseudonymous user identifiers from their local provider, and use these in rooms. These pseudonymns need only identify the client's provider to other providers and clients. The actual user identity could be shared among the active participants of the room, by using a credential with selective disclosures, or by signing a binding with both the pseudonymous signature key and the "real" identity signature key and presenting the binding to other members.<a href="#section-8-3" class="pilcrow">¶</a></p>
+<p id="section-12-1">MLS defines an abstract Delivery Server (DS) and Authentication Server (AS). This abstract functionality is split across all the MLS clients and the providers, but an important function is provided specifically by the hub provider. The hub is responsible for the ordering of messages, fanning messages out to the appropriate providers, and maintaining the GroupInfo so authorized clients can add themselves to groups using an external commit.<a href="#section-12-1" class="pilcrow">¶</a></p>
+<p id="section-12-2">The MLS profile for MIMI requires a concept of a user identifier and a mechanism to associate credentials in MLS clients to MIMI users.<a href="#section-12-2" class="pilcrow">¶</a></p>
+<p id="section-12-3">Clients are free to fetch pseudonymous user identifiers from their local provider, and use these in rooms. These pseudonymns need only identify the client's provider to other providers and clients. The actual user identity could be shared among the active participants of the room, by using a credential with selective disclosures, or by signing a binding with both the pseudonymous signature key and the "real" identity signature key and presenting the binding to other members.<a href="#section-12-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="security-considerations">
-<section id="section-9">
+<section id="section-13">
       <h2 id="name-security-considerations">
-<a href="#section-9" class="section-number selfRef">9. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
+<a href="#section-13" class="section-number selfRef">13. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
       </h2>
-<p id="section-9-1">TODO Security<a href="#section-9-1" class="pilcrow">¶</a></p>
+<p id="section-13-1">TODO Security<a href="#section-13-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="iana-considerations">
-<section id="section-10">
+<section id="section-14">
       <h2 id="name-iana-considerations">
-<a href="#section-10" class="section-number selfRef">10. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
+<a href="#section-14" class="section-number selfRef">14. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
       </h2>
-<p id="section-10-1">This document has no IANA actions.<a href="#section-10-1" class="pilcrow">¶</a></p>
+<p id="section-14-1">This document has no IANA actions.<a href="#section-14-1" class="pilcrow">¶</a></p>
 </section>
 </div>
-<section id="section-11">
+<section id="section-15">
       <h2 id="name-references">
-<a href="#section-11" class="section-number selfRef">11. </a><a href="#name-references" class="section-name selfRef">References</a>
+<a href="#section-15" class="section-number selfRef">15. </a><a href="#name-references" class="section-name selfRef">References</a>
       </h2>
 <div id="sec-normative-references">
-<section id="section-11.1">
+<section id="section-15.1">
         <h3 id="name-normative-references">
-<a href="#section-11.1" class="section-number selfRef">11.1. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
+<a href="#section-15.1" class="section-number selfRef">15.1. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
         </h3>
 <dl class="references">
+<dt id="I-D.barnes-mimi-arch">[I-D.barnes-mimi-arch]</dt>
+        <dd>
+<span class="refAuthor">Barnes, R.</span>, <span class="refTitle">"An Architecture for More Instant Messaging Interoperability (MIMI)"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-barnes-mimi-arch-02</span>, <time datetime="2023-10-23" class="refDate">23 October 2023</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-barnes-mimi-arch-02">https://datatracker.ietf.org/doc/html/draft-barnes-mimi-arch-02</a>&gt;</span>. </dd>
+<dd class="break"></dd>
 <dt id="RFC2119">[RFC2119]</dt>
         <dd>
 <span class="refAuthor">Bradner, S.</span>, <span class="refTitle">"Key words for use in RFCs to Indicate Requirement Levels"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 2119</span>, <span class="seriesInfo">DOI 10.17487/RFC2119</span>, <time datetime="1997-03" class="refDate">March 1997</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc2119">https://www.rfc-editor.org/rfc/rfc2119</a>&gt;</span>. </dd>
 <dd class="break"></dd>
+<dt id="RFC7231">[RFC7231]</dt>
+        <dd>
+<span class="refAuthor">Fielding, R., Ed.</span> and <span class="refAuthor">J. Reschke, Ed.</span>, <span class="refTitle">"Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content"</span>, <span class="seriesInfo">RFC 7231</span>, <span class="seriesInfo">DOI 10.17487/RFC7231</span>, <time datetime="2014-06" class="refDate">June 2014</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7231">https://www.rfc-editor.org/rfc/rfc7231</a>&gt;</span>. </dd>
+<dd class="break"></dd>
 <dt id="RFC8174">[RFC8174]</dt>
-      <dd>
+        <dd>
 <span class="refAuthor">Leiba, B.</span>, <span class="refTitle">"Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 8174</span>, <span class="seriesInfo">DOI 10.17487/RFC8174</span>, <time datetime="2017-05" class="refDate">May 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8174">https://www.rfc-editor.org/rfc/rfc8174</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8446">[RFC8446]</dt>
+        <dd>
+<span class="refAuthor">Rescorla, E.</span>, <span class="refTitle">"The Transport Layer Security (TLS) Protocol Version 1.3"</span>, <span class="seriesInfo">RFC 8446</span>, <span class="seriesInfo">DOI 10.17487/RFC8446</span>, <time datetime="2018-08" class="refDate">August 2018</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8446">https://www.rfc-editor.org/rfc/rfc8446</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9420">[RFC9420]</dt>
+      <dd>
+<span class="refAuthor">Barnes, R.</span>, <span class="refAuthor">Beurdouche, B.</span>, <span class="refAuthor">Robert, R.</span>, <span class="refAuthor">Millican, J.</span>, <span class="refAuthor">Omara, E.</span>, and <span class="refAuthor">K. Cohn-Gordon</span>, <span class="refTitle">"The Messaging Layer Security (MLS) Protocol"</span>, <span class="seriesInfo">RFC 9420</span>, <span class="seriesInfo">DOI 10.17487/RFC9420</span>, <time datetime="2023-07" class="refDate">July 2023</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9420">https://www.rfc-editor.org/rfc/rfc9420</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 </dl>
 </section>
 </div>
 <div id="sec-informative-references">
-<section id="section-11.2">
+<section id="section-15.2">
         <h3 id="name-informative-references">
-<a href="#section-11.2" class="section-number selfRef">11.2. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
+<a href="#section-15.2" class="section-number selfRef">15.2. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
         </h3>
 <dl class="references">
 <dt id="I-D.mahy-mimi-identity">[I-D.mahy-mimi-identity]</dt>
