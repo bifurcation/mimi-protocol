@@ -498,19 +498,6 @@ Consent operations are only sent directly between the acting provider (sending t
 
 In our example, Alice requests consent from Bob for any room. Later, Bob sends a grants consent to Alice to add him to any room. At the same time as sending the consent request, Alice grants consent to Bob to add her to any room.
 
-**TODO:** decide if we like any of the text below better:
-
-The consent primitive needs to include the following:
-- the specific operation (a request for consent, a grant of consent, or a rejection/revocation of consent);
-- the user ID of the user requesting consent;
-- the user ID of the target user; and
-- optionally, the room ID for which the consent was requested.
-
-
-If the consent primitive does not specify a room, it implies consent for any room. This is a common model for systems that use connection requests. Once a user accepts a connection request, either party is consenting to add the other to any number of rooms (connection requests involve granting two unidirectional consents). In other systems, consent for Alice to add Bob to a soccer fans room does not imply that Alice has permission to add Bob to a timeshare presentations room. Both models are common, so MIMI should be able to support both models.
-
-Note that a user could reject consent for all rooms from a user even if there was a consent request for a specific room, or even no consent request.
-
 ## Other ways to join
 
 [[ RWM: TBC ]]
@@ -616,28 +603,27 @@ struct {
 ## Claim keys
 
 This action attempts to claim initial keying material for all the clients
-of a list of users at a single provider. The keying material may not be
+of a single user at a specific provider. The keying material may not be
 reused unless identified as "last resort" keying material.
 
-The target provider's domain name is listed in the request path. KeyPackages
+The target user's URI is listed in the request path. KeyPackages
 requested using this primitive MUST be sent via the hub provider of whatever
 room they will be used in. (If this is not the case, the hub provider will be
 unable to forward a Welcome message to the target provider).
 
 ~~~
-POST /claimKeymaterial/{domain}
+POST /keyMaterial/{targetUser}
 ~~~
 
-The request body includes the protocol (currently just MLS 1.0), the requesting
-user, and one or more target users hosted at the target provider domain. The
-request SHOULD include the room ID for which the KeyPackage is intended, as the
-target may have only granted consent for a specific room.
+The path includes the target user. The request body includes the protocol
+(currently just MLS 1.0), and the requesting user. The request SHOULD include
+the room ID for which the KeyPackage is intended, as the target may have only
+granted consent for a specific room.
 
-For MLS, the request
-includes a non-empty list of acceptable MLS ciphersuites, and an MLS
-`RequiredCapabilities` object (which contains credential types, non-default
-proposal types, and extensions) required by the requesting provider (these lists
-can be an empty). The `lastResortAllowed` field SHOULD be false.
+For MLS, the request includes a non-empty list of acceptable MLS ciphersuites,
+and an MLS `RequiredCapabilities` object (which contains credential types,
+non-default proposal types, and extensions) required by the requesting provider
+(these lists can be an empty). The `lastResortAllowed` field SHOULD be false.
 
 The request body has the following form.
 
@@ -724,14 +710,10 @@ struct {
 } ClientKeyMaterial;
 
 struct {
-    KeyMaterialUserCode userStatus;
-    IdentifiedUri userUri;
-    ClientKeyMaterial clients<V>;
-} UserKeyMaterial;
-
-struct {
     Protocol protocol;
-    UserKeyMaterial users<V>;
+    KeyMaterialUserCode userStatus;
+    IdentifierUri userUri;
+    ClientKeyMaterial clients<V>;
 } KeyMaterialResponse;
 ~~~
 
@@ -743,8 +725,6 @@ messages can be correctly routed to the target provider and client. These
 associations can be deleted after a Welcome message is forwarded or after the
 KeyPackage `leaf_node.lifetime.not_after` time has passed.
 
-
-**ISSUE**: Do we want key material requests to be combined for multiple users?
 
 ## Change room policy/participation
 
