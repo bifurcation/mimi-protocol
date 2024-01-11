@@ -359,11 +359,10 @@ state to remove the removed user from the room's participant list.
 Leaving is slightly more complicated because the leaving user cannot remove all
 of their devices from the MLS group.  Instead, the leave happens in three steps:
 
-1. The leaving client constructs a Commit removing all of the user's other
-   devices, a Remove proposal for itself, and an AppSync proposal that removes
+1. The leaving client constructs MLS Remove proposals for all of the user's
+   devices (including the leaving client), and an AppSync proposal that removes
    its user from the participant list.
-2. The leaving client sends this Commit and proposals to the hub.  The hub
-   distributes the Commit to the room and caches the proposals.
+2. The leaving client sends this proposals to the hub.  The hub caches the proposals.
 3. The next time a client attempts to commit, the hub requires the client to
    include the cached proposals.
 
@@ -373,24 +372,22 @@ possible.
 ~~~
 ClientB1       ServerB         ServerA         ServerC         ClientC1
   |               |               |               |               |
-  | Commit, Prop+ |               |               |               |
+  | Proposals     |               |               |               |
   |~~~~~~~~~~~~~~>| /update       |               |               |
   |               |-------------->|               |               |
   |               |        200 OK |               |               |
   |               |<--------------|               |               |
   |      Accepted |               |               |               |
   |<~~~~~~~~~~~~~~|               |               |               |
-  |               |       /notify | /notify       |               |
-  |               |<--------------|-------------->|               |
   |               |               |               |        Commit |
   |               |               |               |<~~~~~~~~~~~~~~|
   |               |               |       /update |               |
   |               |               |<~~~~~~~~~~~~~~|               |
-  |               |               | 401 Prop+     |               |
+  |               |               | 401 Proposals |               |
   |               |               |~~~~~~~~~~~~~~>|               |
-  |               |               |               | Reject(Prop+) |
+  |               |               |               | Reject(Props) |
   |               |               |               |~~~~~~~~~~~~~~>|
-  |               |               |               | Commit(Prop+) |
+  |               |               |               | Commit(Props) |
   |               |               |               |<~~~~~~~~~~~~~~|
   |               |               |       /update |               |
   |               |               |<~~~~~~~~~~~~~~|               |
@@ -402,20 +399,25 @@ ClientB1       ServerB         ServerA         ServerC         ClientC1
   |               |<--------------|-------------->|               |
   |               |               |               |               |
 
-ClientB1: Prepare Commit over Remove*, Proposal for Remove(self), AppSync(-bob@bravo.com)
-ClientB1->ServerB: [[ Commit, Welcome, GroupInfo?, RatchetTree? ]]
-ServerB->ServerA: POST /update/clubhouse@alpha.com CommitBundle + Proposals
-ServerA: Verify that Removes, AppSync are allowed by policy
+ClientB1: Prepare Remove*, AppSync(-bob@bravo.com)
+ClientB1->ServerB: [[ Remove*, AppSync ]]
+ServerB->ServerA: POST /update/clubhouse@alpha.com Remove*, AppSync
+ServerA: Verify that Removes, AppSync are allowed by policy; cache
 ServerA->ServerB: 200 OK
+ClientC1->ServerC: [[ Commit, Welcome, GroupInfo?, RatchetTree? ]]
+ServerC->ServerA: POST /update/clubhouse@alpha.com CommitBundle
+ServerA: Check whether Commit includes queued proposals; reject
+ServerA->ServerC: 401 Unauthorized; Remove*, AppSync
+ServerC->ClientC1: Remove*, AppSync
+ClientC1: Prepare Commit over Remove*, AppSync, in addition to any others
+ClientC1->ServerC: [[ Commit, Welcome, GroupInfo?, RatchetTree? ]]
+ServerC->ServerA: POST /update/clubhouse@alpha.com CommitBundle
+ServerA: Check whether Commit includes queued proposals; accept
+ServerA->ServerC: 200 OK
 ServerA->ServerB: POST /notify/clubhouse@alpha.com Commit
 ServerA->ServerC: POST /notify/clubhouse@alpha.com Commit
-ServerA->ClientA*: [[ Commit ]]
-ServerB->ClientB*: [[ Commit ]]
-ServerC->ClientC*: [[ Commit ]]
 ~~~
 {: #fig-b-leave title="Bob Leaves the Room" }
-
-
 
 # Transport layer
 
