@@ -849,13 +849,17 @@ GET /.well-known/mimi-protocol-directory
 
 ~~~
 {
-"keyMaterial": "https://mimi.example.com/v1/keyMaterial/{targetUser}",
-"update": "https://mimi.example.com/v1/update{roomId}",
-"notify": "https://mimi.example.com/v1/notify/{roomId}",
-"submitMessage": "https://mimi.example.com/v1/submitMessage/{roomId}",
-"groupInfo": "https://mimi.example.com/v1/groupInfo/{roomId}",
-"requestConsent": "https://mimi.example.com/v1/requestConsent/{targetUser}",
-"updateConsent": "https://mimi.example.com/v1/updateConsent/{requesterUser}"
+  "keyMaterial":
+     "https://mimi.example.com/v1/keyMaterial/{targetUser}",
+  "update": "https://mimi.example.com/v1/update{roomId}",
+  "notify": "https://mimi.example.com/v1/notify/{roomId}",
+  "submitMessage":
+     "https://mimi.example.com/v1/submitMessage/{roomId}",
+  "groupInfo": "https://mimi.example.com/v1/groupInfo/{roomId}",
+  "requestConsent":
+     "https://mimi.example.com/v1/requestConsent/{targetUser}",
+  "updateConsent":
+     "https://mimi.example.com/v1/updateConsent/{requesterUser}"
 }
 ~~~
 
@@ -883,7 +887,7 @@ struct {
   select (consentOperation) {
     case grant:
       KeyPackage clientKeyPackages<V>;
-  }
+  };
 } ConsentEntry;
 ~~~
 
@@ -940,8 +944,7 @@ struct {
 } KeyMaterialRequest;
 ~~~
 
-A successful response contains a list of users.
-For each user in the original request, there is a user status code that
+The response contains a user status code that
 indicates keying material was returned for all the user's clients (`success`),
 that keying material was returned for some of their clients (`partialSuccess`),
 or a specific user code indicating failure. If the user code is success or
