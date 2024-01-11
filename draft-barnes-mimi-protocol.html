@@ -1376,12 +1376,13 @@ be offline).<a href="#section-1-1" class="pilcrow">¶</a></p>
 necessary to send and receive encrypted messages, share room policy, and add
 participants to and remove participants from rooms. In support of these
 functions, the protocol also has primitives to fetch initial keying material,
-fetch the current MLS GroupInfo, and request, grant, and reject consent to
-communicate with users on other providers.<a href="#section-1-2" class="pilcrow">¶</a></p>
+fetch the current state of the underlying end-to-end encryption protocol for the
+room, and request, grant, and reject consent to communicate with users on other
+providers.<a href="#section-1-2" class="pilcrow">¶</a></p>
 <p id="section-1-3">Messages sent inside each room are end-to-end encrypted using the Messaging
 Layer Security (MLS) protocol <span>[<a href="#RFC9420" class="cite xref">RFC9420</a>]</span>, and each room is associated with an
 MLS group. MLS also ensures that clients in a room agree on the room policy and
-participation. One of the core principles of this protocol is that ar all times,
+participation. One of the core principles of this protocol is that at all times,
 the clients of the end-to-end encryption protocol (the MLS clients who are in an
 MLS group) all need to correspond to users who are in the associated room.<a href="#section-1-3" class="pilcrow">¶</a></p>
 </section>
@@ -2000,7 +2001,7 @@ ServerC-&gt;ClientC*: [[ Commit ]]
 +------------------------------------------------+
 </code>
 ```
-POST /updateRoom/dxzxxDuvMOTsUD4D_YdSyQ<a href="#section-10-5" class="pilcrow">¶</a></p>
+POST /update/dxzxxDuvMOTsUD4D_YdSyQ<a href="#section-10-5" class="pilcrow">¶</a></p>
 <p id="section-10-6">PublicMessage{
   /* MLS Commit - inside is a list of Proposals <em>/
   Commit[
@@ -2029,7 +2030,7 @@ POST /updateRoom/dxzxxDuvMOTsUD4D_YdSyQ<a href="#section-10-5" class="pilcrow">�
 ```<a href="#section-10-6" class="pilcrow">¶</a></p>
 <p id="section-10-7">Removing yourself
 ```
-POST /updateRoom/dxzxxDuvMOTsUD4D_YdSyQ<a href="#section-10-7" class="pilcrow">¶</a></p>
+POST /update/dxzxxDuvMOTsUD4D_YdSyQ<a href="#section-10-7" class="pilcrow">¶</a></p>
 <p id="section-10-8">/* concatenated MLS Proposals (each inside a PublicMessage) */
 AppSync{
   removeUsers [Alice]
@@ -2040,7 +2041,7 @@ Remove(Alice3)<a href="#section-10-8" class="pilcrow">¶</a></p>
 <p id="section-10-9">```<a href="#section-10-9" class="pilcrow">¶</a></p>
 <p id="section-10-10">Charlie1 commits Alice's pending proposals. This is accepted even though Charlie wouldn't have permission to remove Alice himself.
 ```
-POST /updateRoom/dxzxxDuvMOTsUD4D_YdSyQ<a href="#section-10-10" class="pilcrow">¶</a></p>
+POST /update/dxzxxDuvMOTsUD4D_YdSyQ<a href="#section-10-10" class="pilcrow">¶</a></p>
 <p id="section-10-11">PublicMessage{
   /* MLS Commit - inside is a list of Proposals <em>/
   Commit[
@@ -2419,7 +2420,7 @@ GET /.well-known/mimi-protocol-directory
 <pre>
 {
 "keyMaterial": "https://mimi.example.com/v1/keyMaterial/{targetUser}",
-"updateRoom": "https://mimi.example.com/v1/updateRoom/{roomId}",
+"update": "https://mimi.example.com/v1/update{roomId}",
 "notify": "https://mimi.example.com/v1/notify/{roomId}",
 "submitMessage": "https://mimi.example.com/v1/submitMessage/{roomId}",
 "groupInfo": "https://mimi.example.com/v1/groupInfo/{roomId}",
@@ -2454,9 +2455,9 @@ struct {
   IdentifierUri requesterUser;
   IdentifierUri targetUser;
   optional&lt;RoomId&gt; roomId;
-  select(consentOperation) {
-      case grant:
-          KeyPackage clientKeyPackages&lt;V&gt;;
+  select (consentOperation) {
+    case grant:
+      KeyPackage clientKeyPackages&lt;V&gt;;
   }
 } ConsentEntry;
 </pre><a href="#section-12.2-2" class="pilcrow">¶</a>
@@ -2506,7 +2507,7 @@ struct {
     IdentifierUri requestingUser;
     IdentifierUri targetUsers&lt;V&gt;;
     IdentifierUri roomId;
-    select(protocol) {
+    select (protocol) {
         case mls10:
             CipherSuite acceptableCiphersuites&lt;V&gt;;
             RequiredCapabilities requiredCapabilities;
@@ -2559,14 +2560,14 @@ enum {
 struct {
     KeyMaterialClientCode clientStatus;
     IdentifierUri clientUri;
-    select(protocol) {
+    select (protocol) {
         case mls10:
-            select(clientStatus) {
+            select (clientStatus) {
                 case success:
                     KeyPackage keyPackage;
                 case nothingCompatible:
                     optional&lt;Capabilities&gt; clientCapabilities;
-            }
+            };
     };
 } ClientKeyMaterial;
 
@@ -2593,11 +2594,11 @@ KeyPackage <code>leaf_node.lifetime.not_after</code> time has passed.<a href="#s
 <a href="#section-12.4" class="section-number selfRef">12.4. </a><a href="#name-change-room-policy-particip" class="section-name selfRef">Change room policy/participation</a>
         </h3>
 <p id="section-12.4-1">Adds, removes, and policy changes to the room are all forms of updating the
-room state. They are accomplished using the updateRoom transaction which is
+room state. They are accomplished using the update transaction which is
 used for updating the room base policy, participation list, or its underlying MLS group.<a href="#section-12.4-1" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-12.4-2">
 <pre>
-POST /updateRoom/{roomId}
+POST /update/{roomId}
 </pre><a href="#section-12.4-2" class="pilcrow">¶</a>
 </div>
 <p id="section-12.4-3">In MLS 1.0, any change to the room base policy document is always expressed
@@ -2634,12 +2635,13 @@ struct {
 <p id="section-12.4-7">Each user can be added with one or more roles. This list of roles can be
 updated. Note that removing a user does not ban the user. To ban a user,
 update their role to <code>banned</code>.<a href="#section-12.4-7" class="pilcrow">¶</a></p>
-<p id="section-12.4-8">The updateRoom request body is described below:<a href="#section-12.4-8" class="pilcrow">¶</a></p>
+<p id="section-12.4-8">The update request body is described below:<a href="#section-12.4-8" class="pilcrow">¶</a></p>
 <div class="lang-tls sourcecode" id="section-12.4-9">
 <pre>
-select(room.protocol) {
-  case mls10:
-    PublicMessage proposalOrCommit;
+struct {
+  select (room.protocol) {
+    case mls10:
+      PublicMessage proposalOrCommit;
       select (proposalOrCommit.content.content_type) {
         case commit:
           optional&lt;Welcome&gt; welcome;
@@ -2648,6 +2650,7 @@ select(room.protocol) {
         case proposal:
           PublicMessage moreProposals&lt;V&gt;; /* a list of additional proposals */
       };
+  };
 };
 </pre><a href="#section-12.4-9" class="pilcrow">¶</a>
 </div>
@@ -2731,10 +2734,10 @@ struct {
   MLSMessage message;
   /* the hub acceptance time (in milliseconds from the UNIX epoch) */
   uint64 timestamp;
-  select(message.wire_format) {
+  select (message.wire_format) {
     case welcome:
       RatchetTreeOption ratchetTreeOption;
-  }
+  };
 } FanoutMessage;
 </pre><a href="#section-12.6-5" class="pilcrow">¶</a>
 </div>
@@ -2879,7 +2882,7 @@ enum {
 struct {
   SearchIdentifierType searchType;
   string searchValue;
-  select(type) {
+  select (type) {
     case oidcStdClaim:
       string claimName;
     case vcardField:

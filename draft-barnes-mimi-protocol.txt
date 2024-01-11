@@ -157,15 +157,16 @@ Table of Contents
    providers necessary to send and receive encrypted messages, share
    room policy, and add participants to and remove participants from
    rooms.  In support of these functions, the protocol also has
-   primitives to fetch initial keying material, fetch the current MLS
-   GroupInfo, and request, grant, and reject consent to communicate with
-   users on other providers.
+   primitives to fetch initial keying material, fetch the current state
+   of the underlying end-to-end encryption protocol for the room, and
+   request, grant, and reject consent to communicate with users on other
+   providers.
 
    Messages sent inside each room are end-to-end encrypted using the
    Messaging Layer Security (MLS) protocol [RFC9420], and each room is
    associated with an MLS group.  MLS also ensures that clients in a
    room agree on the room policy and participation.  One of the core
-   principles of this protocol is that ar all times, the clients of the
+   principles of this protocol is that at all times, the clients of the
    end-to-end encryption protocol (the MLS clients who are in an MLS
    group) all need to correspond to users who are in the associated
    room.
@@ -612,8 +613,8 @@ ServerC->ClientC*: [[ Commit ]]
    +--------+---------+---------------+-------------+ | ID res |
    Consent | State Change | Submission |
    +--------+---------+---------------+-------------+ | Transport |
-   +------------------------------------------------+ ``` POST
-   /updateRoom/dxzxxDuvMOTsUD4D_YdSyQ
+   +------------------------------------------------+ ``` POST /update/
+   dxzxxDuvMOTsUD4D_YdSyQ
 
    PublicMessage{ /* MLS Commit - inside is a list of Proposals _/
    Commit[ AppSync{ addUsers [ [Charlie, [normal]], [Doug,
@@ -623,7 +624,7 @@ ServerC->ClientC*: [[ Commit ]]
    GroupInfo if the Commit is accepted (without the ratchet_tree)
    GroupInfo, /* RatchetTree } ```
 
-   Removing yourself ``` POST /updateRoom/dxzxxDuvMOTsUD4D_YdSyQ
+   Removing yourself ``` POST /update/dxzxxDuvMOTsUD4D_YdSyQ
 
    /* concatenated MLS Proposals (each inside a PublicMessage) */
    AppSync{ removeUsers [Alice] }, Remove(Alice1), SelfRemove(Alice2),
@@ -633,7 +634,7 @@ ServerC->ClientC*: [[ Commit ]]
 
    Charlie1 commits Alice's pending proposals.  This is accepted even
    though Charlie wouldn't have permission to remove Alice himself. ```
-   POST /updateRoom/dxzxxDuvMOTsUD4D_YdSyQ
+   POST /update/dxzxxDuvMOTsUD4D_YdSyQ
 
    PublicMessage{ /* MLS Commit - inside is a list of Proposals _/
    Commit[ AppSync{ removeUsers [Alice] }, Remove(Alice1),
@@ -1031,7 +1032,7 @@ ServerC->ClientC*: [[ Commit ]]
 
 {
 "keyMaterial": "https://mimi.example.com/v1/keyMaterial/{targetUser}",
-"updateRoom": "https://mimi.example.com/v1/updateRoom/{roomId}",
+"update": "https://mimi.example.com/v1/update{roomId}",
 "notify": "https://mimi.example.com/v1/notify/{roomId}",
 "submitMessage": "https://mimi.example.com/v1/submitMessage/{roomId}",
 "groupInfo": "https://mimi.example.com/v1/groupInfo/{roomId}",
@@ -1061,9 +1062,9 @@ ServerC->ClientC*: [[ Commit ]]
      IdentifierUri requesterUser;
      IdentifierUri targetUser;
      optional<RoomId> roomId;
-     select(consentOperation) {
-         case grant:
-             KeyPackage clientKeyPackages<V>;
+     select (consentOperation) {
+       case grant:
+         KeyPackage clientKeyPackages<V>;
      }
    } ConsentEntry;
 
@@ -1110,7 +1111,7 @@ ServerC->ClientC*: [[ Commit ]]
        IdentifierUri requestingUser;
        IdentifierUri targetUsers<V>;
        IdentifierUri roomId;
-       select(protocol) {
+       select (protocol) {
            case mls10:
                CipherSuite acceptableCiphersuites<V>;
                RequiredCapabilities requiredCapabilities;
@@ -1164,14 +1165,14 @@ ServerC->ClientC*: [[ Commit ]]
    struct {
        KeyMaterialClientCode clientStatus;
        IdentifierUri clientUri;
-       select(protocol) {
+       select (protocol) {
            case mls10:
-               select(clientStatus) {
+               select (clientStatus) {
                    case success:
                        KeyPackage keyPackage;
                    case nothingCompatible:
                        optional<Capabilities> clientCapabilities;
-               }
+               };
        };
    } ClientKeyMaterial;
 
@@ -1194,11 +1195,11 @@ ServerC->ClientC*: [[ Commit ]]
 12.4.  Change room policy/participation
 
    Adds, removes, and policy changes to the room are all forms of
-   updating the room state.  They are accomplished using the updateRoom
+   updating the room state.  They are accomplished using the update
    transaction which is used for updating the room base policy,
    participation list, or its underlying MLS group.
 
-   POST /updateRoom/{roomId}
+   POST /update/{roomId}
 
    In MLS 1.0, any change to the room base policy document is always
    expressed using a GroupContextExtensions proposal.  Likewise, any
@@ -1244,11 +1245,12 @@ ServerC->ClientC*: [[ Commit ]]
    can be updated.  Note that removing a user does not ban the user.  To
    ban a user, update their role to banned.
 
-   The updateRoom request body is described below:
+   The update request body is described below:
 
-   select(room.protocol) {
-     case mls10:
-       PublicMessage proposalOrCommit;
+   struct {
+     select (room.protocol) {
+       case mls10:
+         PublicMessage proposalOrCommit;
          select (proposalOrCommit.content.content_type) {
            case commit:
              optional<Welcome> welcome;
@@ -1257,6 +1259,7 @@ ServerC->ClientC*: [[ Commit ]]
            case proposal:
              PublicMessage moreProposals<V>; /* a list of additional proposals */
          };
+     };
    };
 
    In this case Alice creates a Commit containing a AppSync proposal
@@ -1336,10 +1339,10 @@ ServerC->ClientC*: [[ Commit ]]
      MLSMessage message;
      /* the hub acceptance time (in milliseconds from the UNIX epoch) */
      uint64 timestamp;
-     select(message.wire_format) {
+     select (message.wire_format) {
        case welcome:
          RatchetTreeOption ratchetTreeOption;
-     }
+     };
    } FanoutMessage;
 
    If the protocol is MLS 1.0, the request body is one or more of
@@ -1459,7 +1462,7 @@ ServerC->ClientC*: [[ Commit ]]
    struct {
      SearchIdentifierType searchType;
      string searchValue;
-     select(type) {
+     select (type) {
        case oidcStdClaim:
          string claimName;
        case vcardField:
