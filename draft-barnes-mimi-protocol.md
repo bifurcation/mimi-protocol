@@ -106,13 +106,315 @@ placeholders for a binary encoding mechanism and transport semantics.
 
 # Protocol Overview
 
-[[ Layering: State control; security; transport ]]
+As shown in {{fig-layers}}, the overall MIMI protocol is built out of three layers:
 
-## Dramatis Personae
+1. An application layer that enables messaging functionality
+2. A security layer that provides end-to-end security guarantees:
+    * Confidentiality for messages
+    * Authentication of actors making changes to rooms
+    * Agreement on room state across the clients involved in a room
+3. A transport layer that provides secure delivery of protocol objects between
+   servers.
+
+The MIMI transport is based on HTTPS over mutually-authenticated TLS.  MIMI uses
+MLS {{!RFC9420}} for end-to-end security, using the MLS ApplicationSecuritySync
+proposal type to syncronize room state across the clients involved in a room.
+
+~~~ aasvg
++------------------------+
+|       Application      |
+|       +----------------+
+|       |  E2E Security  |
++-------+----------------+
+|        Transport       |
++------------------------+
+~~~
+{: #fig-layers title="MIMI protocol layering" }
+
+The remainder of this section walks through a basic scenario that illustrates
+how a room works in the MIMI protocol.  The scenario involves the following
+actors:
+
+* Service providers `alpha.com`, `bravo.com`, and `charlie.com` represented by
+  servers `ServerA`, `ServerB`, and `ServerC` respectively
+* Users Alice (`alice@alpha.com`), Bob (`bob@bravo.com`) and Cathy
+  (`cathy@charlie.com) of the respective service providers
+* Clients `ClientA1`, `ClientA2`, `ClientB1`, etc. belonging to these users
+* A room `clubhouse@alpha.com` where the three users interact
+
+As noted in {{!I-D.mimi-arch}}, the MIMI protocol only defines interactions
+between service providers' servers.  Interactions between between clients and
+servers within a service provider domain are shown here for completeness, but
+surrounded by `[[ double brackets ]]`.
+
 ## Alice Creates a Room
+
+The first step in the lifetime of a MIMI room is its creation on the hub server.
+This operation is local to the service provider, and does not entail any MIMI
+protocol operations.  However, it must establish the initial state of the room,
+which is then the basis for protocol operations related to the room.
+
+Here, we assume that Alice uses ClientA1 to create a room with the following
+properties:
+
+* Identifier: `clubhouse@alpha.com`
+* Participants: `[alice@alpha.com]`
+
+ClientA1 also creates an MLS group with group ID `clubhouse@alpha.com` and
+ensures via provider-local operations that Alice's other clients are members of
+this MLS group.
+
 ## Alice adds Bob to the Room
-## Bob adds Charlie to the Room
-## Cathy sends a Message
+
+Adding Bob to the room entails operations at two levels.  First, Bob's user
+identity must be added to the room's participant list.  Second, Bob's clients
+must be added to the room's MLS group.
+
+The process of adding Bob to the room thus begins by Alice fetching key material
+for Bob's clients.  Alice then updates the room by sending an MLS Commit over
+the following proposals:
+
+* An ApplicationSync proposal updating the room state by adding Bob to the
+  participant list
+* Add proposals for Bob's clients
+
+The MIMI protocol interactions are between Alice's server ServerA and Bob's
+server ServerB.  ServerB stores KeyPackages on behalf of Bob's devices.  ServerA
+performs the key material fetch on Alice's behalf, and delivers the resulting
+KeyPackages to Alice's clients.  Both ServerA and ServerB remember the sources
+of the KeyPackages they handle, so that they can route a Welcome mesasage for
+those KeyPackages to the proper recipients -- ServerA to ServerB, and ServerB to
+Bob's clients.
+
+[[ NOTE: In the full protocol, it will be necessary to have consent and access
+control on these operations.  We have elided that step here in the interest of
+simplicity.  Some initial thoughts are in {{consent}} ]]
+
+~~~ ascii-art
+ClientA1       ServerA         ServerB         ClientB*
+  |               |               |               |
+  |               |               |     Store KPs |
+  |               |               |<~~~~~~~~~~~~~~|
+  |               |               |<~~~~~~~~~~~~~~|
+  | Request KPs   |               |               |
+  |~~~~~~~~~~~~~~>| /keyMaterial  |               |
+  |               |-------------->|               |
+  |               |        200 OK |               |
+  |           KPs |<--------------|               |
+  |<~~~~~~~~~~~~~~|               |               |
+  |               |               |               |
+
+ClientB*->ServerB: [[ Store KeyPackages ]]
+ClientA1->ServerA: [[ request KPs for bob@bravo.com ]]
+ServerA->ServerB: POST /keyMaterial KeyMaterialRequest
+ServerB: Verify that Alice is authorized to fetch KeyPackages
+ServerB: Mark returned KPs as reserved for Alice’s use
+ServerB->ServerA: 200 OK KeyMaterialResponse
+ServerA: Remember that these KPs go to bravo.com
+ServerA->ClientA1: [[ KPs ]]
+~~~
+{: #fig-ab-kp-fetch title="Alice Fetches KeyPackages for Bob's Clients" }
+
+~~~ ascii-art
+ClientA1       ServerA         ServerB         ClientB*
+  |               |               |               |
+  | Commit, etc.  |               |               |
+  |~~~~~~~~~~~~~~>| /notify       |               |
+  |               |-------------->| Welcome, Tree |
+  |               |               |~~~~~~~~~~~~~~>|
+  |               |               |~~~~~~~~~~~~~~>|
+  |               |        200 OK |               |
+  |      Accepted |<--------------|               |
+  |<~~~~~~~~~~~~~~|               |               |
+  |               |               |               |
+
+ClientA1: Prepare Commit over AppSync(+bob@bravo.com), Add*
+ClientA1->ServerA: [[ Commit, Welcome, GroupInfo?, RatchetTree? ]]
+ServerA: Verify that AppSync, Adds are allowed by policy
+ServerA: Identifies Welcome domains based on KP hash in Welcome
+ServerA->ServerB: POST /notify/clubhouse@alpha.com Intro{ Welcome, RatchetTree? }
+ServerB: Recognizes that Welcome is adding Bob to room clubhouse@alpha.com
+ServerB->ClientB*: [[ Welcome, RatchetTree? ]]
+~~~
+{: #fig-ab-add title="Alice Adds Bob to the Room and Bob's Clients to the MLS Group" }
+
+
+## Bob adds Cathy to the Room
+
+The process of adding Bob was a bit abbreviated because Alice is a user of the
+hub service provider.  When Bob adds Cathy, we see the full process, involving
+the same two steps (KP fetch followed by add), but this time indirected via the
+hub server ServerA.  Also, now that there are users on ServerB involved in the
+room, the hub ServerA will have to distribute the Commit adding Cathy and
+Cathy's clients to ServerB as well as forwarding the Welcome to ServerC.
+
+~~~ ascii-art
+ClientB1       ServerB         ServerA         ServerC         ClientC*
+  |               |               |               |               |
+  |               |               |               |     Store KPs |
+  |               |               |               |<~~~~~~~~~~~~~~|
+  |               |               |               |<~~~~~~~~~~~~~~|
+  | Request KPs   |               |               |               |
+  |~~~~~~~~~~~~~~>| /keyMaterial  | /keyMaterial  |               |
+  |               |-------------->|-------------->|               |
+  |               |        200 OK |        200 OK |               |
+  |           KPs |<--------------|<--------------|               |
+  |<~~~~~~~~~~~~~~|               |               |               |
+  |               |               |               |               |
+
+ClientC*->ServerC: [[ Store KeyPackages ]]
+ClientB1->ServerB: [[ request KPs for bob@bravo.com ]]
+ServerB->ServerA: POST /keyMaterial KeyMaterialRequest
+ServerA->ServerC: POST /keyMaterial KeyMaterialRequest
+ServerB: Verify that Bob is authorized to fetch KeyPackages
+ServerB: Mark returned KPs as reserved for Bob’s use
+ServerC->ServerA: 200 OK KeyMaterialResponse
+ServerA: Remember that these KPs go to bravo.com
+ServerA->ServerB: 200 OK KeyMaterialResponse
+ServerB->ClientB1: [[ KPs ]]
+~~~
+{: #fig-bc-kp-fetch title="Bob Fetches KeyPackages for Cathy's Clients" }
+
+~~~ ascii-art
+ClientB1       ServerB         ServerA         ServerC         ClientC*  ClientB*  ClientA*
+  |               |               |               |               |         |         |
+  | Commit, etc.  |               |               |               |         |         |
+  |~~~~~~~~~~~~~~>| /update       |               |               |         |         |
+  |               |-------------->|               |               |         |         |
+  |               |        200 OK |               |               |         |         |
+  |               |<--------------|               |               |         |         |
+  |      Accepted |               | /notify       |               |         |         |
+  |<~~~~~~~~~~~~~~|               |-------------->| Welcome, Tree |         |         |
+  |               |               |               |~~~~~~~~~~~~~~>|         |         |
+  |               |               |               |~~~~~~~~~~~~~~>|         |         |
+  |               |       /notify |               |               |         |         |
+  |               |<--------------|               |               |         |         |
+  |               | Commit        |               |               |         |         |
+  |               |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>|         |
+  |               |               | Commit        |               |         |         |
+  |               |               |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>|
+  |               |               |               |               |         |         |
+
+ClientB1: Prepare Commit over AppSync(+cathy@charlie.com), Add*
+ClientB1->ServerB: [[ Commit, Welcome, GroupInfo?, RatchetTree? ]]
+ServerB->ServerA: POST /update/clubhouse@alpha.com CommitBundle
+ServerA: Verify that Adds are allowed by policy
+ServerA->ServerB: 200 OK
+ServerA->ServerC: POST /notify/clubhouse@alpha.com Intro{ Welcome, RatchetTree? }
+ServerC: Recognizes that Welcome is adding Cathy to clubhouse@alpha.com
+ServerC->ClientC*: [[ Welcome, RatchetTree? ]]
+ServerA->ServerB: POST /notify/clubhouse@alpha.com Commit
+ServerB->ClientB*: [[ Commit ]]
+ServerA->ClientA*: [[ Commit ]]
+~~~
+{: #fig-bc-add title="Bob Adds Cathy to the Room and Cathy's Clients to the MLS Group" }
+
+## Cathy Sends a Message
+
+Now that Alice, Bob, and Cathy are all in the room, Cathy wants to say hello to
+everyone.  Cathy's client encapsulates the message in an MLS PrivateMessage and
+sends it to ServerC, who forwards it to the hub ServerA on Cathy's behalf.
+Assuming Cathy is allowed to speak in the room, ServerA will forward Cathy's
+message to the other servers involved in the room, who distribute it to their
+clients.
+
+~~~ ascii-art
+ClientC1       ServerC         ServerA         ServerB         ClientB*  ClientC*  ClientA*
+  |               |               |               |               |         |         |
+  | Message       |               |               |               |         |         |
+  |~~~~~~~~~~~~~~>| /message      |               |               |         |         |
+  |               |-------------->|               |               |         |         |
+  |               |        200 OK |               |               |         |         |
+  |               |<--------------|               |               |         |         |
+  |      Accepted |               | /notify       |               |         |         |
+  |<~~~~~~~~~~~~~~|               |-------------->| Message       |         |         |
+  |               |               |               |~~~~~~~~~~~~~~>|         |         |
+  |               |       /notify |               |               |         |         |
+  |               |<--------------|               |               |         |         |
+  |               | Message       |               |               |         |         |
+  |               |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>|         |
+  |               |               | Message       |               |         |         |
+  |               |               |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>|
+  |               |               |               |               |         |         |
+
+ClientC1->ServerC: [[ MLSMessage(PrivateMessage) ]]
+ServerC->ServerA: POST /message/clubhouse@alpha.com MLSMessage(PrivateMessage)
+ServerA: Verifies that message is allowed
+ServerA->ServerC: POST /notify/clubhouse@alpha.com Message{ MLSMessage(PrivateMessage) }
+ServerA->ServerB: POST /notify/clubhouse@alpha.com Message{ MLSMessage(PrivateMessage) }
+ServerA->ClientA*: [[ MLSMessage(PrivateMessage) ]]
+ServerB->ClientB*: [[ MLSMessage(PrivateMessage) ]]
+ServerC->ClientC*: [[ MLSMessage(PrivateMessage) ]]
+~~~
+{: #fig-c-msg title="Cathy Sends a Message to the Room" }
+
+## Bob Leaves the Room
+
+A user removing another user follows the same flow as adding the user.  They
+user performing the removal creates an MLS commit covering Remove proposals for
+all of the removed user's devices, and an AppSync proposal updating the room
+state to remove the removed user from the room's participant list.
+
+Leaving is slightly more complicated because the leaving user cannot remove all
+of their devices from the MLS group.  Instead, the leave happens in three steps:
+
+1. The leaving client constructs a Commit removing all of the user's other
+   devices, a Remove proposal for itself, and an AppSync proposal that removes
+   its user from the participant list.
+2. The leaving client sends this Commit and proposals to the hub.  The hub
+   distributes the Commit to the room and caches the proposals.
+3. The next time a client attempts to commit, the hub requires the client to
+   include the cached proposals.
+
+The hub thus guarantees the leaving client that they will be removed as soon as
+possible.
+
+~~~
+ClientB1       ServerB         ServerA         ServerC         ClientC1
+  |               |               |               |               |
+  | Commit, Prop+ |               |               |               |
+  |~~~~~~~~~~~~~~>| /update       |               |               |
+  |               |-------------->|               |               |
+  |               |        200 OK |               |               |
+  |               |<--------------|               |               |
+  |      Accepted |               |               |               |
+  |<~~~~~~~~~~~~~~|               |               |               |
+  |               |       /notify | /notify       |               |
+  |               |<--------------|-------------->|               |
+  |               |               |               |        Commit |
+  |               |               |               |<~~~~~~~~~~~~~~|
+  |               |               |       /update |               |
+  |               |               |<~~~~~~~~~~~~~~|               |
+  |               |               | 401 Prop+     |               |
+  |               |               |~~~~~~~~~~~~~~>|               |
+  |               |               |               | Reject(Prop+) |
+  |               |               |               |~~~~~~~~~~~~~~>|
+  |               |               |               | Commit(Prop+) |
+  |               |               |               |<~~~~~~~~~~~~~~|
+  |               |               |       /update |               |
+  |               |               |<~~~~~~~~~~~~~~|               |
+  |               |               | 200 OK        |               |
+  |               |               |-------------->|               |
+  |               |               |               | Accepted      |
+  |               |               |               |~~~~~~~~~~~~~~>|
+  |               |       /notify | /notify       |               |
+  |               |<--------------|-------------->|               |
+  |               |               |               |               |
+
+ClientB1: Prepare Commit over Remove*, Proposal for Remove(self), AppSync(-bob@bravo.com)
+ClientB1->ServerB: [[ Commit, Welcome, GroupInfo?, RatchetTree? ]]
+ServerB->ServerA: POST /update/clubhouse@alpha.com CommitBundle + Proposals
+ServerA: Verify that Removes, AppSync are allowed by policy
+ServerA->ServerB: 200 OK
+ServerA->ServerB: POST /notify/clubhouse@alpha.com Commit
+ServerA->ServerC: POST /notify/clubhouse@alpha.com Commit
+ServerA->ClientA*: [[ Commit ]]
+ServerB->ClientB*: [[ Commit ]]
+ServerC->ClientC*: [[ Commit ]]
+~~~
+{: #fig-b-leave title="Bob Leaves the Room" }
+
+
 
 # Transport layer
 
@@ -145,6 +447,11 @@ placeholders for a binary encoding mechanism and transport semantics.
 ### Updating Room State
 ### Notifying Followers of Room Events
 ### Sending Messages
+
+
+# MLS ApplicationSync Proposal
+
+[[ TODO: RLB ]]
 
 # Consent Sketch
 
@@ -197,7 +504,7 @@ POST /updateRoom/dxzxxDuvMOTsUD4D_YdSyQ
 PublicMessage{
   /* MLS Commit - inside is a list of Proposals */
   Commit[
-    ParticipantListPatch{
+    AppSync{
       addUsers [
         [Charlie, [normal]],
         [Doug, [normal,admin]]
@@ -226,7 +533,7 @@ Removing yourself
 POST /updateRoom/dxzxxDuvMOTsUD4D_YdSyQ
 
 /* concatenated MLS Proposals (each inside a PublicMessage) */
-ParticipantListPatch{
+AppSync{
   removeUsers [Alice]
 },
 Remove(Alice1),
@@ -242,7 +549,7 @@ POST /updateRoom/dxzxxDuvMOTsUD4D_YdSyQ
 PublicMessage{
   /* MLS Commit - inside is a list of Proposals */
   Commit[
-    ParticipantListPatch{
+    AppSync{
       removeUsers [Alice]
     },
     Remove(Alice1),
@@ -342,7 +649,7 @@ extension. Any change to the base policy document (which is likely to be rare)
 is made by committing an MLS GroupContextExtensions proposal.
 
 Changes to the participant list are maintained by patching the participation
-list. In MLS this accomplished by committing a `ParticipantListPatch` proposal
+list. In MLS this accomplished by committing a `AppSync` proposal
 (defined in this document).
 
 Unless the base policy document defines otherwise, an MLS client who makes a
@@ -359,10 +666,10 @@ any new clients added, a GroupInfo, and any changes to the ratchet tree. This is
 described in more detail in the syntax section.
 
 If Alice wants to add Bob, her client generates an MLS commit
-with a `ParticipantListPatch` proposal adding Bob as a participant and `Add`
+with a `AppSync` proposal adding Bob as a participant and `Add`
 proposals for each of Bob's clients; and an MLS Welcome message including Bob's clients. Between Alice's client and Alice's provider they also must insure Alice's provider (which is the hub for this room) has the GroupInfo and ratchet tree for the room if the commit is accepted. If the hub provider accepts this "commit bundle", it will forward (fan out) the commit to the current members of the MLS group, and forward a welcome message to any new MLS clients just added to the group.
 
-Note that there are other ways for Bob to eventually participate in the room, but the method just dicsussed is the most straightforward and is preferred. Alice could commit a `ParticipantListPatch`
+Note that there are other ways for Bob to eventually participate in the room, but the method just dicsussed is the most straightforward and is preferred. Alice could commit a `AppSync`
 just adding Bob as an inactive participant, and may need to if she cannot obtain
 KeyPackages for Bob's clients (for example, if she is waiting for consent from
 Bob), but Alice should not expect another participant, Bob, or some provider to
@@ -393,7 +700,7 @@ ProviderB -> Bob*: Message notification
 
 Digress to talk about room policy here...
 
-Since Alice is the owner of the room and the room policy is that administrators have to Alice commits a `ParticipantListPatch` proposal updating Bob's roles in the room to `[regular_user, admin]`.
+Since Alice is the owner of the room and the room policy is that administrators have to Alice commits a `AppSync` proposal updating Bob's roles in the room to `[regular_user, admin]`.
 
 If the hub provider accepts the commit, it fans it out so all the active participants receive it.
 
@@ -404,7 +711,7 @@ ProviderA -> Alice1: Commit accepted
 ```
 ## Bob adds Cathy and Doug
 
-Since Bob is now an admin, Bob wants to Cathy and Doug. Bob starts by fetching their KeyPackages (assuming Bob already has consent from Cathy and Doug). Then Bob commits a `ParticipantListPatch` proposal adding Cathy as both a regular user and administrator, and Doug as a regular user; and Add proposals for all of Cathy's and Doug's KeyPackages.
+Since Bob is now an admin, Bob wants to Cathy and Doug. Bob starts by fetching their KeyPackages (assuming Bob already has consent from Cathy and Doug). Then Bob commits a `AppSync` proposal adding Cathy as both a regular user and administrator, and Doug as a regular user; and Add proposals for all of Cathy's and Doug's KeyPackages.
 
 If the hub provider accepts the commit, it fans it out so all the active participants receive it, and also forwards the welcome message to Cathy's and Doug's providers.
 
@@ -437,7 +744,7 @@ ProviderD -> Doug*: Commit
 
 Removing oneself from a room deserves a special mention. In MLS a client cannot send a commit which removes itself from the group. Instead the leaver needs to send proposals that will be committed by a remaining member of the group.
 
-Bob sends a single `ParticipantListPatch` proposal
+Bob sends a single `AppSync` proposal
 removing himself, a `SelfRemove` proposal for his initiating client, and `Remove` proposals for any of his other clients. An active participant then sends a commit referencing all those proposals together in a timely fashion.
 
 If the commit is accepted by the hub provider, Bob's clients all receive the commit message, so they are aware that they have been removed. This is safe to do because they no longer have the information nececssary to calculate the new decryption key for the group, as it was encrypted only to the remaining members of the group.
@@ -452,7 +759,7 @@ ProviderA: [[ fanout Commit ]]
 
 ## Cathy removes Doug
 
-For Cathy to remove Doug, she commits a `ParticipantListPatch` proposal removing Doug, and `Remove` proposals for each of Doug's clients. Assuming the commit is accepted by the hub, both Doug's clients and the remaining members of the group recieve the commit, but Doug's clients can no longer decrypt messages sent for the group.
+For Cathy to remove Doug, she commits a `AppSync` proposal removing Doug, and `Remove` proposals for each of Doug's clients. Assuming the commit is accepted by the hub, both Doug's clients and the remaining members of the group recieve the commit, but Doug's clients can no longer decrypt messages sent for the group.
 
 ```
 (similar Commit flow)
@@ -738,7 +1045,7 @@ POST /updateRoom/{roomId}
 
 In MLS 1.0, any change to the room base policy document is always expressed
 using a `GroupContextExtensions` proposal. Likewise, any change to the
-participant list is always communicated via a `ParticipantListPatch`
+participant list is always communicated via a `AppSync`
 proposal type. The participant list change needed to add a user MUST happen either before or simultaneously with the corresponding MLS operation.
 
 Removing an active user from a participant list or banning an active participant SHOULD happen simultaneously with any MLS changes made to the commit removing the participant.
@@ -770,7 +1077,7 @@ struct {
     UserRoles addUsers<V>;
     UserRoles updateUsers<V>;
     IdentifierUri removeUsers<V>;
-} ParticipantListPatch;
+} AppSync;
 ~~~
 
 Each user can be added with one or more roles. This list of roles can be
@@ -794,10 +1101,10 @@ select(room.protocol) {
 };
 ~~~
 
-In this case Alice creates a Commit containing a ParticipantListPatch
-proposal adding Bob@b.example, and Add proposals for all Bob's MLS clients.
-Alice includes the Welcome message which will be sent for Bob, a
-GroupInfo object for the hub provider, and complete `ratchet_tree` extension.
+In this case Alice creates a Commit containing a AppSync proposal adding
+Bob@b.example, and Add proposals for all Bob's MLS clients.  Alice includes the
+Welcome message which will be sent for Bob, a GroupInfo object for the hub
+provider, and complete `ratchet_tree` extension.
 
 ~~~ tls
 enum {
