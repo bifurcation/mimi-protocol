@@ -2409,7 +2409,7 @@ ProviderD -&gt; Doug*: Commit notification
 <a href="#section-12.1" class="section-number selfRef">12.1. </a><a href="#name-mimi-url-directory" class="section-name selfRef">MIMI URL directory</a>
         </h3>
 <p id="section-12.1-1">Like the ACME protocol <span>[<a href="#RFC8555" class="cite xref">RFC8555</a>]</span>, the MIMI protocol uses a directory document to convey the HTTPS URLs used to reach certain endpoints (as opposed to hard coding the endpoints).<a href="#section-12.1-1" class="pilcrow">¶</a></p>
-<p id="section-12.1-2">The directory URL is discovered using the <code>mimi-protocol-directory</code> well-known URI.<a href="#section-12.1-2" class="pilcrow">¶</a></p>
+<p id="section-12.1-2">The directory URL is discovered using the <code>mimi-protocol-directory</code> well-known URI. The response is a JSON document with URIs for each type of endpoint.<a href="#section-12.1-2" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-12.1-3">
 <pre>
 GET /.well-known/mimi-protocol-directory
@@ -2417,35 +2417,15 @@ GET /.well-known/mimi-protocol-directory
 </div>
 <div class="alignLeft art-text artwork" id="section-12.1-4">
 <pre>
-enum {
-  get(1),
-  post(2),
-  (255)
-} HttpMethod;
-
-enum {
-  requestConsent(1),
-  updateConsent(2),
-  claimKeyMaterial(3),
-  updateRoom(4),
-  provisionalMessage(5),
-  fanoutMessage(6),
-  claimGroupInfo(7),
-  downloadFile(8),
-  reportAbuse(9),
-  identifierQuery(10),
-  (255)
-} MimiPrimitive;
-
-struct {
-  MimiPrimitive primitive;
-  HttpMethod method;
-  HttpsUri uri;
-} MimiDirectoryEntry;
-
-struct {
-  MimiDirectoryEntry directory&lt;V&gt;;
-} MimiDirectory;
+{
+"keyMaterial": "https://mimi.example.com/v1/keyMaterial/{targetUser}",
+"updateRoom": "https://mimi.example.com/v1/updateRoom/{roomId}",
+"notify": "https://mimi.example.com/v1/notify/{roomId}",
+"submitMessage": "https://mimi.example.com/v1/submitMessage/{roomId}",
+"groupInfo": "https://mimi.example.com/v1/groupInfo/{roomId}",
+"requestConsent": "https://mimi.example.com/v1/requestConsent/{targetUser}",
+"updateConsent": "https://mimi.example.com/v1/updateConsent/{requesterUser}"
+}
 </pre><a href="#section-12.1-4" class="pilcrow">¶</a>
 </div>
 </section>
@@ -2471,8 +2451,8 @@ enum {
 
 struct {
   ConsentOperation consentOperation;
-  IdentifierUri requesterUri;
-  IdentifierUri targetUri;
+  IdentifierUri requesterUser;
+  IdentifierUri targetUser;
   optional&lt;RoomId&gt; roomId;
   select(consentOperation) {
       case grant:
@@ -2742,7 +2722,7 @@ provider.<a href="#section-12.5-3" class="pilcrow">¶</a></p>
 <p id="section-12.6-3">The hub can include multiple concatenated <code>FanoutMessage</code> objects relevant to the same room.<a href="#section-12.6-3" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-12.6-4">
 <pre>
-POST /fanout/{roomId}
+POST /notify/{roomId}
 </pre><a href="#section-12.6-4" class="pilcrow">¶</a>
 </div>
 <div class="lang-tls sourcecode" id="section-12.6-5">
@@ -2873,13 +2853,15 @@ struct {
         <h3 id="name-find-internal-address">
 <a href="#section-12.10" class="section-number selfRef">12.10. </a><a href="#name-find-internal-address" class="section-name selfRef">Find internal address</a>
         </h3>
-<div class="alignLeft art-text artwork" id="section-12.10-1">
+<p id="section-12.10-1">This is a request to find the internal identifier for a user scoped within a
+specific provider.<a href="#section-12.10-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-12.10-2">
 <pre>
 GET /identifierQuery/{domain}
-</pre><a href="#section-12.10-1" class="pilcrow">¶</a>
+</pre><a href="#section-12.10-2" class="pilcrow">¶</a>
 </div>
-<p id="section-12.10-2">The request body is described as:<a href="#section-12.10-2" class="pilcrow">¶</a></p>
-<div class="lang-tls sourcecode" id="section-12.10-3">
+<p id="section-12.10-3">The request body is described as:<a href="#section-12.10-3" class="pilcrow">¶</a></p>
+<div class="lang-tls sourcecode" id="section-12.10-4">
 <pre>
 enum {
   reserved(0),
@@ -2904,10 +2886,10 @@ struct {
       string fieldName;
   };
 } IdentifierRequest;
-</pre><a href="#section-12.10-3" class="pilcrow">¶</a>
+</pre><a href="#section-12.10-4" class="pilcrow">¶</a>
 </div>
-<p id="section-12.10-4">The response body is described as:<a href="#section-12.10-4" class="pilcrow">¶</a></p>
-<div class="lang-tls sourcecode" id="section-12.10-5">
+<p id="section-12.10-5">The response body is described as:<a href="#section-12.10-5" class="pilcrow">¶</a></p>
+<div class="lang-tls sourcecode" id="section-12.10-6">
 <pre>
 enum {
   success(0),
@@ -2941,11 +2923,11 @@ struct {
   IdentifierUri uri&lt;V&gt;;
   UserProfile foundProfiles&lt;V&gt;;
 } IdentifierResponse;
-</pre><a href="#section-12.10-5" class="pilcrow">¶</a>
+</pre><a href="#section-12.10-6" class="pilcrow">¶</a>
 </div>
-<p id="section-12.10-6"><strong>TODO</strong>: The format of specific identifiers is discussed in
+<p id="section-12.10-7"><strong>TODO</strong>: The format of specific identifiers is discussed in
 <span>[<a href="#I-D.mahy-mimi-identity" class="cite xref">I-D.mahy-mimi-identity</a>]</span>. Any specific conventions which are needed
-should be merged into this document.<a href="#section-12.10-6" class="pilcrow">¶</a></p>
+should be merged into this document.<a href="#section-12.10-7" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>

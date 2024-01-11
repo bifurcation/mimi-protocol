@@ -1024,39 +1024,20 @@ ServerC->ClientC*: [[ Commit ]]
    opposed to hard coding the endpoints).
 
    The directory URL is discovered using the mimi-protocol-directory
-   well-known URI.
+   well-known URI.  The response is a JSON document with URIs for each
+   type of endpoint.
 
    GET /.well-known/mimi-protocol-directory
 
-   enum {
-     get(1),
-     post(2),
-     (255)
-   } HttpMethod;
-
-   enum {
-     requestConsent(1),
-     updateConsent(2),
-     claimKeyMaterial(3),
-     updateRoom(4),
-     provisionalMessage(5),
-     fanoutMessage(6),
-     claimGroupInfo(7),
-     downloadFile(8),
-     reportAbuse(9),
-     identifierQuery(10),
-     (255)
-   } MimiPrimitive;
-
-   struct {
-     MimiPrimitive primitive;
-     HttpMethod method;
-     HttpsUri uri;
-   } MimiDirectoryEntry;
-
-   struct {
-     MimiDirectoryEntry directory<V>;
-   } MimiDirectory;
+{
+"keyMaterial": "https://mimi.example.com/v1/keyMaterial/{targetUser}",
+"updateRoom": "https://mimi.example.com/v1/updateRoom/{roomId}",
+"notify": "https://mimi.example.com/v1/notify/{roomId}",
+"submitMessage": "https://mimi.example.com/v1/submitMessage/{roomId}",
+"groupInfo": "https://mimi.example.com/v1/groupInfo/{roomId}",
+"requestConsent": "https://mimi.example.com/v1/requestConsent/{targetUser}",
+"updateConsent": "https://mimi.example.com/v1/updateConsent/{requesterUser}"
+}
 
 12.2.  Obtain consent
 
@@ -1077,8 +1058,8 @@ ServerC->ClientC*: [[ Commit ]]
 
    struct {
      ConsentOperation consentOperation;
-     IdentifierUri requesterUri;
-     IdentifierUri targetUri;
+     IdentifierUri requesterUser;
+     IdentifierUri targetUser;
      optional<RoomId> roomId;
      select(consentOperation) {
          case grant:
@@ -1349,7 +1330,7 @@ ServerC->ClientC*: [[ Commit ]]
    The hub can include multiple concatenated FanoutMessage objects
    relevant to the same room.
 
-   POST /fanout/{roomId}
+   POST /notify/{roomId}
 
    struct {
      MLSMessage message;
@@ -1454,6 +1435,9 @@ ServerC->ClientC*: [[ Commit ]]
    not if any specific automated or human action was taken.
 
 12.10.  Find internal address
+
+   This is a request to find the internal identifier for a user scoped
+   within a specific provider.
 
    GET /identifierQuery/{domain}
 
