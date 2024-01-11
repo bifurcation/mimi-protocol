@@ -273,7 +273,7 @@ ServerA: Remember that these KPs go to bravo.com
 ServerA->ServerB: 200 OK KeyMaterialResponse
 ServerB->ClientB1: [[ KPs ]]
 ~~~
-{: #fig-ab-kp-fetch title="Bob Fetches KeyPackages for Cathy's Clients" }
+{: #fig-bc-kp-fetch title="Bob Fetches KeyPackages for Cathy's Clients" }
 
 ~~~ ascii-art
 ClientB1       ServerB         ServerA         ServerC         ClientC*  ClientB*  ClientA*
@@ -301,13 +301,13 @@ ServerB->ServerA: POST /update/clubhouse@alpha.com CommitBundle
 ServerA: Verify that Adds are allowed by policy
 ServerA->ServerB: 200 OK
 ServerA->ServerC: POST /notify/clubhouse@alpha.com Intro{ Welcome, RatchetTree? }
-ServerC: Recognizes that Welcome is adding Cathy to clubhouse@alpha.com 
+ServerC: Recognizes that Welcome is adding Cathy to clubhouse@alpha.com
 ServerC->ClientC*: [[ Welcome, RatchetTree? ]]
 ServerA->ServerB: POST /notify/clubhouse@alpha.com Commit
 ServerB->ClientB*: [[ Commit ]]
 ServerA->ClientA*: [[ Commit ]]
 ~~~
-{: #fig-ab-add title="Bob Adds Cathy to the Room and Cathy's Clients to the MLS Group" }
+{: #fig-bc-add title="Bob Adds Cathy to the Room and Cathy's Clients to the MLS Group" }
 
 ## Cathy Sends a Message
 
@@ -346,7 +346,7 @@ ServerA->ClientA*: [[ MLSMessage(PrivateMessage) ]]
 ServerB->ClientB*: [[ MLSMessage(PrivateMessage) ]]
 ServerC->ClientC*: [[ MLSMessage(PrivateMessage) ]]
 ~~~
-{: #fig-ab-add title="Cathy Sends a Message to the Room" }
+{: #fig-c-msg title="Cathy Sends a Message to the Room" }
 
 ## Bob Leaves the Room
 
@@ -412,7 +412,7 @@ ServerA->ClientA*: [[ Commit ]]
 ServerB->ClientB*: [[ Commit ]]
 ServerC->ClientC*: [[ Commit ]]
 ~~~
-{: #fig-ab-add title="Bob Leaves the Room" }
+{: #fig-b-leave title="Bob Leaves the Room" }
 
 
 
