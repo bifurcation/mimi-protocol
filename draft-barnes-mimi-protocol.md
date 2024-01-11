@@ -83,13 +83,14 @@ This document describes the communication between and among different providers
 necessary to send and receive encrypted messages, share room policy, and add
 participants to and remove participants from rooms. In support of these
 functions, the protocol also has primitives to fetch initial keying material,
-fetch the current MLS GroupInfo, and request, grant, and reject consent to
-communicate with users on other providers.
+fetch the current state of the underlying end-to-end encryption protocol for the
+room, and request, grant, and reject consent to communicate with users on other
+providers.
 
 Messages sent inside each room are end-to-end encrypted using the Messaging
 Layer Security (MLS) protocol {{!RFC9420}}, and each room is associated with an
 MLS group. MLS also ensures that clients in a room agree on the room policy and
-participation. One of the core principles of this protocol is that ar all times,
+participation. One of the core principles of this protocol is that at all times,
 the clients of the end-to-end encryption protocol (the MLS clients who are in an
 MLS group) all need to correspond to users who are in the associated room.
 
@@ -499,7 +500,7 @@ Functional/layering model of MIMI protocol:
 +------------------------------------------------+
 ```
 ```
-POST /updateRoom/dxzxxDuvMOTsUD4D_YdSyQ
+POST /update/dxzxxDuvMOTsUD4D_YdSyQ
 
 PublicMessage{
   /* MLS Commit - inside is a list of Proposals */
@@ -530,7 +531,7 @@ PublicMessage{
 
 Removing yourself
 ```
-POST /updateRoom/dxzxxDuvMOTsUD4D_YdSyQ
+POST /update/dxzxxDuvMOTsUD4D_YdSyQ
 
 /* concatenated MLS Proposals (each inside a PublicMessage) */
 AppSync{
@@ -544,7 +545,7 @@ Remove(Alice3)
 
 Charlie1 commits Alice's pending proposals. This is accepted even though Charlie wouldn't have permission to remove Alice himself.
 ```
-POST /updateRoom/dxzxxDuvMOTsUD4D_YdSyQ
+POST /update/dxzxxDuvMOTsUD4D_YdSyQ
 
 PublicMessage{
   /* MLS Commit - inside is a list of Proposals */
@@ -849,7 +850,7 @@ GET /.well-known/mimi-protocol-directory
 ~~~
 {
 "keyMaterial": "https://mimi.example.com/v1/keyMaterial/{targetUser}",
-"updateRoom": "https://mimi.example.com/v1/updateRoom/{roomId}",
+"update": "https://mimi.example.com/v1/update{roomId}",
 "notify": "https://mimi.example.com/v1/notify/{roomId}",
 "submitMessage": "https://mimi.example.com/v1/submitMessage/{roomId}",
 "groupInfo": "https://mimi.example.com/v1/groupInfo/{roomId}",
@@ -879,9 +880,9 @@ struct {
   IdentifierUri requesterUser;
   IdentifierUri targetUser;
   optional<RoomId> roomId;
-  select(consentOperation) {
-      case grant:
-          KeyPackage clientKeyPackages<V>;
+  select (consentOperation) {
+    case grant:
+      KeyPackage clientKeyPackages<V>;
   }
 } ConsentEntry;
 ~~~
@@ -930,7 +931,7 @@ struct {
     IdentifierUri requestingUser;
     IdentifierUri targetUsers<V>;
     IdentifierUri roomId;
-    select(protocol) {
+    select (protocol) {
         case mls10:
             CipherSuite acceptableCiphersuites<V>;
             RequiredCapabilities requiredCapabilities;
@@ -985,14 +986,14 @@ enum {
 struct {
     KeyMaterialClientCode clientStatus;
     IdentifierUri clientUri;
-    select(protocol) {
+    select (protocol) {
         case mls10:
-            select(clientStatus) {
+            select (clientStatus) {
                 case success:
                     KeyPackage keyPackage;
                 case nothingCompatible:
                     optional<Capabilities> clientCapabilities;
-            }
+            };
     };
 } ClientKeyMaterial;
 
@@ -1016,11 +1017,11 @@ KeyPackage `leaf_node.lifetime.not_after` time has passed.
 ## Change room policy/participation
 
 Adds, removes, and policy changes to the room are all forms of updating the
-room state. They are accomplished using the updateRoom transaction which is
+room state. They are accomplished using the update transaction which is
 used for updating the room base policy, participation list, or its underlying MLS group.
 
 ~~~
-POST /updateRoom/{roomId}
+POST /update/{roomId}
 ~~~
 
 In MLS 1.0, any change to the room base policy document is always expressed
@@ -1061,12 +1062,13 @@ Each user can be added with one or more roles. This list of roles can be
 updated. Note that removing a user does not ban the user. To ban a user,
 update their role to `banned`.
 
-The updateRoom request body is described below:
+The update request body is described below:
 
 ~~~ tls
-select(room.protocol) {
-  case mls10:
-    PublicMessage proposalOrCommit;
+struct {
+  select (room.protocol) {
+    case mls10:
+      PublicMessage proposalOrCommit;
       select (proposalOrCommit.content.content_type) {
         case commit:
           optional<Welcome> welcome;
@@ -1075,6 +1077,7 @@ select(room.protocol) {
         case proposal:
           PublicMessage moreProposals<V>; /* a list of additional proposals */
       };
+  };
 };
 ~~~
 
@@ -1151,10 +1154,10 @@ struct {
   MLSMessage message;
   /* the hub acceptance time (in milliseconds from the UNIX epoch) */
   uint64 timestamp;
-  select(message.wire_format) {
+  select (message.wire_format) {
     case welcome:
       RatchetTreeOption ratchetTreeOption;
-  }
+  };
 } FanoutMessage;
 ~~~
 
@@ -1287,7 +1290,7 @@ enum {
 struct {
   SearchIdentifierType searchType;
   string searchValue;
-  select(type) {
+  select (type) {
     case oidcStdClaim:
       string claimName;
     case vcardField:
