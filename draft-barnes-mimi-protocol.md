@@ -119,6 +119,11 @@ obtained, e.g., a user consenting to be added to a room by another user.  The
 full protocol will need some mechanisms for establishing this consent.  Some
 initial notes are in {{consent}}
 
+Identifiers:
+: Certain entities in the MIMI system need to be identified in the protocol.  In
+{{identifiers}}, we define a notional syntax for identifiers, but a more
+concrete one should be defined.
+
 Abuse reporting:
 : There is no mechanism in this document for reporting abusive behavior to a
 messaging provider.
@@ -171,12 +176,12 @@ The remainder of this section walks through a basic scenario that illustrates
 how a room works in the MIMI protocol.  The scenario involves the following
 actors:
 
-* Service providers `alpha.com`, `bravo.com`, and `charlie.com` represented by
+* Service providers `a.example`, `b.example`, and `c.example` represented by
   servers `ServerA`, `ServerB`, and `ServerC` respectively
-* Users Alice (`alice@alpha.com`), Bob (`bob@bravo.com`) and Cathy
-  (`cathy@charlie.com) of the respective service providers
+* Users Alice (`alice@a.example`), Bob (`bob@b.example`) and Cathy
+  (`cathy@c.example) of the respective service providers
 * Clients `ClientA1`, `ClientA2`, `ClientB1`, etc. belonging to these users
-* A room `clubhouse@alpha.com` where the three users interact
+* A room `clubhouse@a.example` where the three users interact
 
 As noted in {{!I-D.mimi-arch}}, the MIMI protocol only defines interactions
 between service providers' servers.  Interactions between between clients and
@@ -193,10 +198,10 @@ which is then the basis for protocol operations related to the room.
 Here, we assume that Alice uses ClientA1 to create a room with the following
 properties:
 
-* Identifier: `clubhouse@alpha.com`
-* Participants: `[alice@alpha.com]`
+* Identifier: `clubhouse@a.example`
+* Participants: `[alice@a.example]`
 
-ClientA1 also creates an MLS group with group ID `clubhouse@alpha.com` and
+ClientA1 also creates an MLS group with group ID `clubhouse@a.example` and
 ensures via provider-local operations that Alice's other clients are members of
 this MLS group.
 
@@ -241,12 +246,12 @@ ClientA1       ServerA         ServerB         ClientB*
   |               |               |               |
 
 ClientB*->ServerB: [[ Store KeyPackages ]]
-ClientA1->ServerA: [[ request KPs for bob@bravo.com ]]
+ClientA1->ServerA: [[ request KPs for bob@b.example ]]
 ServerA->ServerB: POST /keyMaterial KeyMaterialRequest
 ServerB: Verify that Alice is authorized to fetch KeyPackages
 ServerB: Mark returned KPs as reserved for Alice’s use
 ServerB->ServerA: 200 OK KeyMaterialResponse
-ServerA: Remember that these KPs go to bravo.com
+ServerA: Remember that these KPs go to b.example
 ServerA->ClientA1: [[ KPs ]]
 ~~~
 {: #fig-ab-kp-fetch title="Alice Fetches KeyPackages for Bob's Clients" }
@@ -264,12 +269,12 @@ ClientA1       ServerA         ServerB         ClientB*
   |<~~~~~~~~~~~~~~|               |               |
   |               |               |               |
 
-ClientA1: Prepare Commit over AppSync(+bob@bravo.com), Add*
+ClientA1: Prepare Commit over AppSync(+bob@b.example), Add*
 ClientA1->ServerA: [[ Commit, Welcome, GroupInfo?, RatchetTree? ]]
 ServerA: Verify that AppSync, Adds are allowed by policy
 ServerA: Identifies Welcome domains based on KP hash in Welcome
-ServerA->ServerB: POST /notify/clubhouse@alpha.com Intro{ Welcome, RatchetTree? }
-ServerB: Recognizes that Welcome is adding Bob to room clubhouse@alpha.com
+ServerA->ServerB: POST /notify/clubhouse@a.example Intro{ Welcome, RatchetTree? }
+ServerB: Recognizes that Welcome is adding Bob to room clubhouse@a.example
 ServerB->ClientB*: [[ Welcome, RatchetTree? ]]
 ~~~
 {: #fig-ab-add title="Alice Adds Bob to the Room and Bob's Clients to the MLS Group" }
@@ -299,13 +304,13 @@ ClientB1       ServerB         ServerA         ServerC         ClientC*
   |               |               |               |               |
 
 ClientC*->ServerC: [[ Store KeyPackages ]]
-ClientB1->ServerB: [[ request KPs for bob@bravo.com ]]
+ClientB1->ServerB: [[ request KPs for bob@b.example ]]
 ServerB->ServerA: POST /keyMaterial KeyMaterialRequest
 ServerA->ServerC: POST /keyMaterial KeyMaterialRequest
 ServerB: Verify that Bob is authorized to fetch KeyPackages
 ServerB: Mark returned KPs as reserved for Bob’s use
 ServerC->ServerA: 200 OK KeyMaterialResponse
-ServerA: Remember that these KPs go to bravo.com
+ServerA: Remember that these KPs go to b.example
 ServerA->ServerB: 200 OK KeyMaterialResponse
 ServerB->ClientB1: [[ KPs ]]
 ~~~
@@ -331,15 +336,15 @@ ClientB1       ServerB         ServerA         ServerC         ClientC*  ClientB
   |               |               |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>|
   |               |               |               |               |         |         |
 
-ClientB1: Prepare Commit over AppSync(+cathy@charlie.com), Add*
+ClientB1: Prepare Commit over AppSync(+cathy@c.example), Add*
 ClientB1->ServerB: [[ Commit, Welcome, GroupInfo?, RatchetTree? ]]
-ServerB->ServerA: POST /update/clubhouse@alpha.com CommitBundle
+ServerB->ServerA: POST /update/clubhouse@a.example CommitBundle
 ServerA: Verify that Adds are allowed by policy
 ServerA->ServerB: 200 OK
-ServerA->ServerC: POST /notify/clubhouse@alpha.com Intro{ Welcome, RatchetTree? }
-ServerC: Recognizes that Welcome is adding Cathy to clubhouse@alpha.com
+ServerA->ServerC: POST /notify/clubhouse@a.example Intro{ Welcome, RatchetTree? }
+ServerC: Recognizes that Welcome is adding Cathy to clubhouse@a.example
 ServerC->ClientC*: [[ Welcome, RatchetTree? ]]
-ServerA->ServerB: POST /notify/clubhouse@alpha.com Commit
+ServerA->ServerB: POST /notify/clubhouse@a.example Commit
 ServerB->ClientB*: [[ Commit ]]
 ServerA->ClientA*: [[ Commit ]]
 ~~~
@@ -374,10 +379,10 @@ ClientC1       ServerC         ServerA         ServerB         ClientB*  ClientC
   |               |               |               |               |         |         |
 
 ClientC1->ServerC: [[ MLSMessage(PrivateMessage) ]]
-ServerC->ServerA: POST /message/clubhouse@alpha.com MLSMessage(PrivateMessage)
+ServerC->ServerA: POST /message/clubhouse@a.example MLSMessage(PrivateMessage)
 ServerA: Verifies that message is allowed
-ServerA->ServerC: POST /notify/clubhouse@alpha.com Message{ MLSMessage(PrivateMessage) }
-ServerA->ServerB: POST /notify/clubhouse@alpha.com Message{ MLSMessage(PrivateMessage) }
+ServerA->ServerC: POST /notify/clubhouse@a.example Message{ MLSMessage(PrivateMessage) }
+ServerA->ServerB: POST /notify/clubhouse@a.example Message{ MLSMessage(PrivateMessage) }
 ServerA->ClientA*: [[ MLSMessage(PrivateMessage) ]]
 ServerB->ClientB*: [[ MLSMessage(PrivateMessage) ]]
 ServerC->ClientC*: [[ MLSMessage(PrivateMessage) ]]
@@ -434,32 +439,69 @@ ClientB1       ServerB         ServerA         ServerC         ClientC1
   |               |<--------------|-------------->|               |
   |               |               |               |               |
 
-ClientB1: Prepare Remove*, AppSync(-bob@bravo.com)
+ClientB1: Prepare Remove*, AppSync(-bob@b.example)
 ClientB1->ServerB: [[ Remove*, AppSync ]]
-ServerB->ServerA: POST /update/clubhouse@alpha.com Remove*, AppSync
+ServerB->ServerA: POST /update/clubhouse@a.example Remove*, AppSync
 ServerA: Verify that Removes, AppSync are allowed by policy; cache
 ServerA->ServerB: 200 OK
 ClientC1->ServerC: [[ Commit, Welcome, GroupInfo?, RatchetTree? ]]
-ServerC->ServerA: POST /update/clubhouse@alpha.com CommitBundle
+ServerC->ServerA: POST /update/clubhouse@a.example CommitBundle
 ServerA: Check whether Commit includes queued proposals; reject
 ServerA->ServerC: 401 Unauthorized; Remove*, AppSync
 ServerC->ClientC1: Remove*, AppSync
 ClientC1: Prepare Commit over Remove*, AppSync, in addition to any others
 ClientC1->ServerC: [[ Commit, Welcome, GroupInfo?, RatchetTree? ]]
-ServerC->ServerA: POST /update/clubhouse@alpha.com CommitBundle
+ServerC->ServerA: POST /update/clubhouse@a.example CommitBundle
 ServerA: Check whether Commit includes queued proposals; accept
 ServerA->ServerC: 200 OK
-ServerA->ServerB: POST /notify/clubhouse@alpha.com Commit
-ServerA->ServerC: POST /notify/clubhouse@alpha.com Commit
+ServerA->ServerB: POST /notify/clubhouse@a.example Commit
+ServerA->ServerC: POST /notify/clubhouse@a.example Commit
 ~~~
 {: #fig-b-leave title="Bob Leaves the Room" }
 
+# Identifiers
+
+Four types of entity need to be identified in the MIMI protocol:
+
+1. Messaging providers
+2. Users
+3. Rooms
+4. MLS groups (in the MLS group ID field)
+
+Messaging providers are identified by domain name.  The remaining identifier
+types are domain-scoped, where the domain represents the messaging provider
+hosting a user or room.  MLS groups use the same identifier as the room to which
+they are attached.
+
+There are several options for the precise syntax for these identifiers, as
+discussed in {{?I-D.mahy-mimi-identity}}.  For purposes of this document, we use
+the following notional syntax:
+
+* Messaging providers: `a.example`
+* Users: `alice@a.example`
+* Rooms: `clubhouse@a.example`
+* MLS groups: `clubhouse@a.example`
+
 # Transport layer
 
-* Server for user identified by domain half of identifier
-* HTTPS over mutually-authenticated TLS
-* Transport framing needs to identify intended src/dst domains
-* TLS certificates need to authenticate src/dst domains
+MIMI servers communicate using HTTPS.  The HTTP request MUST identify the
+source and target providers for the request, in the following way:
+
+* The target provider is indicated using a Host header {{!RFC9110}.  If the
+  provider is using a non-standard port, then the port component of the Host
+  header is ignored.
+* The source provider is indicated using a From header {{!RFC9110}.  The
+  `mailbox` production in the From header MUST use the `addr-spec` variant, and
+  the `local-part` of the address MUST contain the fixed string `mimi`.  Thus,
+  the content of the From header will be `mimi@a.example`, where `a.example` is
+  the domain name of the source provider.
+
+The TLS connection underlying the HTTPS connection MUST be mutually
+authenticated.  The certificates presented in the TLS handshake MUST
+authenticate the source and target provider domains, according to {{!RFC6125}}.
+
+The bodies of HTTP requests and responses are defined by the individual
+endpoints defined in {{application-layer}}.
 
 # E2E Security Layer
 
@@ -471,29 +513,21 @@ ServerA->ServerC: POST /notify/clubhouse@alpha.com Commit
 
 # Application Layer
 
-## Room State
+[[ TODO introductory material ]]
+
+## Server State
 
 [[ Only room state right now is a list of participant IDs, MLS group ID ]]
 [[ Hub and followers track KP hashes for Welcome routing ]]
 
-## Application Endpoints
+## Directory
 
-[[ keyMaterial / notify / update / message ]]
-[[ Discovery from domain via .well-known ]]
+Like the ACME protocol {{?RFC8555}}, the MIMI protocol uses a directory document
+to convey the HTTPS URLs used to reach certain endpoints (as opposed to hard
+coding the endpoints).
 
-### Fetching Key Material for a User
-### Updating Room State
-### Notifying Followers of Room Events
-### Sending Messages
-
-
-# Definition of Primitives
-
-## MIMI URL directory
-
-Like the ACME protocol {{?RFC8555}}, the MIMI protocol uses a directory document to convey the HTTPS URLs used to reach certain endpoints (as opposed to hard coding the endpoints).
-
-The directory URL is discovered using the `mimi-protocol-directory` well-known URI. The response is a JSON document with URIs for each type of endpoint.
+The directory URL is discovered using the `mimi-protocol-directory` well-known
+URI. The response is a JSON document with URIs for each type of endpoint.
 
 ~~~
 GET /.well-known/mimi-protocol-directory
@@ -515,36 +549,7 @@ GET /.well-known/mimi-protocol-directory
 }
 ~~~
 
-## Obtain consent
-
-Alice can request consent for Bob in the context of a room, or in general. Bob can grant or refuse consent to Alice in the context of a room or in general.
-
-~~~
-POST /requestConsent/{targetDomain}
-POST /updateConsent/{requesterDomain}
-
-enum {
-  cancel(0),
-  request(1),
-  grant(2),
-  revoke(3),
-  (255)
-} ConsentOperation;
-
-struct {
-  ConsentOperation consentOperation;
-  IdentifierUri requesterUser;
-  IdentifierUri targetUser;
-  optional<RoomId> roomId;
-  select (consentOperation) {
-    case grant:
-      KeyPackage clientKeyPackages<V>;
-  };
-} ConsentEntry;
-~~~
-
-
-## Claim keys
+## Fetch Key Material
 
 This action attempts to claim initial keying material for all the clients
 of a single user at a specific provider. The keying material may not be
@@ -596,15 +601,15 @@ struct {
 } KeyMaterialRequest;
 ~~~
 
-The response contains a user status code that
-indicates keying material was returned for all the user's clients (`success`),
-that keying material was returned for some of their clients (`partialSuccess`),
-or a specific user code indicating failure. If the user code is success or
-partialSuccess, each client is enumerated in the response. Then for each client
-with a *client* success code, the structure includes initial keying material (a
-KeyPackage for MLS 1.0). If the client's code is `nothingCompatible`, the
-client's capabilities are optionally included (The client's capabilities could
-be omitted for privacy reasons.)
+The response contains a user status code that indicates keying material was
+returned for all the user's clients (`success`), that keying material was
+returned for some of their clients (`partialSuccess`), or a specific user code
+indicating failure. If the user code is success or partialSuccess, each client
+is enumerated in the response. Then for each client with a *client* success
+code, the structure includes initial keying material (a KeyPackage for MLS 1.0).
+If the client's code is `nothingCompatible`, the client's capabilities are
+optionally included (The client's capabilities could be omitted for privacy
+reasons.)
 
 If the *user* code is `noCompatibleMaterial`, the provider MAY populate the
 `clients` list. For any other user code, the provider MUST NOT populate the
@@ -669,7 +674,7 @@ can be deleted after a Welcome message is forwarded or after the KeyPackage
 `leaf_node.lifetime.not_after` time has passed.
 
 
-## Change room policy/participation
+## Update Room State
 
 Adds, removes, and policy changes to the room are all forms of updating the room
 state. They are accomplished using the update transaction which is used for
@@ -785,7 +790,7 @@ struct {
 } UpdateRoomResponse
 ~~~
 
-## Submit provisional message
+## Submit a Message
 
 ~~~
 POST /submitMessage/{roomId}
@@ -800,7 +805,7 @@ The response merely indicates if the message was accepted by the hub provider.
 messages and ephemeral applications messages (for example "is typing"
 notifications), which do not need to be queued at the target provider.
 
-## Fan out messages
+## Notify Servers of Room Events
 
 If the hub provider accepts an application or handshake message (proposal or
 commit) message, it forward that message to all other providers with active
@@ -838,62 +843,6 @@ or Proposal), or Welcome. In the case of a Welcome message, a
 
 **NOTE:** Correctly fanning out Welcome messages relies on the hub and target
 providers storing the `KeyPackageRef` of claimed KeyPackages.
-
-## Claim end-to-end crypto group key information
-
-For Bob's new client to join the MLS group and therefore fully participate
-in the room with Alice, Bob needs to fetch the MLS GroupInfo (or analogous).
-
-~~~
-POST /groupInfo/{roomId}
-~~~
-
-In the case of MLS 1.0, Bob provides a credential proving his client's
-real or pseudonymous identity (for permission to join the group).
-
-~~~ tls
-
-struct {
-  select (protocol) {
-    case mls10:
-      opaque roomId<V>;
-      SignaturePublicKey requestingSignatureKey;
-      Credential requestingCredential;
-  };
-} GroupInfoRequestTBS;
-
-struct {
-  select (protocol) {
-    case mls10:
-      /* SignWithLabel(., "GroupInfoRequestTBS", GroupInfoRequestTBS) */
-      opaque signature<V>;
-      opaque roomId<V>;
-      SignaturePublicKey requestingSignatureKey;
-      Credential requestingCredential;
-  };
-} GroupInfoRequest;
-
-~~~
-
-The response body contains the GroupInfo and a way to get the ratchet_tree.
-
-~~~ tls
-struct {
-  GroupInfoCode status;
-  select (protocol) {
-    case mls10:
-      GroupInfo groupInfo;   /* without embedded ratchet_tree */
-      RatchetTreeOption ratchetTreeOption;
-  };
-} GroupInfoResponse;
-~~~
-
-**ISSUE**: What security properties are needed to protect a
-GroupInfo object in the MIMI context are still under discussion. It is
-possible that the requester only needs to prove possession of their private
-key. The GroupInfo in another context might be sufficiently sensitive that
-it should be encrypted from the end client to the hub provider (unreadable
-by the local provider).
 
 # Use of MLS DS/AS
 
