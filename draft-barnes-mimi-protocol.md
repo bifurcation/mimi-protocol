@@ -840,42 +840,22 @@ out of scope
 
 Like the ACME protocol {{?RFC8555}}, the MIMI protocol uses a directory document to convey the HTTPS URLs used to reach certain endpoints (as opposed to hard coding the endpoints).
 
-The directory URL is discovered using the `mimi-protocol-directory` well-known URI.
+The directory URL is discovered using the `mimi-protocol-directory` well-known URI. The response is a JSON document with URIs for each type of endpoint.
 
 ~~~
 GET /.well-known/mimi-protocol-directory
 ~~~
 
 ~~~
-enum {
-  get(1),
-  post(2),
-  (255)
-} HttpMethod;
-
-enum {
-  requestConsent(1),
-  updateConsent(2),
-  claimKeyMaterial(3),
-  updateRoom(4),
-  provisionalMessage(5),
-  fanoutMessage(6),
-  claimGroupInfo(7),
-  downloadFile(8),
-  reportAbuse(9),
-  identifierQuery(10),
-  (255)
-} MimiPrimitive;
-
-struct {
-  MimiPrimitive primitive;
-  HttpMethod method;
-  HttpsUri uri;
-} MimiDirectoryEntry;
-
-struct {
-  MimiDirectoryEntry directory<V>;
-} MimiDirectory;
+{
+"keyMaterial": "https://mimi.example.com/v1/keyMaterial/{targetUser}",
+"updateRoom": "https://mimi.example.com/v1/updateRoom/{roomId}",
+"notify": "https://mimi.example.com/v1/notify/{roomId}",
+"submitMessage": "https://mimi.example.com/v1/submitMessage/{roomId}",
+"groupInfo": "https://mimi.example.com/v1/groupInfo/{roomId}",
+"requestConsent": "https://mimi.example.com/v1/requestConsent/{targetUser}",
+"updateConsent": "https://mimi.example.com/v1/updateConsent/{requesterUser}"
+}
 ~~~
 
 ## Obtain consent
@@ -896,8 +876,8 @@ enum {
 
 struct {
   ConsentOperation consentOperation;
-  IdentifierUri requesterUri;
-  IdentifierUri targetUri;
+  IdentifierUri requesterUser;
+  IdentifierUri targetUser;
   optional<RoomId> roomId;
   select(consentOperation) {
       case grant:
@@ -1163,7 +1143,7 @@ The hub provider also fans out any messages which originate from itself (ex: MLS
 The hub can include multiple concatenated `FanoutMessage` objects relevant to the same room.
 
 ~~~
-POST /fanout/{roomId}
+POST /notify/{roomId}
 ~~~
 
 ~~~ tls
@@ -1280,6 +1260,9 @@ The response code only indicates if the abuse report was accepted, not if any sp
 
 
 ## Find internal address
+
+This is a request to find the internal identifier for a user scoped within a
+specific provider.
 
 ~~~
 GET /identifierQuery/{domain}
