@@ -1747,13 +1747,12 @@ state to remove the removed user from the room's participant list.<a href="#sect
 of their devices from the MLS group.  Instead, the leave happens in three steps:<a href="#section-3.5-2" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-3.5-3">
 <li id="section-3.5-3.1">
-            <p id="section-3.5-3.1.1">The leaving client constructs a Commit removing all of the user's other
-devices, a Remove proposal for itself, and an AppSync proposal that removes
+            <p id="section-3.5-3.1.1">The leaving client constructs MLS Remove proposals for all of the user's
+devices (including the leaving client), and an AppSync proposal that removes
 its user from the participant list.<a href="#section-3.5-3.1.1" class="pilcrow">¶</a></p>
 </li>
           <li id="section-3.5-3.2">
-            <p id="section-3.5-3.2.1">The leaving client sends this Commit and proposals to the hub.  The hub
-distributes the Commit to the room and caches the proposals.<a href="#section-3.5-3.2.1" class="pilcrow">¶</a></p>
+            <p id="section-3.5-3.2.1">The leaving client sends this proposals to the hub.  The hub caches the proposals.<a href="#section-3.5-3.2.1" class="pilcrow">¶</a></p>
 </li>
           <li id="section-3.5-3.3">
             <p id="section-3.5-3.3.1">The next time a client attempts to commit, the hub requires the client to
@@ -1768,24 +1767,22 @@ possible.<a href="#section-3.5-4" class="pilcrow">¶</a></p>
 <pre>
 ClientB1       ServerB         ServerA         ServerC         ClientC1
   |               |               |               |               |
-  | Commit, Prop+ |               |               |               |
+  | Proposals     |               |               |               |
   |~~~~~~~~~~~~~~&gt;| /update       |               |               |
   |               |--------------&gt;|               |               |
   |               |        200 OK |               |               |
   |               |&lt;--------------|               |               |
   |      Accepted |               |               |               |
   |&lt;~~~~~~~~~~~~~~|               |               |               |
-  |               |       /notify | /notify       |               |
-  |               |&lt;--------------|--------------&gt;|               |
   |               |               |               |        Commit |
   |               |               |               |&lt;~~~~~~~~~~~~~~|
   |               |               |       /update |               |
   |               |               |&lt;~~~~~~~~~~~~~~|               |
-  |               |               | 401 Prop+     |               |
+  |               |               | 401 Proposals |               |
   |               |               |~~~~~~~~~~~~~~&gt;|               |
-  |               |               |               | Reject(Prop+) |
+  |               |               |               | Reject(Props) |
   |               |               |               |~~~~~~~~~~~~~~&gt;|
-  |               |               |               | Commit(Prop+) |
+  |               |               |               | Commit(Props) |
   |               |               |               |&lt;~~~~~~~~~~~~~~|
   |               |               |       /update |               |
   |               |               |&lt;~~~~~~~~~~~~~~|               |
@@ -1797,16 +1794,23 @@ ClientB1       ServerB         ServerA         ServerC         ClientC1
   |               |&lt;--------------|--------------&gt;|               |
   |               |               |               |               |
 
-ClientB1: Prepare Commit over Remove*, Proposal for Remove(self), AppSync(-bob@bravo.com)
-ClientB1-&gt;ServerB: [[ Commit, Welcome, GroupInfo?, RatchetTree? ]]
-ServerB-&gt;ServerA: POST /update/clubhouse@alpha.com CommitBundle + Proposals
-ServerA: Verify that Removes, AppSync are allowed by policy
+ClientB1: Prepare Remove*, AppSync(-bob@bravo.com)
+ClientB1-&gt;ServerB: [[ Remove*, AppSync ]]
+ServerB-&gt;ServerA: POST /update/clubhouse@alpha.com Remove*, AppSync
+ServerA: Verify that Removes, AppSync are allowed by policy; cache
 ServerA-&gt;ServerB: 200 OK
+ClientC1-&gt;ServerC: [[ Commit, Welcome, GroupInfo?, RatchetTree? ]]
+ServerC-&gt;ServerA: POST /update/clubhouse@alpha.com CommitBundle
+ServerA: Check whether Commit includes queued proposals; reject
+ServerA-&gt;ServerC: 401 Unauthorized; Remove*, AppSync
+ServerC-&gt;ClientC1: Remove*, AppSync
+ClientC1: Prepare Commit over Remove*, AppSync, in addition to any others
+ClientC1-&gt;ServerC: [[ Commit, Welcome, GroupInfo?, RatchetTree? ]]
+ServerC-&gt;ServerA: POST /update/clubhouse@alpha.com CommitBundle
+ServerA: Check whether Commit includes queued proposals; accept
+ServerA-&gt;ServerC: 200 OK
 ServerA-&gt;ServerB: POST /notify/clubhouse@alpha.com Commit
 ServerA-&gt;ServerC: POST /notify/clubhouse@alpha.com Commit
-ServerA-&gt;ClientA*: [[ Commit ]]
-ServerB-&gt;ClientB*: [[ Commit ]]
-ServerC-&gt;ClientC*: [[ Commit ]]
 </pre>
 </div>
 <figcaption><a href="#figure-7" class="selfRef">Figure 7</a>:
