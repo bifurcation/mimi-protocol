@@ -5,7 +5,7 @@
 More Instant Messaging Interoperability                     R. L. Barnes
 Internet-Draft                                                     Cisco
 Intended status: Informational                                M. Hodgson
-Expires: 13 July 2024                   The Matrix.org Foundation C.I.C.
+Expires: 14 July 2024                   The Matrix.org Foundation C.I.C.
                                                               K. Kohbrok
                                                              Phoenix R&D
                                                                  R. Mahy
@@ -14,7 +14,7 @@ Expires: 13 July 2024                   The Matrix.org Foundation C.I.C.
                                         The Matrix.org Foundation C.I.C.
                                                                R. Robert
                                                              Phoenix R&D
-                                                         10 January 2024
+                                                         11 January 2024
 
 
          More Instant Messaging Interoperability: The Protocol
@@ -62,7 +62,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 13 July 2024.
+   This Internet-Draft will expire on 14 July 2024.
 
 Copyright Notice
 
@@ -83,54 +83,59 @@ Table of Contents
    1.  Introduction
    2.  Conventions and Definitions
    3.  Protocol Overview
-     3.1.  Dramatis Personae
+     3.1.  Alice Creates a Room
+     3.2.  Alice adds Bob to the Room
+     3.3.  Bob adds Cathy to the Room
+     3.4.  Cathy Sends a Message
+     3.5.  Bob Leaves the Room
    4.  Transport layer
    5.  E2E Security Layer
    6.  Application Layer
      6.1.  Room State
      6.2.  Application Endpoints
        6.2.1.  Fetching Key Material for a User
-   7.  Consent Sketch
-   8.  HEDGEDOC CONTENT BELOW THIS LINE
-   9.  Operational Model
-   10. ABCs of the Protocol
-     10.1.  Dramatis Personae
-     10.2.  Alice creates a room
-     10.3.  Alice adds Bob
-       10.3.1.  Alice gets initial keying material for Bob
-       10.3.2.  Alice adds Bob to the participant list and MLS group
-       10.3.3.  Alice and Bob exchange messages
-     10.4.  Alice makes Bob a room administrator
-     10.5.  Bob leaves the room
-     10.6.  Cathy removes Doug
-     10.7.  Cathy gets a new client
-     10.8.  Consent
-     10.9.  Other ways to join
-       10.9.1.  Joining with an join URL / code
-       10.9.2.  Joining an open room
-       10.9.3.  Knocks
-       10.9.4.  Invites
-     10.10. Reporting abuse/spam
-     10.11. Alice sends an attachment which Cathy downloads
-     10.12. Getting the internal identitifier for a user
-     10.13. Moderation
-   11. Definition of Primitives
-     11.1.  MIMI URL directory
-     11.2.  Obtain consent
-     11.3.  Claim keys
-     11.4.  Change room policy/participation
-     11.5.  Send provisional message
-     11.6.  Fan out messages
-     11.7.  Claim end-to-end crypto group key information
-     11.8.  Download files
-     11.9.  Report abuse
-     11.10. Find internal address
-   12. Use of MLS DS/AS
-   13. Security Considerations
-   14. IANA Considerations
-   15. References
-     15.1.  Normative References
-     15.2.  Informative References
+   7.  MLS ApplicationSync Proposal
+   8.  Consent Sketch
+   9.  HEDGEDOC CONTENT BELOW THIS LINE
+   10. Operational Model
+   11. ABCs of the Protocol
+     11.1.  Dramatis Personae
+     11.2.  Alice creates a room
+     11.3.  Alice adds Bob
+       11.3.1.  Alice gets initial keying material for Bob
+       11.3.2.  Alice adds Bob to the participant list and MLS group
+       11.3.3.  Alice and Bob exchange messages
+     11.4.  Alice makes Bob a room administrator
+     11.5.  Bob leaves the room
+     11.6.  Cathy removes Doug
+     11.7.  Cathy gets a new client
+     11.8.  Consent
+     11.9.  Other ways to join
+       11.9.1.  Joining with an join URL / code
+       11.9.2.  Joining an open room
+       11.9.3.  Knocks
+       11.9.4.  Invites
+     11.10. Reporting abuse/spam
+     11.11. Alice sends an attachment which Cathy downloads
+     11.12. Getting the internal identitifier for a user
+     11.13. Moderation
+   12. Definition of Primitives
+     12.1.  MIMI URL directory
+     12.2.  Obtain consent
+     12.3.  Claim keys
+     12.4.  Change room policy/participation
+     12.5.  Send provisional message
+     12.6.  Fan out messages
+     12.7.  Claim end-to-end crypto group key information
+     12.8.  Download files
+     12.9.  Report abuse
+     12.10. Find internal address
+   13. Use of MLS DS/AS
+   14. Security Considerations
+   15. IANA Considerations
+   16. References
+     16.1.  Normative References
+     16.2.  Informative References
    Acknowledgments
    Authors' Addresses
 
@@ -184,12 +189,330 @@ Table of Contents
 
 3.  Protocol Overview
 
-   [[ Layering: State control; security; transport ]]
+   As shown in Figure 1, the overall MIMI protocol is built out of three
+   layers:
 
-3.1.  Dramatis Personae
+   1.  An application layer that enables messaging functionality
 
-   ## Alice Creates a Room ## Alice adds Bob to the Room ## Bob adds
-   Charlie to the Room ## Cathy sends a Message
+   2.  A security layer that provides end-to-end security guarantees:
+
+       *  Confidentiality for messages
+
+       *  Authentication of actors making changes to rooms
+
+       *  Agreement on room state across the clients involved in a room
+
+   3.  A transport layer that provides secure delivery of protocol
+       objects between servers.
+
+   The MIMI transport is based on HTTPS over mutually-authenticated TLS.
+   MIMI uses MLS [RFC9420] for end-to-end security, using the MLS
+   ApplicationSecuritySync proposal type to syncronize room state across
+   the clients involved in a room.
+
+   +------------------------+
+   |       Application      |
+   |       +----------------+
+   |       |  E2E Security  |
+   +-------+----------------+
+   |        Transport       |
+   +------------------------+
+
+                      Figure 1: MIMI protocol layering
+
+   The remainder of this section walks through a basic scenario that
+   illustrates how a room works in the MIMI protocol.  The scenario
+   involves the following actors:
+
+   *  Service providers alpha.com, bravo.com, and charlie.com
+      represented by servers ServerA, ServerB, and ServerC respectively
+
+   *  Users Alice (alice@alpha.com), Bob (bob@bravo.com) and Cathy
+      (`cathy@charlie.com) of the respective service providers
+
+   *  Clients ClientA1, ClientA2, ClientB1, etc. belonging to these
+      users
+
+   *  A room clubhouse@alpha.com where the three users interact
+
+   As noted in [I-D.mimi-arch], the MIMI protocol only defines
+   interactions between service providers' servers.  Interactions
+   between between clients and servers within a service provider domain
+   are shown here for completeness, but surrounded by [[ double brackets
+   ]].
+
+3.1.  Alice Creates a Room
+
+   The first step in the lifetime of a MIMI room is its creation on the
+   hub server.  This operation is local to the service provider, and
+   does not entail any MIMI protocol operations.  However, it must
+   establish the initial state of the room, which is then the basis for
+   protocol operations related to the room.
+
+   Here, we assume that Alice uses ClientA1 to create a room with the
+   following properties:
+
+   *  Identifier: clubhouse@alpha.com
+
+   *  Participants: [alice@alpha.com]
+
+   ClientA1 also creates an MLS group with group ID clubhouse@alpha.com
+   and ensures via provider-local operations that Alice's other clients
+   are members of this MLS group.
+
+3.2.  Alice adds Bob to the Room
+
+   Adding Bob to the room entails operations at two levels.  First,
+   Bob's user identity must be added to the room's participant list.
+   Second, Bob's clients must be added to the room's MLS group.
+
+   The process of adding Bob to the room thus begins by Alice fetching
+   key material for Bob's clients.  Alice then updates the room by
+   sending an MLS Commit over the following proposals:
+
+   *  An ApplicationSync proposal updating the room state by adding Bob
+      to the participant list
+
+   *  Add proposals for Bob's clients
+
+   The MIMI protocol interactions are between Alice's server ServerA and
+   Bob's server ServerB.  ServerB stores KeyPackages on behalf of Bob's
+   devices.  ServerA performs the key material fetch on Alice's behalf,
+   and delivers the resulting KeyPackages to Alice's clients.  Both
+   ServerA and ServerB remember the sources of the KeyPackages they
+   handle, so that they can route a Welcome mesasage for those
+   KeyPackages to the proper recipients -- ServerA to ServerB, and
+   ServerB to Bob's clients.
+
+   [[ NOTE: In the full protocol, it will be necessary to have consent
+   and access control on these operations.  We have elided that step
+   here in the interest of simplicity.  Some initial thoughts are in
+   Section 11.8 ]]
+
+   ClientA1       ServerA         ServerB         ClientB*
+     |               |               |               |
+     |               |               |     Store KPs |
+     |               |               |<~~~~~~~~~~~~~~|
+     |               |               |<~~~~~~~~~~~~~~|
+     | Request KPs   |               |               |
+     |~~~~~~~~~~~~~~>| /keyMaterial  |               |
+     |               |-------------->|               |
+     |               |        200 OK |               |
+     |           KPs |<--------------|               |
+     |<~~~~~~~~~~~~~~|               |               |
+     |               |               |               |
+
+   ClientB*->ServerB: [[ Store KeyPackages ]]
+   ClientA1->ServerA: [[ request KPs for bob@bravo.com ]]
+   ServerA->ServerB: POST /keyMaterial KeyMaterialRequest
+   ServerB: Verify that Alice is authorized to fetch KeyPackages
+   ServerB: Mark returned KPs as reserved for Alice’s use
+   ServerB->ServerA: 200 OK KeyMaterialResponse
+   ServerA: Remember that these KPs go to bravo.com
+   ServerA->ClientA1: [[ KPs ]]
+
+           Figure 2: Alice Fetches KeyPackages for Bob's Clients
+
+ClientA1       ServerA         ServerB         ClientB*
+  |               |               |               |
+  | Commit, etc.  |               |               |
+  |~~~~~~~~~~~~~~>| /notify       |               |
+  |               |-------------->| Welcome, Tree |
+  |               |               |~~~~~~~~~~~~~~>|
+  |               |               |~~~~~~~~~~~~~~>|
+  |               |        200 OK |               |
+  |      Accepted |<--------------|               |
+  |<~~~~~~~~~~~~~~|               |               |
+  |               |               |               |
+
+ClientA1: Prepare Commit over AppSync(+bob@bravo.com), Add*
+ClientA1->ServerA: [[ Commit, Welcome, GroupInfo?, RatchetTree? ]]
+ServerA: Verify that AppSync, Adds are allowed by policy
+ServerA: Identifies Welcome domains based on KP hash in Welcome
+ServerA->ServerB: POST /notify/clubhouse@alpha.com Intro{ Welcome, RatchetTree? }
+ServerB: Recognizes that Welcome is adding Bob to room clubhouse@alpha.com
+ServerB->ClientB*: [[ Welcome, RatchetTree? ]]
+
+  Figure 3: Alice Adds Bob to the Room and Bob's Clients to the MLS
+                                Group
+
+3.3.  Bob adds Cathy to the Room
+
+   The process of adding Bob was a bit abbreviated because Alice is a
+   user of the hub service provider.  When Bob adds Cathy, we see the
+   full process, involving the same two steps (KP fetch followed by
+   add), but this time indirected via the hub server ServerA.  Also, now
+   that there are users on ServerB involved in the room, the hub ServerA
+   will have to distribute the Commit adding Cathy and Cathy's clients
+   to ServerB as well as forwarding the Welcome to ServerC.
+
+ ClientB1       ServerB         ServerA         ServerC         ClientC*
+   |               |               |               |               |
+   |               |               |               |     Store KPs |
+   |               |               |               |<~~~~~~~~~~~~~~|
+   |               |               |               |<~~~~~~~~~~~~~~|
+   | Request KPs   |               |               |               |
+   |~~~~~~~~~~~~~~>| /keyMaterial  | /keyMaterial  |               |
+   |               |-------------->|-------------->|               |
+   |               |        200 OK |        200 OK |               |
+   |           KPs |<--------------|<--------------|               |
+   |<~~~~~~~~~~~~~~|               |               |               |
+   |               |               |               |               |
+
+ ClientC*->ServerC: [[ Store KeyPackages ]]
+ ClientB1->ServerB: [[ request KPs for bob@bravo.com ]]
+ ServerB->ServerA: POST /keyMaterial KeyMaterialRequest
+ ServerA->ServerC: POST /keyMaterial KeyMaterialRequest
+ ServerB: Verify that Bob is authorized to fetch KeyPackages
+ ServerB: Mark returned KPs as reserved for Bob’s use
+ ServerC->ServerA: 200 OK KeyMaterialResponse
+ ServerA: Remember that these KPs go to bravo.com
+ ServerA->ServerB: 200 OK KeyMaterialResponse
+ ServerB->ClientB1: [[ KPs ]]
+
+         Figure 4: Bob Fetches KeyPackages for Cathy's Clients
+
+ClientB1       ServerB         ServerA         ServerC         ClientC*  ClientB*  ClientA*
+  |               |               |               |               |         |         |
+  | Commit, etc.  |               |               |               |         |         |
+  |~~~~~~~~~~~~~~>| /update       |               |               |         |         |
+  |               |-------------->|               |               |         |         |
+  |               |        200 OK |               |               |         |         |
+  |               |<--------------|               |               |         |         |
+  |      Accepted |               | /notify       |               |         |         |
+  |<~~~~~~~~~~~~~~|               |-------------->| Welcome, Tree |         |         |
+  |               |               |               |~~~~~~~~~~~~~~>|         |         |
+  |               |               |               |~~~~~~~~~~~~~~>|         |         |
+  |               |       /notify |               |               |         |         |
+  |               |<--------------|               |               |         |         |
+  |               | Commit        |               |               |         |         |
+  |               |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>|         |
+  |               |               | Commit        |               |         |         |
+  |               |               |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>|
+  |               |               |               |               |         |         |
+
+ClientB1: Prepare Commit over AppSync(+cathy@charlie.com), Add*
+ClientB1->ServerB: [[ Commit, Welcome, GroupInfo?, RatchetTree? ]]
+ServerB->ServerA: POST /update/clubhouse@alpha.com CommitBundle
+ServerA: Verify that Adds are allowed by policy
+ServerA->ServerB: 200 OK
+ServerA->ServerC: POST /notify/clubhouse@alpha.com Intro{ Welcome, RatchetTree? }
+ServerC: Recognizes that Welcome is adding Cathy to clubhouse@alpha.com
+ServerC->ClientC*: [[ Welcome, RatchetTree? ]]
+ServerA->ServerB: POST /notify/clubhouse@alpha.com Commit
+ServerB->ClientB*: [[ Commit ]]
+ServerA->ClientA*: [[ Commit ]]
+
+   Figure 5: Bob Adds Cathy to the Room and Cathy's Clients to the
+                              MLS Group
+
+3.4.  Cathy Sends a Message
+
+   Now that Alice, Bob, and Cathy are all in the room, Cathy wants to
+   say hello to everyone.  Cathy's client encapsulates the message in an
+   MLS PrivateMessage and sends it to ServerC, who forwards it to the
+   hub ServerA on Cathy's behalf.  Assuming Cathy is allowed to speak in
+   the room, ServerA will forward Cathy's message to the other servers
+   involved in the room, who distribute it to their clients.
+
+ClientC1       ServerC         ServerA         ServerB         ClientB*  ClientC*  ClientA*
+  |               |               |               |               |         |         |
+  | Message       |               |               |               |         |         |
+  |~~~~~~~~~~~~~~>| /message      |               |               |         |         |
+  |               |-------------->|               |               |         |         |
+  |               |        200 OK |               |               |         |         |
+  |               |<--------------|               |               |         |         |
+  |      Accepted |               | /notify       |               |         |         |
+  |<~~~~~~~~~~~~~~|               |-------------->| Message       |         |         |
+  |               |               |               |~~~~~~~~~~~~~~>|         |         |
+  |               |       /notify |               |               |         |         |
+  |               |<--------------|               |               |         |         |
+  |               | Message       |               |               |         |         |
+  |               |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>|         |
+  |               |               | Message       |               |         |         |
+  |               |               |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>|
+  |               |               |               |               |         |         |
+
+ClientC1->ServerC: [[ MLSMessage(PrivateMessage) ]]
+ServerC->ServerA: POST /message/clubhouse@alpha.com MLSMessage(PrivateMessage)
+ServerA: Verifies that message is allowed
+ServerA->ServerC: POST /notify/clubhouse@alpha.com Message{ MLSMessage(PrivateMessage) }
+ServerA->ServerB: POST /notify/clubhouse@alpha.com Message{ MLSMessage(PrivateMessage) }
+ServerA->ClientA*: [[ MLSMessage(PrivateMessage) ]]
+ServerB->ClientB*: [[ MLSMessage(PrivateMessage) ]]
+ServerC->ClientC*: [[ MLSMessage(PrivateMessage) ]]
+
+             Figure 6: Cathy Sends a Message to the Room
+
+3.5.  Bob Leaves the Room
+
+   A user removing another user follows the same flow as adding the
+   user.  They user performing the removal creates an MLS commit
+   covering Remove proposals for all of the removed user's devices, and
+   an AppSync proposal updating the room state to remove the removed
+   user from the room's participant list.
+
+   Leaving is slightly more complicated because the leaving user cannot
+   remove all of their devices from the MLS group.  Instead, the leave
+   happens in three steps:
+
+   1.  The leaving client constructs a Commit removing all of the user's
+       other devices, a Remove proposal for itself, and an AppSync
+       proposal that removes its user from the participant list.
+
+   2.  The leaving client sends this Commit and proposals to the hub.
+       The hub distributes the Commit to the room and caches the
+       proposals.
+
+   3.  The next time a client attempts to commit, the hub requires the
+       client to include the cached proposals.
+
+   The hub thus guarantees the leaving client that they will be removed
+   as soon as possible.
+
+ClientB1       ServerB         ServerA         ServerC         ClientC1
+  |               |               |               |               |
+  | Commit, Prop+ |               |               |               |
+  |~~~~~~~~~~~~~~>| /update       |               |               |
+  |               |-------------->|               |               |
+  |               |        200 OK |               |               |
+  |               |<--------------|               |               |
+  |      Accepted |               |               |               |
+  |<~~~~~~~~~~~~~~|               |               |               |
+  |               |       /notify | /notify       |               |
+  |               |<--------------|-------------->|               |
+  |               |               |               |        Commit |
+  |               |               |               |<~~~~~~~~~~~~~~|
+  |               |               |       /update |               |
+  |               |               |<~~~~~~~~~~~~~~|               |
+  |               |               | 401 Prop+     |               |
+  |               |               |~~~~~~~~~~~~~~>|               |
+  |               |               |               | Reject(Prop+) |
+  |               |               |               |~~~~~~~~~~~~~~>|
+  |               |               |               | Commit(Prop+) |
+  |               |               |               |<~~~~~~~~~~~~~~|
+  |               |               |       /update |               |
+  |               |               |<~~~~~~~~~~~~~~|               |
+  |               |               | 200 OK        |               |
+  |               |               |-------------->|               |
+  |               |               |               | Accepted      |
+  |               |               |               |~~~~~~~~~~~~~~>|
+  |               |       /notify | /notify       |               |
+  |               |<--------------|-------------->|               |
+  |               |               |               |               |
+
+ClientB1: Prepare Commit over Remove*, Proposal for Remove(self), AppSync(-bob@bravo.com)
+ClientB1->ServerB: [[ Commit, Welcome, GroupInfo?, RatchetTree? ]]
+ServerB->ServerA: POST /update/clubhouse@alpha.com CommitBundle + Proposals
+ServerA: Verify that Removes, AppSync are allowed by policy
+ServerA->ServerB: 200 OK
+ServerA->ServerB: POST /notify/clubhouse@alpha.com Commit
+ServerA->ServerC: POST /notify/clubhouse@alpha.com Commit
+ServerA->ClientA*: [[ Commit ]]
+ServerB->ClientB*: [[ Commit ]]
+ServerC->ClientC*: [[ Commit ]]
+
+                    Figure 7: Bob Leaves the Room
 
 4.  Transport layer
 
@@ -230,13 +553,17 @@ Table of Contents
    ### Updating Room State ### Notifying Followers of Room Events ###
    Sending Messages
 
-7.  Consent Sketch
+7.  MLS ApplicationSync Proposal
+
+   [[ TODO: RLB ]]
+
+8.  Consent Sketch
 
    [[ Consent is important, so we include a preliminary sketch here ]]
 
-8.  HEDGEDOC CONTENT BELOW THIS LINE
+9.  HEDGEDOC CONTENT BELOW THIS LINE
 
-9.  Operational Model
+10.  Operational Model
 
    [[ RLB: This might be better to pull up into the architecture. ]]
 
@@ -289,7 +616,7 @@ Table of Contents
    /updateRoom/dxzxxDuvMOTsUD4D_YdSyQ
 
    PublicMessage{ /* MLS Commit - inside is a list of Proposals _/
-   Commit[ ParticipantListPatch{ addUsers [ [Charlie, [normal]], [Doug,
+   Commit[ AppSync{ addUsers [ [Charlie, [normal]], [Doug,
    [normal,admin]] ] updateUsers [], removeUsers [Bob] }, Add(Charlie1),
    Add(Doug1), Add(Doug2), Remove(Bob1), Remove(Bob2), Remove(Bob3) ],
    /_ MLS Welcome encrypted for Charlie1, Doug1, Doug2 _/ Welcome /_ MLS
@@ -299,8 +626,8 @@ Table of Contents
    Removing yourself ``` POST /updateRoom/dxzxxDuvMOTsUD4D_YdSyQ
 
    /* concatenated MLS Proposals (each inside a PublicMessage) */
-   ParticipantListPatch{ removeUsers [Alice] }, Remove(Alice1),
-   SelfRemove(Alice2), Remove(Alice3)
+   AppSync{ removeUsers [Alice] }, Remove(Alice1), SelfRemove(Alice2),
+   Remove(Alice3)
 
    ```
 
@@ -309,13 +636,13 @@ Table of Contents
    POST /updateRoom/dxzxxDuvMOTsUD4D_YdSyQ
 
    PublicMessage{ /* MLS Commit - inside is a list of Proposals _/
-   Commit[ ParticipantListPatch{ removeUsers [Alice] }, Remove(Alice1),
+   Commit[ AppSync{ removeUsers [Alice] }, Remove(Alice1),
    SelfRemove(Alice2), Remove(Alice3) ], /_ No MLS Welcome _/ /_ MLS
    GroupInfo if the Commit is accepted (without the ratchet_tree) _/
    GroupInfo, /_ ratchet_tree or some other representation */
    RatchetTree } ```
 
-10.  ABCs of the Protocol
+11.  ABCs of the Protocol
 
    The MIMI transport protocol is designed to allow users of instant
    messaging on different providers to participate together in group
@@ -343,7 +670,7 @@ Table of Contents
    with their respective servers, which then communicate with one
    another.
 
-10.1.  Dramatis Personae
+11.1.  Dramatis Personae
 
    *  Alice, Bob: Users
 
@@ -354,7 +681,7 @@ Table of Contents
 
    *  Room1 is a room in which the users are interacting
 
-10.2.  Alice creates a room
+11.2.  Alice creates a room
 
    We assume that someone on ProviderA (possibly Alice) has created
    Room1, that ProviderA is the _hub provider_ for the room, and that
@@ -379,9 +706,9 @@ Table of Contents
    administrator, of the room.  Alice has owner, administrator, and
    regular user roles in the room.
 
-10.3.  Alice adds Bob
+11.3.  Alice adds Bob
 
-10.3.1.  Alice gets initial keying material for Bob
+11.3.1.  Alice gets initial keying material for Bob
 
    In end-to-end encryption protocols, there is typiclly some type of
    initial ephemeral keying material which clients generate.  Clients
@@ -418,7 +745,7 @@ Table of Contents
    more in [[consent section]].  For the purpose of this simple example,
    we assume that Alice already has appropriate consent.
 
-10.3.2.  Alice adds Bob to the participant list and MLS group
+11.3.2.  Alice adds Bob to the participant list and MLS group
 
    In MIMI, the room policy consists of the base policy (which can refer
    to roles, but does not refer to specific participants), the
@@ -440,8 +767,8 @@ Table of Contents
    GroupContextExtensions proposal.
 
    Changes to the participant list are maintained by patching the
-   participation list.  In MLS this accomplished by committing a
-   ParticipantListPatch proposal (defined in this document).
+   participation list.  In MLS this accomplished by committing a AppSync
+   proposal (defined in this document).
 
    Unless the base policy document defines otherwise, an MLS client who
    makes a change to the participant list is expected to simultaneously
@@ -458,31 +785,30 @@ Table of Contents
    syntax section.
 
    If Alice wants to add Bob, her client generates an MLS commit with a
-   ParticipantListPatch proposal adding Bob as a participant and Add
-   proposals for each of Bob's clients; and an MLS Welcome message
-   including Bob's clients.  Between Alice's client and Alice's provider
-   they also must insure Alice's provider (which is the hub for this
-   room) has the GroupInfo and ratchet tree for the room if the commit
-   is accepted.  If the hub provider accepts this "commit bundle", it
-   will forward (fan out) the commit to the current members of the MLS
-   group, and forward a welcome message to any new MLS clients just
-   added to the group.
+   AppSync proposal adding Bob as a participant and Add proposals for
+   each of Bob's clients; and an MLS Welcome message including Bob's
+   clients.  Between Alice's client and Alice's provider they also must
+   insure Alice's provider (which is the hub for this room) has the
+   GroupInfo and ratchet tree for the room if the commit is accepted.
+   If the hub provider accepts this "commit bundle", it will forward
+   (fan out) the commit to the current members of the MLS group, and
+   forward a welcome message to any new MLS clients just added to the
+   group.
 
    Note that there are other ways for Bob to eventually participate in
    the room, but the method just dicsussed is the most straightforward
-   and is preferred.  Alice could commit a ParticipantListPatch just
-   adding Bob as an inactive participant, and may need to if she cannot
-   obtain KeyPackages for Bob's clients (for example, if she is waiting
-   for consent from Bob), but Alice should not expect another
-   participant, Bob, or some provider to react to Bob being added,
-   unless some specific policy arrangement is specified in the base
-   policy.
+   and is preferred.  Alice could commit a AppSync just adding Bob as an
+   inactive participant, and may need to if she cannot obtain
+   KeyPackages for Bob's clients (for example, if she is waiting for
+   consent from Bob), but Alice should not expect another participant,
+   Bob, or some provider to react to Bob being added, unless some
+   specific policy arrangement is specified in the base policy.
 
    Alice1 -> ProviderA: CommitBundle(PLP, Add*) ProviderA: Validate
    commit sequencing; PLP authz by policy; Add authz by PL ProviderA ->
    Alice1: Commit accepted
 
-10.3.3.  Alice and Bob exchange messages
+11.3.3.  Alice and Bob exchange messages
 
    Any of Alice's or Bob's clients can try to send a instant message to
    the room.  For an MLS room, Alice's or Bob's provider just sends the
@@ -500,13 +826,13 @@ Table of Contents
    ProviderA -> ProviderB: Message notification ProviderB -> Bob*:
    Message notification
 
-10.4.  Alice makes Bob a room administrator
+11.4.  Alice makes Bob a room administrator
 
    Digress to talk about room policy here...
 
    Since Alice is the owner of the room and the room policy is that
-   administrators have to Alice commits a ParticipantListPatch proposal
-   updating Bob's roles in the room to [regular_user, admin].
+   administrators have to Alice commits a AppSync proposal updating
+   Bob's roles in the room to [regular_user, admin].
 
    If the hub provider accepts the commit, it fans it out so all the
    active participants receive it.
@@ -517,10 +843,9 @@ Table of Contents
 
    Since Bob is now an admin, Bob wants to Cathy and Doug.  Bob starts
    by fetching their KeyPackages (assuming Bob already has consent from
-   Cathy and Doug).  Then Bob commits a ParticipantListPatch proposal
-   adding Cathy as both a regular user and administrator, and Doug as a
-   regular user; and Add proposals for all of Cathy's and Doug's
-   KeyPackages.
+   Cathy and Doug).  Then Bob commits a AppSync proposal adding Cathy as
+   both a regular user and administrator, and Doug as a regular user;
+   and Add proposals for all of Cathy's and Doug's KeyPackages.
 
    If the hub provider accepts the commit, it fans it out so all the
    active participants receive it, and also forwards the welcome message
@@ -548,17 +873,17 @@ Table of Contents
    ProviderA -> ProviderD: Commit ProviderB -> Bob's other clients:
    Commit ProviderC -> Cathy*: Commit ProviderD -> Doug*: Commit
 
-10.5.  Bob leaves the room
+11.5.  Bob leaves the room
 
    Removing oneself from a room deserves a special mention.  In MLS a
    client cannot send a commit which removes itself from the group.
    Instead the leaver needs to send proposals that will be committed by
    a remaining member of the group.
 
-   Bob sends a single ParticipantListPatch proposal removing himself, a
-   SelfRemove proposal for his initiating client, and Remove proposals
-   for any of his other clients.  An active participant then sends a
-   commit referencing all those proposals together in a timely fashion.
+   Bob sends a single AppSync proposal removing himself, a SelfRemove
+   proposal for his initiating client, and Remove proposals for any of
+   his other clients.  An active participant then sends a commit
+   referencing all those proposals together in a timely fashion.
 
    If the commit is accepted by the hub provider, Bob's clients all
    receive the commit message, so they are aware that they have been
@@ -572,17 +897,17 @@ Table of Contents
    ProviderA: Validate commit sequencing; PLP authz by policy; Rem authz
    by PL ProviderA: Enqueue Rem(B2), PLP ProviderA: [[ fanout Commit ]]
 
-10.6.  Cathy removes Doug
+11.6.  Cathy removes Doug
 
-   For Cathy to remove Doug, she commits a ParticipantListPatch proposal
-   removing Doug, and Remove proposals for each of Doug's clients.
-   Assuming the commit is accepted by the hub, both Doug's clients and
-   the remaining members of the group recieve the commit, but Doug's
-   clients can no longer decrypt messages sent for the group.
+   For Cathy to remove Doug, she commits a AppSync proposal removing
+   Doug, and Remove proposals for each of Doug's clients.  Assuming the
+   commit is accepted by the hub, both Doug's clients and the remaining
+   members of the group recieve the commit, but Doug's clients can no
+   longer decrypt messages sent for the group.
 
    (similar Commit flow)
 
-10.7.  Cathy gets a new client
+11.7.  Cathy gets a new client
 
    When a user is already a participant of a room, but a specific client
    is not yet a member of the corresponding MLS group, the client can
@@ -603,7 +928,7 @@ Table of Contents
    notification ProviderA -> Alice*: Commit notification ProviderB ->
    Bob*: Commit notification ProviderD -> Doug*: Commit notification
 
-10.8.  Consent
+11.8.  Consent
 
    Most instant messaging systems have some notion of how a user
    consents to be added to a room, and how they manipulate this consent.
@@ -662,37 +987,37 @@ Table of Contents
    same time as sending the consent request, Alice grants consent to Bob
    to add her to any room.
 
-10.9.  Other ways to join
+11.9.  Other ways to join
 
    [[ RWM: TBC ]]
 
-10.9.1.  Joining with an join URL / code
+11.9.1.  Joining with an join URL / code
 
-10.9.2.  Joining an open room
+11.9.2.  Joining an open room
 
-10.9.3.  Knocks
+11.9.3.  Knocks
 
-10.9.4.  Invites
+11.9.4.  Invites
 
-10.10.  Reporting abuse/spam
-
-   [[ RWM: TBC ]]
-
-10.11.  Alice sends an attachment which Cathy downloads
+11.10.  Reporting abuse/spam
 
    [[ RWM: TBC ]]
 
-10.12.  Getting the internal identitifier for a user
+11.11.  Alice sends an attachment which Cathy downloads
 
    [[ RWM: TBC ]]
 
-10.13.  Moderation
+11.12.  Getting the internal identitifier for a user
+
+   [[ RWM: TBC ]]
+
+11.13.  Moderation
 
    out of scope
 
-11.  Definition of Primitives
+12.  Definition of Primitives
 
-11.1.  MIMI URL directory
+12.1.  MIMI URL directory
 
    Like the ACME protocol [RFC8555], the MIMI protocol uses a directory
    document to convey the HTTPS URLs used to reach certain endpoints (as
@@ -733,7 +1058,7 @@ Table of Contents
      MimiDirectoryEntry directory<V>;
    } MimiDirectory;
 
-11.2.  Obtain consent
+12.2.  Obtain consent
 
    Alice can request consent for Bob in the context of a room, or in
    general.  Bob can grant or refuse consent to Alice in the context of
@@ -761,7 +1086,7 @@ Table of Contents
      }
    } ConsentEntry;
 
-11.3.  Claim keys
+12.3.  Claim keys
 
    This action attempts to claim initial keying material for all the
    clients of a single user at a specific provider.  The keying material
@@ -885,7 +1210,7 @@ Table of Contents
    after a Welcome message is forwarded or after the KeyPackage
    leaf_node.lifetime.not_after time has passed.
 
-11.4.  Change room policy/participation
+12.4.  Change room policy/participation
 
    Adds, removes, and policy changes to the room are all forms of
    updating the room state.  They are accomplished using the updateRoom
@@ -896,10 +1221,10 @@ Table of Contents
 
    In MLS 1.0, any change to the room base policy document is always
    expressed using a GroupContextExtensions proposal.  Likewise, any
-   change to the participant list is always communicated via a
-   ParticipantListPatch proposal type.  The participant list change
-   needed to add a user MUST happen either before or simultaneously with
-   the corresponding MLS operation.
+   change to the participant list is always communicated via a AppSync
+   proposal type.  The participant list change needed to add a user MUST
+   happen either before or simultaneously with the corresponding MLS
+   operation.
 
    Removing an active user from a participant list or banning an active
    participant SHOULD happen simultaneously with any MLS changes made to
@@ -940,7 +1265,7 @@ Table of Contents
        UserRoles addUsers<V>;
        UserRoles updateUsers<V>;
        IdentifierUri removeUsers<V>;
-   } ParticipantListPatch;
+   } AppSync;
 
    Each user can be added with one or more roles.  This list of roles
    can be updated.  Note that removing a user does not ban the user.  To
@@ -961,11 +1286,11 @@ Table of Contents
          };
    };
 
-   In this case Alice creates a Commit containing a ParticipantListPatch
-   proposal adding Bob@b.example, and Add proposals for all Bob's MLS
-   clients.  Alice includes the Welcome message which will be sent for
-   Bob, a GroupInfo object for the hub provider, and complete
-   ratchet_tree extension.
+   In this case Alice creates a Commit containing a AppSync proposal
+   adding Bob@b.example, and Add proposals for all Bob's MLS clients.
+   Alice includes the Welcome message which will be sent for Bob, a
+   GroupInfo object for the hub provider, and complete ratchet_tree
+   extension.
 
    enum {
      reserved(0),
@@ -1001,7 +1326,7 @@ Table of Contents
        string errorDescription;
    } UpdateRoomResponse
 
-11.5.  Send provisional message
+12.5.  Send provisional message
 
    POST /provisionalMessage/{roomId}
 
@@ -1016,7 +1341,7 @@ Table of Contents
    "is typing" notifications), which do not need to be queued at the
    target provider.
 
-11.6.  Fan out messages
+12.6.  Fan out messages
 
    If the hub provider accepts an application or handshake message
    (proposal or commit) message, it forward that message to all other
@@ -1047,7 +1372,7 @@ Table of Contents
    *NOTE:* Correctly fanning out Welcome messages relies on the hub and
    target providers storing the KeyPackageRef of claimed KeyPackages.
 
-11.7.  Claim end-to-end crypto group key information
+12.7.  Claim end-to-end crypto group key information
 
    For Bob's new client to join the MLS group and therefore fully
    participate in the room with Alice, Bob needs to fetch the MLS
@@ -1086,11 +1411,11 @@ Table of Contents
    sensitive that it should be encrypted from the end client to the hub
    provider (unreadable by the local provider).
 
-11.8.  Download files
+12.8.  Download files
 
    [[ RWM: TBC ]]
 
-11.9.  Report abuse
+12.9.  Report abuse
 
    Abuse reports are only sent to the hub provider.
 
@@ -1120,7 +1445,7 @@ Table of Contents
    The response code only indicates if the abuse report was accepted,
    not if any specific automated or human action was taken.
 
-11.10.  Find internal address
+12.10.  Find internal address
 
    GET /identifierQuery/{domain}
 
@@ -1189,7 +1514,7 @@ Table of Contents
    [I-D.mahy-mimi-identity].  Any specific conventions which are needed
    should be merged into this document.
 
-12.  Use of MLS DS/AS
+13.  Use of MLS DS/AS
 
    MLS defines an abstract Delivery Server (DS) and Authentication
    Server (AS).  This abstract functionality is split across all the MLS
@@ -1211,17 +1536,17 @@ Table of Contents
    "real" identity signature key and presenting the binding to other
    members.
 
-13.  Security Considerations
+14.  Security Considerations
 
    TODO Security
 
-14.  IANA Considerations
+15.  IANA Considerations
 
    This document has no IANA actions.
 
-15.  References
+16.  References
 
-15.1.  Normative References
+16.1.  Normative References
 
    [I-D.barnes-mimi-arch]
               Barnes, R., "An Architecture for More Instant Messaging
@@ -1229,6 +1554,9 @@ Table of Contents
               Draft, draft-barnes-mimi-arch-02, 23 October 2023,
               <https://datatracker.ietf.org/doc/html/draft-barnes-mimi-
               arch-02>.
+
+   [I-D.mimi-arch]
+              "*** BROKEN REFERENCE ***".
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
@@ -1253,7 +1581,7 @@ Table of Contents
               Security (MLS) Protocol", RFC 9420, DOI 10.17487/RFC9420,
               July 2023, <https://www.rfc-editor.org/rfc/rfc9420>.
 
-15.2.  Informative References
+16.2.  Informative References
 
    [I-D.mahy-mimi-identity]
               Mahy, R., "More Instant Messaging Interoperability (MIMI)
