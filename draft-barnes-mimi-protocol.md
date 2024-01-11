@@ -837,10 +837,10 @@ struct {
 } UpdateRoomResponse
 ~~~
 
-## Send provisional message
+## Submit provisional message
 
 ~~~
-POST /provisionalMessage/{roomId}
+POST /submitMessage/{roomId}
 ~~~
 
 If the protocol is MLS 1.0, the request body is an MLSMessage with. a WireFormat of PrivateMessage (an application message).
@@ -867,12 +867,16 @@ struct {
   MLSMessage message;
   /* the hub acceptance time (in milliseconds from the UNIX epoch) */
   uint64 timestamp;
+  select(message.wire_format) {
+    case welcome:
+      RatchetTreeOption ratchetTreeOption;
+  }
 } FanoutMessage;
 ~~~
 
 If the protocol is MLS 1.0, the request body is one or more of MLSMessage
 with wire_format one of PrivateMessage (application message), PublicMessage
-(Commit or Proposal), or Welcome.
+(Commit or Proposal), or Welcome. In the case of a Welcome message, a `RatchetTreeOption` is also included.
 
 **NOTE:** Correctly fanning out Welcome messages relies on the hub and target providers storing the `KeyPackageRef` of claimed KeyPackages.
 
