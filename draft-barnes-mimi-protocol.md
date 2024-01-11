@@ -179,7 +179,7 @@ actors:
 * Service providers `a.example`, `b.example`, and `c.example` represented by
   servers `ServerA`, `ServerB`, and `ServerC` respectively
 * Users Alice (`alice@a.example`), Bob (`bob@b.example`) and Cathy
-  (`cathy@c.example) of the respective service providers
+  (`cathy@c.example`) of the respective service providers
 * Clients `ClientA1`, `ClientA2`, `ClientB1`, etc. belonging to these users
 * A room `clubhouse@a.example` where the three users interact
 
@@ -805,14 +805,15 @@ The response merely indicates if the message was accepted by the hub provider.
 messages and ephemeral applications messages (for example "is typing"
 notifications), which do not need to be queued at the target provider.
 
-## Notify Servers of Room Events
+## Fanout Messages and Room Events
 
 If the hub provider accepts an application or handshake message (proposal or
-commit) message, it forward that message to all other providers with active
+commit) message, it forwards that message to all other providers with active
 participants in the room and all local clients which are active participants.
 This is described as fanning the message out. An MLS Welcome message is sent to
-the providers and local users associated with the `KeyPackageRef` values to
-which the bulk of the Welcome (the `encrypted_group_info`) was encrypted.
+the providers and local users associated with the `KeyPackageRef` values in
+the `secrets` array of the Welcome. In the case of a Welcome message, a
+`RatchetTreeOption` is also included in the FanoutMessage.
 
 The hub provider also fans out any messages which originate from itself (ex: MLS
 External Proposals).
@@ -826,9 +827,9 @@ POST /notify/{roomId}
 
 ~~~ tls
 struct {
+  uint64 timestamp;
   MLSMessage message;
   /* the hub acceptance time (in milliseconds from the UNIX epoch) */
-  uint64 timestamp;
   select (message.wire_format) {
     case welcome:
       RatchetTreeOption ratchetTreeOption;
@@ -836,13 +837,11 @@ struct {
 } FanoutMessage;
 ~~~
 
-If the protocol is MLS 1.0, the request body is one or more of MLSMessage with
-wire_format one of PrivateMessage (application message), PublicMessage (Commit
-or Proposal), or Welcome. In the case of a Welcome message, a
-`RatchetTreeOption` is also included.
-
 **NOTE:** Correctly fanning out Welcome messages relies on the hub and target
 providers storing the `KeyPackageRef` of claimed KeyPackages.
+
+For the avoidance of doubt, clients which are being removed, SHOULD receive
+the corresponding Commit message, so they can clean up their internal state.
 
 # Use of MLS DS/AS
 
