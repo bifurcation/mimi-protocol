@@ -487,10 +487,10 @@ the following notional syntax:
 MIMI servers communicate using HTTPS.  The HTTP request MUST identify the
 source and target providers for the request, in the following way:
 
-* The target provider is indicated using a Host header {{!RFC9110}.  If the
+* The target provider is indicated using a Host header {{!RFC9110}}.  If the
   provider is using a non-standard port, then the port component of the Host
   header is ignored.
-* The source provider is indicated using a From header {{!RFC9110}.  The
+* The source provider is indicated using a From header {{!RFC9110}}.  The
   `mailbox` production in the From header MUST use the `addr-spec` variant, and
   the `local-part` of the address MUST contain the fixed string `mimi`.  Thus,
   the content of the From header will be `mimi@a.example`, where `a.example` is
