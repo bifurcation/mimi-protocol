@@ -1045,13 +1045,10 @@ POST /updateRoom/{roomId}
 
 In MLS 1.0, any change to the room base policy document is always expressed
 using a `GroupContextExtensions` proposal. Likewise, any change to the
-participant list is always communicated via a `AppSync`
+participant list is always communicated via an `AppSync`
 proposal type. The participant list change needed to add a user MUST happen either before or simultaneously with the corresponding MLS operation.
 
 Removing an active user from a participant list or banning an active participant SHOULD happen simultaneously with any MLS changes made to the commit removing the participant.
-
-
-[[ RWM: TO REMOVE: "The provider is in an impossible situation handling users removed from the participation list but who are still active participants. It should forward the commit removing Bob as a participant to Bob's clients so that Bob is aware that it has been removed, but it should not forward the commit to Bob's clients because those clients would then be able to form the epoch secret for the new epoch." ]]
 
 A hub provider which observes that an active user has been removed or banned, but still has clients MUST prevent any of those clients from sending or receiving any additional application messages; MUST prevent any of those clients from sending Commit messages; and MUST prevent it from sending any proposals except for `Remove` and `SelfRemove` proposals.
 
@@ -1193,7 +1190,7 @@ For Bob's new client to join the MLS group and therefore fully participate
 in the room with Alice, Bob needs to fetch the MLS GroupInfo (or analogous).
 
 ~~~
-POST /claimGroupInfo/{roomId}
+POST /groupInfo/{roomId}
 ~~~
 
 In the case of MLS 1.0, Bob provides a credential proving his client's
@@ -1204,6 +1201,18 @@ real or pseudonymous identity (for permission to join the group).
 struct {
   select (protocol) {
     case mls10:
+      opaque roomId<V>;
+      SignaturePublicKey requestingSignatureKey;
+      Credential requestingCredential;
+  };
+} GroupInfoRequestTBS;
+
+struct {
+  select (protocol) {
+    case mls10:
+      /* SignWithLabel(., "GroupInfoRequestTBS", GroupInfoRequestTBS) */
+      opaque signature<V>;
+      opaque roomId<V>;
       SignaturePublicKey requestingSignatureKey;
       Credential requestingCredential;
   };
@@ -1259,12 +1268,11 @@ struct {
   IdentifierURI reportingUser;
   IdentifierURI allegedAbuserURI;
   opaque group_id<V>;
-  uint64 epoch;
-  uint32 allegedAbuserLeafIndex;
+  uint64 currentEpoch;
+  uint32 currentAllegedAbuserLeafIndex;
   AbusiveMessage messages<V>;
   AbuseType reasonCode;
   string note;
-  AbusiveMessage messages<V>;
 } AbuseReport;
 ~~~
 
@@ -1353,10 +1361,6 @@ MLS defines an abstract Delivery Server (DS) and Authentication Server (AS). Thi
 The MLS profile for MIMI requires a concept of a user identifier and a mechanism to associate credentials in MLS clients to MIMI users.
 
 Clients are free to fetch pseudonymous user identifiers from their local provider, and use these in rooms. These pseudonymns need only identify the client's provider to other providers and clients. The actual user identity could be shared among the active participants of the room, by using a credential with selective disclosures, or by signing a binding with both the pseudonymous signature key and the "real" identity signature key and presenting the binding to other members.
-
-
-
-
 
 
 # Security Considerations
