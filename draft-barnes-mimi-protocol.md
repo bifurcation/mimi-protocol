@@ -487,12 +487,6 @@ ServerA->ServerC: POST /notify/clubhouse@alpha.com Commit
 ### Sending Messages
 
 
-# MLS ApplicationSync Proposal
-
-[[ This section should be moved to its own document in the MLS working group ]]
-
-[[ TODO ]]
-
 # Definition of Primitives
 
 ## MIMI URL directory
@@ -920,6 +914,78 @@ be shared among the active participants of the room, by using a credential with
 selective disclosures, or by signing a binding with both the pseudonymous
 signature key and the "real" identity signature key and presenting the binding
 to other members.
+
+# MLS AppSync Proposal
+
+[[ This section should be moved to its own document in the MLS working group ]]
+
+One of the primary security benefits of MLS is that the MLS key schedule
+confirms that the group agrees on certain metadata, such as the membership of
+the group. Members that disagree on the relevant metadata will arrive at
+different keys and be unable to communicate. Applications based on MLS can
+integrate their state into this metadata in order to confirm that the member of
+an MLS group agree on application state as well as MLS metadata.
+
+Here, we define two extensions to MLS to facilitate this application design:
+
+1. A GroupContext extension `application_state` that confirms agreement on
+   application state.
+2. A new proposal type AppSync that allows MLS group members to propose changes
+   to the agreed application state.
+
+The `application_state` extension allows the application to inject a state
+object into the MLS key schedule.  Changes to this state can be made out of
+band, or using the AppSync proposal.  Using the AppSync proposal ensures that
+members of the MLS group have received the relevant state changes before they
+are reflected in the group's `application_state`.
+
+The content of the `application_state` extension and the `AppSync` proposal are
+structured as follows:
+
+~~~ tls
+struct {
+    uint32 application_id;
+    opaque application_state<V>;
+} ApplicationState;
+~~~
+{: #fig-app-state title="The application_state extension" }
+
+~~~ tls
+struct {
+    uint32 application_id;
+    opaque application_state_update<V>;
+} AppSync;
+~~~
+{: #fig-app-sync title="The AppSync proposal type" }
+
+The `application_id` determines the structure and interpretation of the
+`application_state` and `application_state_update` fields.  The assumed
+structure is that the application holds some state, which is either expressed
+directly or committed to in the `application_state` field.  AppSync proposals
+contain deltas / diffs on this state, which the client uses to update the
+representation of the state in `application_state`.
+
+A client receiving an AppSync proposal applies it in the following way:
+
+* Identify a GroupContext extension with the same `application_id` as the
+  AppSync
+* Verify that the current application state matches the value of the
+  `application_state` field in the extension
+* Apply the `application_state_update` to the current application state
+* Replace the `application_state` in that extension with a representation of the
+  updated application state.
+
+Note that the `application_state` extension is updated directly by AppSync
+proposals; a GroupContextExtensions proposal is not necessary.  A proposal list
+that contains both an AppSync proposal and a GroupContextExtensions proposal
+that changes the value of the affected `application_state` extension is invalid.
+
+A proposal list in a Commit MAY contain more than one AppSync proposal.  The
+proposals are applied in the order that they are sent in the Commit, after any
+GroupContextExtensions proposals.
+
+[[ TODO: IANA registry for application_id; register extension and proposal types
+]]
 
 # Consent
 
