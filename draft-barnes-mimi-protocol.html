@@ -2622,12 +2622,11 @@ POST /updateRoom/{roomId}
 </div>
 <p id="section-12.4-3">In MLS 1.0, any change to the room base policy document is always expressed
 using a <code>GroupContextExtensions</code> proposal. Likewise, any change to the
-participant list is always communicated via a <code>AppSync</code>
+participant list is always communicated via an <code>AppSync</code>
 proposal type. The participant list change needed to add a user <span class="bcp14">MUST</span> happen either before or simultaneously with the corresponding MLS operation.<a href="#section-12.4-3" class="pilcrow">¶</a></p>
 <p id="section-12.4-4">Removing an active user from a participant list or banning an active participant <span class="bcp14">SHOULD</span> happen simultaneously with any MLS changes made to the commit removing the participant.<a href="#section-12.4-4" class="pilcrow">¶</a></p>
-<p id="section-12.4-5">[[ RWM: TO REMOVE: "The provider is in an impossible situation handling users removed from the participation list but who are still active participants. It should forward the commit removing Bob as a participant to Bob's clients so that Bob is aware that it has been removed, but it should not forward the commit to Bob's clients because those clients would then be able to form the epoch secret for the new epoch." ]]<a href="#section-12.4-5" class="pilcrow">¶</a></p>
-<p id="section-12.4-6">A hub provider which observes that an active user has been removed or banned, but still has clients <span class="bcp14">MUST</span> prevent any of those clients from sending or receiving any additional application messages; <span class="bcp14">MUST</span> prevent any of those clients from sending Commit messages; and <span class="bcp14">MUST</span> prevent it from sending any proposals except for <code>Remove</code> and <code>SelfRemove</code> proposals.<a href="#section-12.4-6" class="pilcrow">¶</a></p>
-<div class="lang-tls sourcecode" id="section-12.4-7">
+<p id="section-12.4-5">A hub provider which observes that an active user has been removed or banned, but still has clients <span class="bcp14">MUST</span> prevent any of those clients from sending or receiving any additional application messages; <span class="bcp14">MUST</span> prevent any of those clients from sending Commit messages; and <span class="bcp14">MUST</span> prevent it from sending any proposals except for <code>Remove</code> and <code>SelfRemove</code> proposals.<a href="#section-12.4-5" class="pilcrow">¶</a></p>
+<div class="lang-tls sourcecode" id="section-12.4-6">
 <pre>
 enum {
   reserved(0),
@@ -2650,13 +2649,13 @@ struct {
     UserRoles updateUsers&lt;V&gt;;
     IdentifierUri removeUsers&lt;V&gt;;
 } AppSync;
-</pre><a href="#section-12.4-7" class="pilcrow">¶</a>
+</pre><a href="#section-12.4-6" class="pilcrow">¶</a>
 </div>
-<p id="section-12.4-8">Each user can be added with one or more roles. This list of roles can be
+<p id="section-12.4-7">Each user can be added with one or more roles. This list of roles can be
 updated. Note that removing a user does not ban the user. To ban a user,
-update their role to <code>banned</code>.<a href="#section-12.4-8" class="pilcrow">¶</a></p>
-<p id="section-12.4-9">The updateRoom request body is described below:<a href="#section-12.4-9" class="pilcrow">¶</a></p>
-<div class="lang-tls sourcecode" id="section-12.4-10">
+update their role to <code>banned</code>.<a href="#section-12.4-7" class="pilcrow">¶</a></p>
+<p id="section-12.4-8">The updateRoom request body is described below:<a href="#section-12.4-8" class="pilcrow">¶</a></p>
+<div class="lang-tls sourcecode" id="section-12.4-9">
 <pre>
 select(room.protocol) {
   case mls10:
@@ -2670,13 +2669,13 @@ select(room.protocol) {
           PublicMessage moreProposals&lt;V&gt;; /* a list of additional proposals */
       };
 };
-</pre><a href="#section-12.4-10" class="pilcrow">¶</a>
+</pre><a href="#section-12.4-9" class="pilcrow">¶</a>
 </div>
-<p id="section-12.4-11">In this case Alice creates a Commit containing a AppSync proposal adding
+<p id="section-12.4-10">In this case Alice creates a Commit containing a AppSync proposal adding
 Bob@b.example, and Add proposals for all Bob's MLS clients.  Alice includes the
 Welcome message which will be sent for Bob, a GroupInfo object for the hub
-provider, and complete <code>ratchet_tree</code> extension.<a href="#section-12.4-11" class="pilcrow">¶</a></p>
-<div class="lang-tls sourcecode" id="section-12.4-12">
+provider, and complete <code>ratchet_tree</code> extension.<a href="#section-12.4-10" class="pilcrow">¶</a></p>
+<div class="lang-tls sourcecode" id="section-12.4-11">
 <pre>
 enum {
   reserved(0),
@@ -2695,10 +2694,10 @@ struct {
       Node ratchet_tree&lt;V&gt;;
   };
 } RatchetTreeOption;
-</pre><a href="#section-12.4-12" class="pilcrow">¶</a>
+</pre><a href="#section-12.4-11" class="pilcrow">¶</a>
 </div>
-<p id="section-12.4-13">The response body is described below:<a href="#section-12.4-13" class="pilcrow">¶</a></p>
-<div class="lang-tls sourcecode" id="section-12.4-14">
+<p id="section-12.4-12">The response body is described below:<a href="#section-12.4-12" class="pilcrow">¶</a></p>
+<div class="lang-tls sourcecode" id="section-12.4-13">
 <pre>
 enum {
   success(0),
@@ -2713,7 +2712,7 @@ struct {
     UpdateResponseCode responseCode;
     string errorDescription;
 } UpdateRoomResponse
-</pre><a href="#section-12.4-14" class="pilcrow">¶</a>
+</pre><a href="#section-12.4-13" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
@@ -2774,7 +2773,7 @@ with wire_format one of PrivateMessage (application message), PublicMessage
 in the room with Alice, Bob needs to fetch the MLS GroupInfo (or analogous).<a href="#section-12.7-1" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-12.7-2">
 <pre>
-POST /claimGroupInfo/{roomId}
+POST /groupInfo/{roomId}
 </pre><a href="#section-12.7-2" class="pilcrow">¶</a>
 </div>
 <p id="section-12.7-3">In the case of MLS 1.0, Bob provides a credential proving his client's
@@ -2784,6 +2783,18 @@ real or pseudonymous identity (for permission to join the group).<a href="#secti
 struct {
   select (protocol) {
     case mls10:
+      opaque roomId&lt;V&gt;;
+      SignaturePublicKey requestingSignatureKey;
+      Credential requestingCredential;
+  };
+} GroupInfoRequestTBS;
+
+struct {
+  select (protocol) {
+    case mls10:
+      /* SignWithLabel(., "GroupInfoRequestTBS", GroupInfoRequestTBS) */
+      opaque signature&lt;V&gt;;
+      opaque roomId&lt;V&gt;;
       SignaturePublicKey requestingSignatureKey;
       Credential requestingCredential;
   };
@@ -2846,12 +2857,11 @@ struct {
   IdentifierURI reportingUser;
   IdentifierURI allegedAbuserURI;
   opaque group_id&lt;V&gt;;
-  uint64 epoch;
-  uint32 allegedAbuserLeafIndex;
+  uint64 currentEpoch;
+  uint32 currentAllegedAbuserLeafIndex;
   AbusiveMessage messages&lt;V&gt;;
   AbuseType reasonCode;
   string note;
-  AbusiveMessage messages&lt;V&gt;;
 } AbuseReport;
 </pre><a href="#section-12.9-3" class="pilcrow">¶</a>
 </div>
