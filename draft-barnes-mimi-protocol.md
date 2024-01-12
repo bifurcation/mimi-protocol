@@ -876,64 +876,119 @@ an MLS group agree on application state as well as MLS metadata.
 
 Here, we define two extensions to MLS to facilitate this application design:
 
-1. A GroupContext extension `application_state` that confirms agreement on
-   application state.
+1. A GroupContext extension `application_states` that confirms agreement on
+   application state from potentially multiple sources.
 2. A new proposal type AppSync that allows MLS group members to propose changes
    to the agreed application state.
 
-The `application_state` extension allows the application to inject a state
-object into the MLS key schedule.  Changes to this state can be made out of
-band, or using the AppSync proposal.  Using the AppSync proposal ensures that
+The `application_states` extension allows the application to inject state
+objects into the MLS key schedule. Changes to this state can be made out of
+band, or using the AppSync proposal. Using the AppSync proposal ensures that
 members of the MLS group have received the relevant state changes before they
-are reflected in the group's `application_state`.
+are reflected in the group's `application_states`.
 
-The content of the `application_state` extension and the `AppSync` proposal are
+Each applicationId in the application_states needs to conform to one of four
+basic types: an ordered array, an unordered array, a map, or an irreducible
+blob. This allows the AppSync proposal to efficiently modify a large application
+state object.
+
+The content of the `application_states` extension and the `AppSync` proposal are
 structured as follows:
 
 ~~~ tls
 struct {
-    uint32 application_id;
-    opaque application_state<V>;
+  opaque element<V>;
+} OpaqueElement;
+
+struct {
+  opaque elementName<V>;
+  opaque elementValue<V>;
+} OpaqueMapElement;
+
+struct {
+  uint32 applicationId;
+  StateType stateType;
+  select (stateType) {
+    case irreducible:
+      OpaqueElement state;
+    case map:
+      OpaqueMapElement mapEntries<V>;
+    case unorderedList:
+      OpaqueElement unorderedEntries<V>;
+    case orderedArray:
+      OpaqueElement orderedEntries<V>;
+  };
 } ApplicationState;
+
+struct {
+  ApplicationState applicationStates<V>;
+} ApplicationStatesExtension;
 ~~~
 {: #fig-app-state title="The application_state extension" }
 
 ~~~ tls
 struct {
-    uint32 application_id;
-    opaque application_state_update<V>;
+  uint32 index;
+  opaque element<V>;
+} ElementWithIndex;
+
+
+struct {
+  uint32 applicationId;
+  StateType stateType;
+  select (stateType) {
+    case irreducible:
+      OpaqueElement newState;
+    case map:
+      OpaqueElement removedKeys<V>;
+      OpaqueMapElement newOrUpdatedElements<V>;
+    case unorderedList:
+      uint32 removedIndices<V>;
+      OpaqueElement addedEntries<V>;
+    case orderedArray:
+      ElementWithIndex replacedElements<V>;
+      uint32 removedIndices<V>;
+      ElementWithIndex insertedElements<V>;
+      OpaqueElement appenededEntries<V>;
+  };
 } AppSync;
 ~~~
 {: #fig-app-sync title="The AppSync proposal type" }
 
-The `application_id` determines the structure and interpretation of the
-`application_state` and `application_state_update` fields.  The assumed
-structure is that the application holds some state, which is either expressed
-directly or committed to in the `application_state` field.  AppSync proposals
-contain deltas / diffs on this state, which the client uses to update the
-representation of the state in `application_state`.
+The `applicationId` determines the structure and interpretation of the contents.
+of an ApplicationState object. AppSync proposals
+contain changes to this state, which the client uses to update the
+representation of the state in `application_states`.
 
 A client receiving an AppSync proposal applies it in the following way:
 
-* Identify a GroupContext extension with the same `application_id` as the
-  AppSync
-* Verify that the current application state matches the value of the
-  `application_state` field in the extension
-* Apply the `application_state_update` to the current application state
-* Replace the `application_state` in that extension with a representation of the
-  updated application state.
+* Identify an `application_states` GroupContext extension which contains the same `application_id` state as the AppSync proposal
+* Apply the relevant operations (replace, remove, update, append, insert) according to the `stateType` to the relevant parts of the ApplicationState object in `application_states` extension.
 
-Note that the `application_state` extension is updated directly by AppSync
-proposals; a GroupContextExtensions proposal is not necessary.  A proposal list
+An AppSync for an irreducible state replaces its `state` element with a new
+(possibly empty) `newState`. An AppSync for a map-based ApplicationState first
+removes all the keys in `removedKeys` and than replaces or adds the elements in
+`newOrUpdatedElements`. An AppSync for an unorderedList ApplicationState first
+removes all the indexes in `removedIndices`, then adds the elements in
+`addedEntries`. Finally an AppSync for an orderedArray, replaces all the
+elements (index-by-index) in `replacedElements`, the removes the elements in
+`removedIndices` according to the then order of the array, then inserts all the
+elements in `insertedElements` according to the then order of the array, then
+finally appends the `appendedEntries` (in order). All indices are zero-based.
+
+Note that the `application_states` extension is updated directly by AppSync
+proposals; a GroupContextExtensions proposal is not necessary. A proposal list
 that contains both an AppSync proposal and a GroupContextExtensions proposal
-that changes the value of the affected `application_state` extension is invalid.
+is invalid.
 
-A proposal list in a Commit MAY contain more than one AppSync proposal.  The
-proposals are applied in the order that they are sent in the Commit, after any
-GroupContextExtensions proposals.
+Likewise a proposal list in a Commit MAY contain more than one AppSync proposal,
+but no more than one AppSync proposal per `applicationId`. The proposals are
+applied in the order that they are sent in the Commit.
+
+AppSync proposals do not need to contain an UpdatePath. An AppSync proposal can be sent by an authorized external sender.
 
 [[ TODO: IANA registry for application_id; register extension and proposal types
-]]
+as safe extensions ]]
 
 # Consent
 
