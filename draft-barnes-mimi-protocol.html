@@ -1940,6 +1940,9 @@ are described with a simple JSON object of the following form:<a href="#section-
 <p id="section-7.2-3">[[ NOTE: This syntax is clearly not sufficient.  To go along with the more full
 description of room state mentioned above, we need a more full taxonomy of the
 ways that room state can change. ]]<a href="#section-7.2-3" class="pilcrow">¶</a></p>
+<p id="section-7.2-4">To put these changes into effect, a client or server encodes them in an AppSync
+proposal, signs the proposal as a PublicMessage, and submits them to the
+<code>update</code> enpoint on the hub.<a href="#section-7.2-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="directory">
