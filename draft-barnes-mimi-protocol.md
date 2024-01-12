@@ -572,6 +572,10 @@ are described with a simple JSON object of the following form:
 description of room state mentioned above, we need a more full taxonomy of the
 ways that room state can change. ]]
 
+To put these changes into effect, a client or server encodes them in an AppSync
+proposal, signs the proposal as a PublicMessage, and submits them to the
+`update` enpoint on the hub.
+
 ## Directory
 
 Like the ACME protocol {{?RFC8555}}, the MIMI protocol uses a directory document
