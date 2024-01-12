@@ -607,6 +607,11 @@ ServerA->ServerC: POST /notify/clubhouse@a.example Commit
    a commit that confirms a state change before processing the state
    change itself.
 
+   [[ TODO: A little more needs to be said here about how MLS is used.
+   For example: What types of credential are required / allowed?  If
+   servers are going to be allowed to introduce room changes, how are
+   their keys provisioned as external signers? ]]
+
 7.  Application Layer
 
    Servers in MIMI provide a few functions that enable messaging
@@ -1135,11 +1140,29 @@ ServerA->ServerC: POST /notify/clubhouse@a.example Commit
 
 11.  Security Considerations
 
-   TODO Security
+   The MIMI protocol provides incorporates several layers of security.
 
-   [[ Servers authenticate to each other with mTLS ]]
+   Individual protocol actions are protected against network attackers
+   with mutually-authenticated TLS, where the TLS certificates
+   authenticate the identities that the protocol actors assert at the
+   application layer.
 
-   [[ E2E security via MLS ]]
+   Messages and room state changes are protected end-to-end using MLS.
+   The protection is "end-to-end" in the sense that messages sent within
+   the group are confidentiality-protected against all servers involved
+   in the delivery of those messages, and in the sense that the
+   authenticity of room state changes is verified by the end clients
+   involved in the room.  The usage of MLS ensures that the servers
+   facilitating the exchange cannot read messages in the room or falsify
+   room state changes, even though they can read the room state change
+   messages.
+
+   Each room has an authorization policy that dictates which protocol
+   actors can perform which actions in the room.  This policy is
+   enforced by the hub server for the room.  The actors for whom the
+   policy is being evaluated authenticate their identities to the hub
+   server using the MLS PublicMessage signed object format, together
+   with the identity credentials presented in MLS.
 
 12.  IANA Considerations
 
