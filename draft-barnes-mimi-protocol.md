@@ -231,18 +231,18 @@ Bob's clients.
 control on these operations.  We have elided that step here in the interest of
 simplicity.  Some initial thoughts are in {{consent}} ]]
 
-~~~ ascii-art
+~~~ aasvg
 ClientA1       ServerA         ServerB         ClientB*
   |               |               |               |
   |               |               |     Store KPs |
-  |               |               |<~~~~~~~~~~~~~~|
-  |               |               |<~~~~~~~~~~~~~~|
+  |               |               |<~~~~~~~~~~~~~~+
+  |               |               |<~~~~~~~~~~~~~~+
   | Request KPs   |               |               |
-  |~~~~~~~~~~~~~~>| /keyMaterial  |               |
-  |               |-------------->|               |
+  +~~~~~~~~~~~~~~>| /keyMaterial  |               |
+  |               +-------------->|               |
   |               |        200 OK |               |
-  |           KPs |<--------------|               |
-  |<~~~~~~~~~~~~~~|               |               |
+  |           KPs |<--------------+               |
+  |<~~~~~~~~~~~~~~+               |               |
   |               |               |               |
 
 ClientB*->ServerB: [[ Store KeyPackages ]]
@@ -256,17 +256,17 @@ ServerA->ClientA1: [[ KPs ]]
 ~~~
 {: #fig-ab-kp-fetch title="Alice Fetches KeyPackages for Bob's Clients" }
 
-~~~ ascii-art
+~~~ aasvg
 ClientA1       ServerA         ServerB         ClientB*
   |               |               |               |
   | Commit, etc.  |               |               |
-  |~~~~~~~~~~~~~~>| /notify       |               |
-  |               |-------------->| Welcome, Tree |
-  |               |               |~~~~~~~~~~~~~~>|
-  |               |               |~~~~~~~~~~~~~~>|
+  +~~~~~~~~~~~~~~>| /notify       |               |
+  |               +-------------->| Welcome, Tree |
+  |               |               +~~~~~~~~~~~~~~>|
+  |               |               +~~~~~~~~~~~~~~>|
   |               |        200 OK |               |
-  |      Accepted |<--------------|               |
-  |<~~~~~~~~~~~~~~|               |               |
+  |      Accepted |<--------------+               |
+  |<~~~~~~~~~~~~~~+               |               |
   |               |               |               |
 
 ClientA1: Prepare Commit over AppSync(+bob@b.example), Add*
@@ -289,18 +289,18 @@ hub server ServerA.  Also, now that there are users on ServerB involved in the
 room, the hub ServerA will have to distribute the Commit adding Cathy and
 Cathy's clients to ServerB as well as forwarding the Welcome to ServerC.
 
-~~~ ascii-art
+~~~ aasvg
 ClientB1       ServerB         ServerA         ServerC         ClientC*
   |               |               |               |               |
   |               |               |               |     Store KPs |
-  |               |               |               |<~~~~~~~~~~~~~~|
-  |               |               |               |<~~~~~~~~~~~~~~|
+  |               |               |               |<~~~~~~~~~~~~~~+
+  |               |               |               |<~~~~~~~~~~~~~~+
   | Request KPs   |               |               |               |
-  |~~~~~~~~~~~~~~>| /keyMaterial  | /keyMaterial  |               |
-  |               |-------------->|-------------->|               |
+  +~~~~~~~~~~~~~~>| /keyMaterial  | /keyMaterial  |               |
+  |               +-------------->+-------------->|               |
   |               |        200 OK |        200 OK |               |
-  |           KPs |<--------------|<--------------|               |
-  |<~~~~~~~~~~~~~~|               |               |               |
+  |           KPs |<--------------+<--------------+               |
+  |<~~~~~~~~~~~~~~+               |               |               |
   |               |               |               |               |
 
 ClientC*->ServerC: [[ Store KeyPackages ]]
@@ -316,24 +316,24 @@ ServerB->ClientB1: [[ KPs ]]
 ~~~
 {: #fig-bc-kp-fetch title="Bob Fetches KeyPackages for Cathy's Clients" }
 
-~~~ ascii-art
+~~~ aasvg
 ClientB1       ServerB         ServerA         ServerC         ClientC*  ClientB*  ClientA*
   |               |               |               |               |         |         |
   | Commit, etc.  |               |               |               |         |         |
-  |~~~~~~~~~~~~~~>| /update       |               |               |         |         |
-  |               |-------------->|               |               |         |         |
+  +~~~~~~~~~~~~~~>| /update       |               |               |         |         |
+  |               +-------------->|               |               |         |         |
   |               |        200 OK |               |               |         |         |
-  |               |<--------------|               |               |         |         |
+  |               |<--------------+               |               |         |         |
   |      Accepted |               | /notify       |               |         |         |
-  |<~~~~~~~~~~~~~~|               |-------------->| Welcome, Tree |         |         |
-  |               |               |               |~~~~~~~~~~~~~~>|         |         |
-  |               |               |               |~~~~~~~~~~~~~~>|         |         |
+  |<~~~~~~~~~~~~~~+               +-------------->| Welcome, Tree |         |         |
+  |               |               |               +~~~~~~~~~~~~~~>|         |         |
+  |               |               |               +~~~~~~~~~~~~~~>|         |         |
   |               |       /notify |               |               |         |         |
-  |               |<--------------|               |               |         |         |
+  |               |<--------------+               |               |         |         |
   |               | Commit        |               |               |         |         |
-  |               |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>|         |
+  |               +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>|         |
   |               |               | Commit        |               |         |         |
-  |               |               |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>|
+  |               |               +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>|
   |               |               |               |               |         |         |
 
 ClientB1: Prepare Commit over AppSync(+cathy@c.example), Add*
@@ -359,23 +359,23 @@ Assuming Cathy is allowed to speak in the room, ServerA will forward Cathy's
 message to the other servers involved in the room, who distribute it to their
 clients.
 
-~~~ ascii-art
+~~~ aasvg
 ClientC1       ServerC         ServerA         ServerB         ClientB*  ClientC*  ClientA*
   |               |               |               |               |         |         |
   | Message       |               |               |               |         |         |
-  |~~~~~~~~~~~~~~>| /submit       |               |               |         |         |
-  |               |-------------->|               |               |         |         |
+  +~~~~~~~~~~~~~~>| /submit       |               |               |         |         |
+  |               +-------------->|               |               |         |         |
   |               |        200 OK |               |               |         |         |
-  |               |<--------------|               |               |         |         |
+  |               |<--------------+               |               |         |         |
   |      Accepted |               | /notify       |               |         |         |
-  |<~~~~~~~~~~~~~~|               |-------------->| Message       |         |         |
-  |               |               |               |~~~~~~~~~~~~~~>|         |         |
+  |<~~~~~~~~~~~~~~+               +-------------->| Message       |         |         |
+  |               |               |               +~~~~~~~~~~~~~~>|         |         |
   |               |       /notify |               |               |         |         |
-  |               |<--------------|               |               |         |         |
+  |               |<--------------+               |               |         |         |
   |               | Message       |               |               |         |         |
-  |               |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>|         |
+  |               +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>|         |
   |               |               | Message       |               |         |         |
-  |               |               |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>|
+  |               |               +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>|
   |               |               |               |               |         |         |
 
 ClientC1->ServerC: [[ MLSMessage(PrivateMessage) ]]
@@ -409,29 +409,29 @@ of their devices from the MLS group.  Instead, the leave happens in three steps:
 The hub thus guarantees the leaving client that they will be removed as soon as
 possible.
 
-~~~
+~~~ aasvg
 ClientB1       ServerB         ServerA         ServerC         ClientC1
   |               |               |               |               |
   | Proposals     |               |               |               |
-  |~~~~~~~~~~~~~~>| /update       |               |               |
-  |               |-------------->|               |               |
+  +~~~~~~~~~~~~~~>| /update       |               |               |
+  |               +-------------->|               |               |
   |               |        200 OK |               |               |
-  |               |<--------------|               |               |
+  |               |<--------------+               |               |
   |      Accepted |               |  /notify      |               |
-  |<~~~~~~~~~~~~~~|               |-------------->|               |
+  |<~~~~~~~~~~~~~~+               +-------------->|               |
   |               |               |               | Proposals     |
-  |               |               |               |~~~~~~~~~~~~~~>|
+  |               |               |               +~~~~~~~~~~~~~~>|
   |               |               |               |               |
   |               |               |               | Commit(Props) |
-  |               |               |               |<~~~~~~~~~~~~~~|
+  |               |               |               |<~~~~~~~~~~~~~~+
   |               |               |       /update |               |
-  |               |               |<~~~~~~~~~~~~~~|               |
+  |               |               |<--------------+               |
   |               |               | 200 OK        |               |
-  |               |               |-------------->|               |
+  |               |               +-------------->|               |
   |               |               |               | Accepted      |
-  |               |               |               |~~~~~~~~~~~~~~>|
+  |               |               |               +~~~~~~~~~~~~~~>|
   |               |       /notify | /notify       |               |
-  |               |<--------------|-------------->|               |
+  |               |<--------------+-------------->|               |
   |               |               |               |               |
 
 ClientB1: Prepare Remove*, AppSync(-bob@b.example)
