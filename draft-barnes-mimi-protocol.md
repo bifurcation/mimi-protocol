@@ -505,20 +505,72 @@ endpoints defined in {{application-layer}}.
 
 # E2E Security Layer
 
-* All actions within a room are E2E-authenticated
-* Each room has an associated MLS group
-* Messages are protected as PrivateMessage
-* Room changes are protected as PublicMessage(Proposal)
-* ... incl. origination by servers
+Every MIMI room has an MLS group associated to it, which provides end-to-end
+security guarantees.  The clients participating in the room manage the MLS-level
+membership by sending Commit messages covering Add and Remove proposals.
+
+Every message sent within a room is authenticated and confidentiality-protected
+by virtue of being encapsulated in an MLS PrivateMessage object.
+
+MIMI uses the MLS application state synchronization mechanism
+({{mls-application-state-synchronization}}) to ensure that the clients involved
+in a MIMI room agree on the state of the room.  Each MIMI message that changes
+the state of the room is encapsulated in an AppSync proposal and transmitted
+inside an MLS PublicMessage object.
+
+The PublicMessage encapsulation provides sender authentication, including the
+ability for actors outside the group (e.g., servers involved in the room) to
+originate AppSync proposals.  Encoding room state changes in MLS proposals
+ensures that a client will not process a commit that confirms a state change
+before processing the state change itself.
 
 # Application Layer
 
-[[ TODO introductory material ]]
+Servers in MIMI provide a few functions that enable messaging applications.
+All servers act as publication points for key material used to add their users
+to rooms. The hub server for a room tracks the state of the room, and controls
+how the room's state evolves, e.g., by ensuring that changes are compliant with
+the room's policy. Non-hub servers facilitate interactions between their clients
+and the hub server.
+
+In this section, we desribe the state that servers keep and the HTTP endpoints
+they expose to enable these functions.
 
 ## Server State
 
-[[ Only room state right now is a list of participant IDs, MLS group ID ]]
-[[ Hub and followers track KP hashes for Welcome routing ]]
+Every MIMI server is a publication point for users' key material, via the
+`keyMaterial` endpoint discussed in {{fetch-key-material}}.  To support this
+endpoint, the server stores a set of KeyPackages, where each KeyPackage belongs
+to a specific user and device.
+
+The hub server for the room stores the state of the room, comprising:
+
+* A list of user identifiers for users who are members of the room
+
+[[ NOTE: This state is clearly not sufficient.  We need a more full description
+of the room. ]]
+
+When a client requests key material via the hub, the hub records the
+KeyPackageRef values for the returned KeyPackages, and the identity of the
+provider from which they were received.  This information is then used to route
+Welcome message to the proper provider.
+
+## Room State Changes
+
+The state of the room can be changed by adding or removing users.  These changes
+are described with a simple JSON object of the following form:
+
+~~~
+{
+    "add": ["diana@d.example", "eric@e.example"],
+    "remove": ["bob@b.example"],
+}
+~~~
+{: #fig-room-state-change title="Changing the state of the room" }
+
+[[ NOTE: This syntax is clearly not sufficient.  To go along with the more full
+description of room state mentioned above, we need a more full taxonomy of the
+ways that room state can change. ]]
 
 ## Directory
 
@@ -864,7 +916,7 @@ selective disclosures, or by signing a binding with both the pseudonymous
 signature key and the "real" identity signature key and presenting the binding
 to other members.
 
-# MLS AppSync Proposal
+# MLS Application State Synchronization
 
 [[ This section should be moved to its own document in the MLS working group ]]
 
