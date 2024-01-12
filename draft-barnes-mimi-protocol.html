@@ -1399,8 +1399,8 @@ servers.<a href="#section-3-2.3.1" class="pilcrow">¶</a></p>
 </li>
       </ol>
 <p id="section-3-3">The MIMI transport is based on HTTPS over mutually-authenticated TLS.  MIMI uses
-MLS <span>[<a href="#RFC9420" class="cite xref">RFC9420</a>]</span> for end-to-end security, using the MLS ApplicationSecuritySync
-proposal type to syncronize room state across the clients involved in a room.<a href="#section-3-3" class="pilcrow">¶</a></p>
+MLS <span>[<a href="#RFC9420" class="cite xref">RFC9420</a>]</span> for end-to-end security, using the MLS AppSync proposal type to
+efficiently synchronize room state across the clients involved in a room.<a href="#section-3-3" class="pilcrow">¶</a></p>
 <span id="name-mimi-protocol-layering"></span><div id="fig-layers">
 <figure id="figure-1">
         <div id="section-3-4.1">
@@ -1446,8 +1446,8 @@ servers <code>ServerA</code>, <code>ServerB</code>, and <code>ServerC</code> res
 </li>
       </ul>
 <p id="section-3-7">As noted in <span>[<a href="#I-D.mimi-arch" class="cite xref">I-D.mimi-arch</a>]</span>, the MIMI protocol only defines interactions
-between service providers' servers.  Interactions between between clients and
-servers within a service provider domain are shown here for completeness, but
+between service providers' servers.  Interactions between clients and servers
+within a service provider domain are shown here for completeness, but
 surrounded by <code>[[ double brackets ]]</code>.<a href="#section-3-7" class="pilcrow">¶</a></p>
 <div id="alice-creates-a-room">
 <section id="section-3.1">
@@ -1486,7 +1486,7 @@ for Bob's clients.  Alice then updates the room by sending an MLS Commit over
 the following proposals:<a href="#section-3.2-2" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-3.2-3.1">
-            <p id="section-3.2-3.1.1">An ApplicationSync proposal updating the room state by adding Bob to the
+            <p id="section-3.2-3.1.1">An AppSync proposal updating the room state by adding Bob to the
 participant list<a href="#section-3.2-3.1.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-3.2-3.2">
@@ -1669,7 +1669,7 @@ clients.<a href="#section-3.4-1" class="pilcrow">¶</a></p>
 ClientC1       ServerC         ServerA         ServerB         ClientB*  ClientC*  ClientA*
   |               |               |               |               |         |         |
   | Message       |               |               |               |         |         |
-  |~~~~~~~~~~~~~~&gt;| /message      |               |               |         |         |
+  |~~~~~~~~~~~~~~&gt;| /submit       |               |               |         |         |
   |               |--------------&gt;|               |               |         |         |
   |               |        200 OK |               |               |         |         |
   |               |&lt;--------------|               |               |         |         |
@@ -1685,7 +1685,7 @@ ClientC1       ServerC         ServerA         ServerB         ClientB*  ClientC
   |               |               |               |               |         |         |
 
 ClientC1-&gt;ServerC: [[ MLSMessage(PrivateMessage) ]]
-ServerC-&gt;ServerA: POST /message/clubhouse@a.example MLSMessage(PrivateMessage)
+ServerC-&gt;ServerA: POST /submit/clubhouse@a.example MLSMessage(PrivateMessage)
 ServerA: Verifies that message is allowed
 ServerA-&gt;ServerC: POST /notify/clubhouse@a.example Message{ MLSMessage(PrivateMessage) }
 ServerA-&gt;ServerB: POST /notify/clubhouse@a.example Message{ MLSMessage(PrivateMessage) }
@@ -1705,10 +1705,10 @@ ServerC-&gt;ClientC*: [[ MLSMessage(PrivateMessage) ]]
         <h3 id="name-bob-leaves-the-room">
 <a href="#section-3.5" class="section-number selfRef">3.5. </a><a href="#name-bob-leaves-the-room" class="section-name selfRef">Bob Leaves the Room</a>
         </h3>
-<p id="section-3.5-1">A user removing another user follows the same flow as adding the user.  They
-user performing the removal creates an MLS commit covering Remove proposals for
-all of the removed user's devices, and an AppSync proposal updating the room
-state to remove the removed user from the room's participant list.<a href="#section-3.5-1" class="pilcrow">¶</a></p>
+<p id="section-3.5-1">A user removing another user follows the same flow as adding the user.  The
+user performing the removal creates a MLS Remove proposals for all of the
+removed user's devices, and an AppSync proposal updating the room state to
+remove the removed user from the room's participant list.<a href="#section-3.5-1" class="pilcrow">¶</a></p>
 <p id="section-3.5-2">Leaving is slightly more complicated because the leaving user cannot remove all
 of their devices from the MLS group.  Instead, the leave happens in three steps:<a href="#section-3.5-2" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-3.5-3">
@@ -1738,16 +1738,11 @@ ClientB1       ServerB         ServerA         ServerC         ClientC1
   |               |--------------&gt;|               |               |
   |               |        200 OK |               |               |
   |               |&lt;--------------|               |               |
-  |      Accepted |               |               |               |
-  |&lt;~~~~~~~~~~~~~~|               |               |               |
-  |               |               |               |        Commit |
-  |               |               |               |&lt;~~~~~~~~~~~~~~|
-  |               |               |       /update |               |
-  |               |               |&lt;~~~~~~~~~~~~~~|               |
-  |               |               | 401 Proposals |               |
-  |               |               |~~~~~~~~~~~~~~&gt;|               |
-  |               |               |               | Reject(Props) |
+  |      Accepted |               |  /notify      |               |
+  |&lt;~~~~~~~~~~~~~~|               |--------------&gt;|               |
+  |               |               |               | Proposals     |
   |               |               |               |~~~~~~~~~~~~~~&gt;|
+  |               |               |               |               |
   |               |               |               | Commit(Props) |
   |               |               |               |&lt;~~~~~~~~~~~~~~|
   |               |               |       /update |               |
@@ -1765,13 +1760,9 @@ ClientB1-&gt;ServerB: [[ Remove*, AppSync ]]
 ServerB-&gt;ServerA: POST /update/clubhouse@a.example Remove*, AppSync
 ServerA: Verify that Removes, AppSync are allowed by policy; cache
 ServerA-&gt;ServerB: 200 OK
-ClientC1-&gt;ServerC: [[ Commit, Welcome, GroupInfo?, RatchetTree? ]]
-ServerC-&gt;ServerA: POST /update/clubhouse@a.example CommitBundle
-ServerA: Check whether Commit includes queued proposals; reject
-ServerA-&gt;ServerC: 401 Unauthorized; Remove*, AppSync
-ServerC-&gt;ClientC1: Remove*, AppSync
-ClientC1: Prepare Commit over Remove*, AppSync, in addition to any others
-ClientC1-&gt;ServerC: [[ Commit, Welcome, GroupInfo?, RatchetTree? ]]
+ServerA-&gt;ServerC: POST /notify/clubhouse@a.example Proposals
+ServerC1-&gt;ClientC1: [[ Proposals ]]
+ClientC1-&gt;ServerC: [[ Commit(Props), Welcome, GroupInfo?, RatchetTree? ]]
 ServerC-&gt;ServerA: POST /update/clubhouse@a.example CommitBundle
 ServerA: Check whether Commit includes queued proposals; accept
 ServerA-&gt;ServerC: 200 OK
@@ -1895,7 +1886,7 @@ to rooms. The hub server for a room tracks the state of the room, and controls
 how the room's state evolves, e.g., by ensuring that changes are compliant with
 the room's policy. Non-hub servers facilitate interactions between their clients
 and the hub server.<a href="#section-7-1" class="pilcrow">¶</a></p>
-<p id="section-7-2">In this section, we desribe the state that servers keep and the HTTP endpoints
+<p id="section-7-2">In this section, we describe the state that servers keep and the HTTP endpoints
 they expose to enable these functions.<a href="#section-7-2" class="pilcrow">¶</a></p>
 <div id="server-state">
 <section id="section-7.1">
@@ -1926,14 +1917,13 @@ Welcome message to the proper provider.<a href="#section-7.1-5" class="pilcrow">
 <a href="#section-7.2" class="section-number selfRef">7.2. </a><a href="#name-room-state-changes" class="section-name selfRef">Room State Changes</a>
         </h3>
 <p id="section-7.2-1">The state of the room can be changed by adding or removing users.  These changes
-are described with a simple JSON object of the following form:<a href="#section-7.2-1" class="pilcrow">¶</a></p>
+are described without a specific syntax as a list of adds and removes:<a href="#section-7.2-1" class="pilcrow">¶</a></p>
 <span id="name-changing-the-state-of-the-r"></span><div id="fig-room-state-change">
 <figure id="figure-8">
           <div class="alignLeft art-text artwork" id="section-7.2-2.1">
 <pre>
-{
-    "add": ["diana@d.example", "eric@e.example"],
-    "remove": ["bob@b.example"],
+Add: ["diana@d.example", "eric@e.example"],
+Remove: ["bob@b.example"],
 }
 </pre>
 </div>
@@ -1941,7 +1931,7 @@ are described with a simple JSON object of the following form:<a href="#section-
 <a href="#name-changing-the-state-of-the-r" class="selfRef">Changing the state of the room</a>
           </figcaption></figure>
 </div>
-<p id="section-7.2-3">[[ NOTE: This syntax is clearly not sufficient.  To go along with the more full
+<p id="section-7.2-3">[[ NOTE: The syntax needs to be defined.  To go along with the more full
 description of room state mentioned above, we need a more full taxonomy of the
 ways that room state can change. ]]<a href="#section-7.2-3" class="pilcrow">¶</a></p>
 <p id="section-7.2-4">To put these changes into effect, a client or server encodes them in an AppSync
@@ -2179,10 +2169,11 @@ struct {
 };
 </pre><a href="#section-7.5-9" class="pilcrow">¶</a>
 </div>
-<p id="section-7.5-10">In this case Alice creates a Commit containing a AppSync proposal adding
-Bob@b.example, and Add proposals for all Bob's MLS clients.  Alice includes the
-Welcome message which will be sent for Bob, a GroupInfo object for the hub
-provider, and complete <code>ratchet_tree</code> extension.<a href="#section-7.5-10" class="pilcrow">¶</a></p>
+<p id="section-7.5-10">In the first use case described in the Protocol Overview, Alice creates a Commit
+containing an AppSync proposal adding Bob@b.example, and Add proposals for all
+Bob's MLS clients.  Alice includes the Welcome message which will be sent for
+Bob, a GroupInfo object for the hub provider, and complete <code>ratchet_tree</code>
+extension.<a href="#section-7.5-10" class="pilcrow">¶</a></p>
 <div class="lang-tls sourcecode" id="section-7.5-11">
 <pre>
 enum {
@@ -2502,7 +2493,7 @@ consent request, Alice grants consent to Bob to add her to any room.<a href="#se
       <h2 id="name-security-considerations">
 <a href="#section-11" class="section-number selfRef">11. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
       </h2>
-<p id="section-11-1">The MIMI protocol provides incorporates several layers of security.<a href="#section-11-1" class="pilcrow">¶</a></p>
+<p id="section-11-1">The MIMI protocol incorporates several layers of security.<a href="#section-11-1" class="pilcrow">¶</a></p>
 <p id="section-11-2">Individual protocol actions are protected against network attackers with
 mutually-authenticated TLS, where the TLS certificates authenticate the
 identities that the protocol actors assert at the application layer.<a href="#section-11-2" class="pilcrow">¶</a></p>
