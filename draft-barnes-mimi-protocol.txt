@@ -5,7 +5,7 @@
 More Instant Messaging Interoperability                     R. L. Barnes
 Internet-Draft                                                     Cisco
 Intended status: Informational                                M. Hodgson
-Expires: 14 July 2024                   The Matrix.org Foundation C.I.C.
+Expires: 15 July 2024                   The Matrix.org Foundation C.I.C.
                                                               K. Kohbrok
                                                              Phoenix R&D
                                                                  R. Mahy
@@ -14,7 +14,7 @@ Expires: 14 July 2024                   The Matrix.org Foundation C.I.C.
                                         The Matrix.org Foundation C.I.C.
                                                                R. Robert
                                                              Phoenix R&D
-                                                         11 January 2024
+                                                         12 January 2024
 
 
          More Instant Messaging Interoperability: The Protocol
@@ -62,7 +62,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 14 July 2024.
+   This Internet-Draft will expire on 15 July 2024.
 
 Copyright Notice
 
@@ -94,13 +94,14 @@ Table of Contents
    6.  E2E Security Layer
    7.  Application Layer
      7.1.  Server State
-     7.2.  Directory
-     7.3.  Fetch Key Material
-     7.4.  Update Room State
-     7.5.  Submit a Message
-     7.6.  Notify Servers of Room Events
+     7.2.  Room State Changes
+     7.3.  Directory
+     7.4.  Fetch Key Material
+     7.5.  Update Room State
+     7.6.  Submit a Message
+     7.7.  Notify Servers of Room Events
    8.  Use of MLS DS/AS
-   9.  MLS AppSync Proposal
+   9.  MLS Application State Synchronization
    10. Consent
    11. Security Considerations
    12. IANA Considerations
@@ -584,26 +585,78 @@ ServerA->ServerC: POST /notify/clubhouse@a.example Commit
 
 6.  E2E Security Layer
 
-   *  All actions within a room are E2E-authenticated
+   Every MIMI room has an MLS group associated to it, which provides
+   end-to-end security guarantees.  The clients participating in the
+   room manage the MLS-level membership by sending Commit messages
+   covering Add and Remove proposals.
 
-   *  Each room has an associated MLS group
+   Every message sent within a room is authenticated and
+   confidentiality-protected by virtue of being encapsulated in an MLS
+   PrivateMessage object.
 
-   *  Messages are protected as PrivateMessage
+   MIMI uses the MLS application state synchronization mechanism
+   (Section 9) to ensure that the clients involved in a MIMI room agree
+   on the state of the room.  Each MIMI message that changes the state
+   of the room is encapsulated in an AppSync proposal and transmitted
+   inside an MLS PublicMessage object.
 
-   *  Room changes are protected as PublicMessage(Proposal)
-
-   *  ... incl. origination by servers
+   The PublicMessage encapsulation provides sender authentication,
+   including the ability for actors outside the group (e.g., servers
+   involved in the room) to originate AppSync proposals.  Encoding room
+   state changes in MLS proposals ensures that a client will not process
+   a commit that confirms a state change before processing the state
+   change itself.
 
 7.  Application Layer
 
-   [[ TODO introductory material ]]
+   Servers in MIMI provide a few functions that enable messaging
+   applications.  All servers act as publication points for key material
+   used to add their users to rooms.  The hub server for a room tracks
+   the state of the room, and controls how the room's state evolves,
+   e.g., by ensuring that changes are compliant with the room's policy.
+   Non-hub servers facilitate interactions between their clients and the
+   hub server.
+
+   In this section, we desribe the state that servers keep and the HTTP
+   endpoints they expose to enable these functions.
 
 7.1.  Server State
 
-   [[ Only room state right now is a list of participant IDs, MLS group
-   ID ]] [[ Hub and followers track KP hashes for Welcome routing ]]
+   Every MIMI server is a publication point for users' key material, via
+   the keyMaterial endpoint discussed in Section 7.4.  To support this
+   endpoint, the server stores a set of KeyPackages, where each
+   KeyPackage belongs to a specific user and device.
 
-7.2.  Directory
+   The hub server for the room stores the state of the room, comprising:
+
+   *  A list of user identifiers for users who are members of the room
+
+   [[ NOTE: This state is clearly not sufficient.  We need a more full
+   description of the room. ]]
+
+   When a client requests key material via the hub, the hub records the
+   KeyPackageRef values for the returned KeyPackages, and the identity
+   of the provider from which they were received.  This information is
+   then used to route Welcome message to the proper provider.
+
+7.2.  Room State Changes
+
+   The state of the room can be changed by adding or removing users.
+   These changes are described with a simple JSON object of the
+   following form:
+
+   {
+       "add": ["diana@d.example", "eric@e.example"],
+       "remove": ["bob@b.example"],
+   }
+
+                  Figure 8: Changing the state of the room
+
+   [[ NOTE: This syntax is clearly not sufficient.  To go along with the
+   more full description of room state mentioned above, we need a more
+   full taxonomy of the ways that room state can change. ]]
+
+7.3.  Directory
 
    Like the ACME protocol [RFC8555], the MIMI protocol uses a directory
    document to convey the HTTPS URLs used to reach certain endpoints (as
@@ -629,7 +682,7 @@ ServerA->ServerC: POST /notify/clubhouse@a.example Commit
         "https://mimi.example.com/v1/updateConsent/{requesterUser}"
    }
 
-7.3.  Fetch Key Material
+7.4.  Fetch Key Material
 
    This action attempts to claim initial keying material for all the
    clients of a single user at a specific provider.  The keying material
@@ -752,7 +805,7 @@ ServerA->ServerC: POST /notify/clubhouse@a.example Commit
    after a Welcome message is forwarded or after the KeyPackage
    leaf_node.lifetime.not_after time has passed.
 
-7.4.  Update Room State
+7.5.  Update Room State
 
    Adds, removes, and policy changes to the room are all forms of
    updating the room state.  They are accomplished using the update
@@ -862,7 +915,7 @@ ServerA->ServerC: POST /notify/clubhouse@a.example Commit
        string errorDescription;
    } UpdateRoomResponse
 
-7.5.  Submit a Message
+7.6.  Submit a Message
 
    POST /submitMessage/{roomId}
 
@@ -877,7 +930,7 @@ ServerA->ServerC: POST /notify/clubhouse@a.example Commit
    "is typing" notifications), which do not need to be queued at the
    target provider.
 
-7.6.  Notify Servers of Room Events
+7.7.  Notify Servers of Room Events
 
    If the hub provider accepts an application or handshake message
    (proposal or commit) message, it forward that message to all other
@@ -935,7 +988,7 @@ ServerA->ServerC: POST /notify/clubhouse@a.example Commit
    "real" identity signature key and presenting the binding to other
    members.
 
-9.  MLS AppSync Proposal
+9.  MLS Application State Synchronization
 
    [[ This section should be moved to its own document in the MLS
    working group ]]
@@ -972,14 +1025,14 @@ ServerA->ServerC: POST /notify/clubhouse@a.example Commit
        opaque application_state<V>;
    } ApplicationState;
 
-                 Figure 8: The application_state extension
+                 Figure 9: The application_state extension
 
    struct {
        uint32 application_id;
        opaque application_state_update<V>;
    } AppSync;
 
-                    Figure 9: The AppSync proposal type
+                    Figure 10: The AppSync proposal type
 
    The application_id determines the structure and interpretation of the
    application_state and application_state_update fields.  The assumed
