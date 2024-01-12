@@ -847,10 +847,8 @@ ServerA->ServerC: POST /notify/clubhouse@a.example Commit
    } UserRoles;
 
    struct {
-       UserRoles addUsers<V>;
-       UserRoles updateUsers<V>;
-       IdentifierUri removeUsers<V>;
-   } AppSync;
+       UserRoles participants<V>;
+   } MimiParticipantList;
 
    Each user can be added with one or more roles.  This list of roles
    can be updated.  Note that removing a user does not ban the user.  To
