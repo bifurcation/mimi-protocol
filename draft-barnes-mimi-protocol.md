@@ -769,10 +769,8 @@ struct {
 } UserRoles;
 
 struct {
-    UserRoles addUsers<V>;
-    UserRoles updateUsers<V>;
-    IdentifierUri removeUsers<V>;
-} AppSync;
+    UserRoles participants<V>;
+} MimiParticipantList;
 ~~~
 
 Each user can be added with one or more roles. This list of roles can be
