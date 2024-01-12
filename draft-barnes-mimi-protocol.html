@@ -1505,30 +1505,87 @@ control on these operations.  We have elided that step here in the interest of
 simplicity.  Some initial thoughts are in <a href="#consent" class="auto internal xref">Section 10</a> ]]<a href="#section-3.2-5" class="pilcrow">¶</a></p>
 <span id="name-alice-fetches-keypackages-f"></span><div id="fig-ab-kp-fetch">
 <figure id="figure-2">
-          <div class="alignLeft art-ascii-art art-text artwork" id="section-3.2-6.1">
-<pre>
-ClientA1       ServerA         ServerB         ClientB*
-  |               |               |               |
-  |               |               |     Store KPs |
-  |               |               |&lt;~~~~~~~~~~~~~~|
-  |               |               |&lt;~~~~~~~~~~~~~~|
-  | Request KPs   |               |               |
-  |~~~~~~~~~~~~~~&gt;| /keyMaterial  |               |
-  |               |--------------&gt;|               |
-  |               |        200 OK |               |
-  |           KPs |&lt;--------------|               |
-  |&lt;~~~~~~~~~~~~~~|               |               |
-  |               |               |               |
-
-ClientB*-&gt;ServerB: [[ Store KeyPackages ]]
-ClientA1-&gt;ServerA: [[ request KPs for bob@b.example ]]
-ServerA-&gt;ServerB: POST /keyMaterial KeyMaterialRequest
-ServerB: Verify that Alice is authorized to fetch KeyPackages
-ServerB: Mark returned KPs as reserved for Alice’s use
-ServerB-&gt;ServerA: 200 OK KeyMaterialResponse
-ServerA: Remember that these KPs go to b.example
-ServerA-&gt;ClientA1: [[ KPs ]]
-</pre>
+          <div id="section-3.2-6.1">
+            <div class="alignLeft art-svg artwork" id="section-3.2-6.1.1">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="368" width="496" viewBox="0 0 496 368" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
+                <path d="M 24,48 L 24,208" fill="none" stroke="black"></path>
+                <path d="M 152,48 L 152,208" fill="none" stroke="black"></path>
+                <path d="M 280,48 L 280,208" fill="none" stroke="black"></path>
+                <path d="M 408,48 L 408,208" fill="none" stroke="black"></path>
+                <path d="M 152,144 L 272,144" fill="none" stroke="black"></path>
+                <path d="M 160,176 L 280,176" fill="none" stroke="black"></path>
+                <polygon class="arrowhead" points="280,144 268,138.4 268,149.6" fill="black" transform="rotate(0,272,144)"></polygon>
+                <polygon class="arrowhead" points="168,176 156,170.4 156,181.6" fill="black" transform="rotate(180,160,176)"></polygon>
+                <g class="text">
+                  <text x="36" y="36">ClientA1</text>
+                  <text x="152" y="36">ServerA</text>
+                  <text x="280" y="36">ServerB</text>
+                  <text x="412" y="36">ClientB*</text>
+                  <text x="344" y="68">Store</text>
+                  <text x="384" y="68">KPs</text>
+                  <text x="344" y="84">&lt;~~~~~~~~~~~~~~</text>
+                  <text x="344" y="100">&lt;~~~~~~~~~~~~~~</text>
+                  <text x="64" y="116">Request</text>
+                  <text x="112" y="116">KPs</text>
+                  <text x="88" y="132">~~~~~~~~~~~~~~&gt;</text>
+                  <text x="212" y="132">/keyMaterial</text>
+                  <text x="232" y="164">200</text>
+                  <text x="260" y="164">OK</text>
+                  <text x="128" y="180">KPs</text>
+                  <text x="88" y="196">&lt;~~~~~~~~~~~~~~</text>
+                  <text x="76" y="244">ClientB*-&gt;ServerB:</text>
+                  <text x="164" y="244">[[</text>
+                  <text x="200" y="244">Store</text>
+                  <text x="272" y="244">KeyPackages</text>
+                  <text x="332" y="244">]]</text>
+                  <text x="76" y="260">ClientA1-&gt;ServerA:</text>
+                  <text x="164" y="260">[[</text>
+                  <text x="208" y="260">request</text>
+                  <text x="256" y="260">KPs</text>
+                  <text x="288" y="260">for</text>
+                  <text x="360" y="260">bob@b.example</text>
+                  <text x="428" y="260">]]</text>
+                  <text x="72" y="276">ServerA-&gt;ServerB:</text>
+                  <text x="164" y="276">POST</text>
+                  <text x="236" y="276">/keyMaterial</text>
+                  <text x="364" y="276">KeyMaterialRequest</text>
+                  <text x="36" y="292">ServerB:</text>
+                  <text x="100" y="292">Verify</text>
+                  <text x="148" y="292">that</text>
+                  <text x="192" y="292">Alice</text>
+                  <text x="228" y="292">is</text>
+                  <text x="284" y="292">authorized</text>
+                  <text x="340" y="292">to</text>
+                  <text x="376" y="292">fetch</text>
+                  <text x="448" y="292">KeyPackages</text>
+                  <text x="36" y="308">ServerB:</text>
+                  <text x="92" y="308">Mark</text>
+                  <text x="148" y="308">returned</text>
+                  <text x="200" y="308">KPs</text>
+                  <text x="228" y="308">as</text>
+                  <text x="276" y="308">reserved</text>
+                  <text x="328" y="308">for</text>
+                  <text x="376" y="308">Alice’s</text>
+                  <text x="424" y="308">use</text>
+                  <text x="72" y="324">ServerB-&gt;ServerA:</text>
+                  <text x="160" y="324">200</text>
+                  <text x="188" y="324">OK</text>
+                  <text x="280" y="324">KeyMaterialResponse</text>
+                  <text x="36" y="340">ServerA:</text>
+                  <text x="108" y="340">Remember</text>
+                  <text x="164" y="340">that</text>
+                  <text x="208" y="340">these</text>
+                  <text x="248" y="340">KPs</text>
+                  <text x="276" y="340">go</text>
+                  <text x="300" y="340">to</text>
+                  <text x="352" y="340">b.example</text>
+                  <text x="76" y="356">ServerA-&gt;ClientA1:</text>
+                  <text x="164" y="356">[[</text>
+                  <text x="192" y="356">KPs</text>
+                  <text x="220" y="356">]]</text>
+                </g>
+              </svg><a href="#section-3.2-6.1.1" class="pilcrow">¶</a>
+</div>
 </div>
 <figcaption><a href="#figure-2" class="selfRef">Figure 2</a>:
 <a href="#name-alice-fetches-keypackages-f" class="selfRef">Alice Fetches KeyPackages for Bob's Clients</a>
@@ -1536,28 +1593,91 @@ ServerA-&gt;ClientA1: [[ KPs ]]
 </div>
 <span id="name-alice-adds-bob-to-the-room-"></span><div id="fig-ab-add">
 <figure id="figure-3">
-          <div class="alignLeft art-ascii-art art-text artwork" id="section-3.2-7.1">
-<pre>
-ClientA1       ServerA         ServerB         ClientB*
-  |               |               |               |
-  | Commit, etc.  |               |               |
-  |~~~~~~~~~~~~~~&gt;| /notify       |               |
-  |               |--------------&gt;| Welcome, Tree |
-  |               |               |~~~~~~~~~~~~~~&gt;|
-  |               |               |~~~~~~~~~~~~~~&gt;|
-  |               |        200 OK |               |
-  |      Accepted |&lt;--------------|               |
-  |&lt;~~~~~~~~~~~~~~|               |               |
-  |               |               |               |
-
-ClientA1: Prepare Commit over AppSync(+bob@b.example), Add*
-ClientA1-&gt;ServerA: [[ Commit, Welcome, GroupInfo?, RatchetTree? ]]
-ServerA: Verify that AppSync, Adds are allowed by policy
-ServerA: Identifies Welcome domains based on KP hash in Welcome
-ServerA-&gt;ServerB: POST /notify/clubhouse@a.example Intro{ Welcome, RatchetTree? }
-ServerB: Recognizes that Welcome is adding Bob to room clubhouse@a.example
-ServerB-&gt;ClientB*: [[ Welcome, RatchetTree? ]]
-</pre>
+          <div id="section-3.2-7.1">
+            <div class="alignLeft art-svg artwork" id="section-3.2-7.1.1">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="336" width="656" viewBox="0 0 656 336" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
+                <path d="M 24,48 L 24,192" fill="none" stroke="black"></path>
+                <path d="M 152,48 L 152,192" fill="none" stroke="black"></path>
+                <path d="M 280,48 L 280,192" fill="none" stroke="black"></path>
+                <path d="M 408,48 L 408,192" fill="none" stroke="black"></path>
+                <path d="M 152,96 L 272,96" fill="none" stroke="black"></path>
+                <path d="M 160,160 L 280,160" fill="none" stroke="black"></path>
+                <polygon class="arrowhead" points="280,96 268,90.4 268,101.6" fill="black" transform="rotate(0,272,96)"></polygon>
+                <polygon class="arrowhead" points="168,160 156,154.4 156,165.6" fill="black" transform="rotate(180,160,160)"></polygon>
+                <g class="text">
+                  <text x="36" y="36">ClientA1</text>
+                  <text x="152" y="36">ServerA</text>
+                  <text x="280" y="36">ServerB</text>
+                  <text x="412" y="36">ClientB*</text>
+                  <text x="64" y="68">Commit,</text>
+                  <text x="116" y="68">etc.</text>
+                  <text x="88" y="84">~~~~~~~~~~~~~~&gt;</text>
+                  <text x="192" y="84">/notify</text>
+                  <text x="324" y="100">Welcome,</text>
+                  <text x="380" y="100">Tree</text>
+                  <text x="344" y="116">~~~~~~~~~~~~~~&gt;</text>
+                  <text x="344" y="132">~~~~~~~~~~~~~~&gt;</text>
+                  <text x="232" y="148">200</text>
+                  <text x="260" y="148">OK</text>
+                  <text x="108" y="164">Accepted</text>
+                  <text x="88" y="180">&lt;~~~~~~~~~~~~~~</text>
+                  <text x="40" y="228">ClientA1:</text>
+                  <text x="112" y="228">Prepare</text>
+                  <text x="172" y="228">Commit</text>
+                  <text x="220" y="228">over</text>
+                  <text x="340" y="228">AppSync(+bob@b.example),</text>
+                  <text x="460" y="228">Add*</text>
+                  <text x="76" y="244">ClientA1-&gt;ServerA:</text>
+                  <text x="164" y="244">[[</text>
+                  <text x="208" y="244">Commit,</text>
+                  <text x="276" y="244">Welcome,</text>
+                  <text x="360" y="244">GroupInfo?,</text>
+                  <text x="460" y="244">RatchetTree?</text>
+                  <text x="524" y="244">]]</text>
+                  <text x="36" y="260">ServerA:</text>
+                  <text x="100" y="260">Verify</text>
+                  <text x="148" y="260">that</text>
+                  <text x="204" y="260">AppSync,</text>
+                  <text x="260" y="260">Adds</text>
+                  <text x="296" y="260">are</text>
+                  <text x="344" y="260">allowed</text>
+                  <text x="388" y="260">by</text>
+                  <text x="428" y="260">policy</text>
+                  <text x="36" y="276">ServerA:</text>
+                  <text x="116" y="276">Identifies</text>
+                  <text x="192" y="276">Welcome</text>
+                  <text x="256" y="276">domains</text>
+                  <text x="312" y="276">based</text>
+                  <text x="348" y="276">on</text>
+                  <text x="372" y="276">KP</text>
+                  <text x="404" y="276">hash</text>
+                  <text x="436" y="276">in</text>
+                  <text x="480" y="276">Welcome</text>
+                  <text x="72" y="292">ServerA-&gt;ServerB:</text>
+                  <text x="164" y="292">POST</text>
+                  <text x="296" y="292">/notify/clubhouse@a.example</text>
+                  <text x="436" y="292">Intro{</text>
+                  <text x="500" y="292">Welcome,</text>
+                  <text x="588" y="292">RatchetTree?</text>
+                  <text x="648" y="292">}</text>
+                  <text x="36" y="308">ServerB:</text>
+                  <text x="116" y="308">Recognizes</text>
+                  <text x="180" y="308">that</text>
+                  <text x="232" y="308">Welcome</text>
+                  <text x="276" y="308">is</text>
+                  <text x="316" y="308">adding</text>
+                  <text x="360" y="308">Bob</text>
+                  <text x="388" y="308">to</text>
+                  <text x="420" y="308">room</text>
+                  <text x="520" y="308">clubhouse@a.example</text>
+                  <text x="76" y="324">ServerB-&gt;ClientB*:</text>
+                  <text x="164" y="324">[[</text>
+                  <text x="212" y="324">Welcome,</text>
+                  <text x="300" y="324">RatchetTree?</text>
+                  <text x="364" y="324">]]</text>
+                </g>
+              </svg><a href="#section-3.2-7.1.1" class="pilcrow">¶</a>
+</div>
 </div>
 <figcaption><a href="#figure-3" class="selfRef">Figure 3</a>:
 <a href="#name-alice-adds-bob-to-the-room-" class="selfRef">Alice Adds Bob to the Room and Bob's Clients to the MLS Group</a>
@@ -1578,32 +1698,102 @@ room, the hub ServerA will have to distribute the Commit adding Cathy and
 Cathy's clients to ServerB as well as forwarding the Welcome to ServerC.<a href="#section-3.3-1" class="pilcrow">¶</a></p>
 <span id="name-bob-fetches-keypackages-for"></span><div id="fig-bc-kp-fetch">
 <figure id="figure-4">
-          <div class="alignLeft art-ascii-art art-text artwork" id="section-3.3-2.1">
-<pre>
-ClientB1       ServerB         ServerA         ServerC         ClientC*
-  |               |               |               |               |
-  |               |               |               |     Store KPs |
-  |               |               |               |&lt;~~~~~~~~~~~~~~|
-  |               |               |               |&lt;~~~~~~~~~~~~~~|
-  | Request KPs   |               |               |               |
-  |~~~~~~~~~~~~~~&gt;| /keyMaterial  | /keyMaterial  |               |
-  |               |--------------&gt;|--------------&gt;|               |
-  |               |        200 OK |        200 OK |               |
-  |           KPs |&lt;--------------|&lt;--------------|               |
-  |&lt;~~~~~~~~~~~~~~|               |               |               |
-  |               |               |               |               |
-
-ClientC*-&gt;ServerC: [[ Store KeyPackages ]]
-ClientB1-&gt;ServerB: [[ request KPs for bob@b.example ]]
-ServerB-&gt;ServerA: POST /keyMaterial KeyMaterialRequest
-ServerA-&gt;ServerC: POST /keyMaterial KeyMaterialRequest
-ServerB: Verify that Bob is authorized to fetch KeyPackages
-ServerB: Mark returned KPs as reserved for Bob’s use
-ServerC-&gt;ServerA: 200 OK KeyMaterialResponse
-ServerA: Remember that these KPs go to b.example
-ServerA-&gt;ServerB: 200 OK KeyMaterialResponse
-ServerB-&gt;ClientB1: [[ KPs ]]
-</pre>
+          <div id="section-3.3-2.1">
+            <div class="alignLeft art-svg artwork" id="section-3.3-2.1.1">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="400" width="576" viewBox="0 0 576 400" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
+                <path d="M 24,48 L 24,208" fill="none" stroke="black"></path>
+                <path d="M 152,48 L 152,208" fill="none" stroke="black"></path>
+                <path d="M 280,48 L 280,208" fill="none" stroke="black"></path>
+                <path d="M 408,48 L 408,208" fill="none" stroke="black"></path>
+                <path d="M 536,48 L 536,208" fill="none" stroke="black"></path>
+                <path d="M 152,144 L 400,144" fill="none" stroke="black"></path>
+                <path d="M 160,176 L 408,176" fill="none" stroke="black"></path>
+                <polygon class="arrowhead" points="408,144 396,138.4 396,149.6" fill="black" transform="rotate(0,400,144)"></polygon>
+                <polygon class="arrowhead" points="296,176 284,170.4 284,181.6" fill="black" transform="rotate(180,288,176)"></polygon>
+                <polygon class="arrowhead" points="280,144 268,138.4 268,149.6" fill="black" transform="rotate(0,272,144)"></polygon>
+                <polygon class="arrowhead" points="168,176 156,170.4 156,181.6" fill="black" transform="rotate(180,160,176)"></polygon>
+                <g class="text">
+                  <text x="36" y="36">ClientB1</text>
+                  <text x="152" y="36">ServerB</text>
+                  <text x="280" y="36">ServerA</text>
+                  <text x="408" y="36">ServerC</text>
+                  <text x="540" y="36">ClientC*</text>
+                  <text x="472" y="68">Store</text>
+                  <text x="512" y="68">KPs</text>
+                  <text x="472" y="84">&lt;~~~~~~~~~~~~~~</text>
+                  <text x="472" y="100">&lt;~~~~~~~~~~~~~~</text>
+                  <text x="64" y="116">Request</text>
+                  <text x="112" y="116">KPs</text>
+                  <text x="88" y="132">~~~~~~~~~~~~~~&gt;</text>
+                  <text x="212" y="132">/keyMaterial</text>
+                  <text x="340" y="132">/keyMaterial</text>
+                  <text x="232" y="164">200</text>
+                  <text x="260" y="164">OK</text>
+                  <text x="360" y="164">200</text>
+                  <text x="388" y="164">OK</text>
+                  <text x="128" y="180">KPs</text>
+                  <text x="88" y="196">&lt;~~~~~~~~~~~~~~</text>
+                  <text x="76" y="244">ClientC*-&gt;ServerC:</text>
+                  <text x="164" y="244">[[</text>
+                  <text x="200" y="244">Store</text>
+                  <text x="272" y="244">KeyPackages</text>
+                  <text x="332" y="244">]]</text>
+                  <text x="76" y="260">ClientB1-&gt;ServerB:</text>
+                  <text x="164" y="260">[[</text>
+                  <text x="208" y="260">request</text>
+                  <text x="256" y="260">KPs</text>
+                  <text x="288" y="260">for</text>
+                  <text x="360" y="260">bob@b.example</text>
+                  <text x="428" y="260">]]</text>
+                  <text x="72" y="276">ServerB-&gt;ServerA:</text>
+                  <text x="164" y="276">POST</text>
+                  <text x="236" y="276">/keyMaterial</text>
+                  <text x="364" y="276">KeyMaterialRequest</text>
+                  <text x="72" y="292">ServerA-&gt;ServerC:</text>
+                  <text x="164" y="292">POST</text>
+                  <text x="236" y="292">/keyMaterial</text>
+                  <text x="364" y="292">KeyMaterialRequest</text>
+                  <text x="36" y="308">ServerB:</text>
+                  <text x="100" y="308">Verify</text>
+                  <text x="148" y="308">that</text>
+                  <text x="184" y="308">Bob</text>
+                  <text x="212" y="308">is</text>
+                  <text x="268" y="308">authorized</text>
+                  <text x="324" y="308">to</text>
+                  <text x="360" y="308">fetch</text>
+                  <text x="432" y="308">KeyPackages</text>
+                  <text x="36" y="324">ServerB:</text>
+                  <text x="92" y="324">Mark</text>
+                  <text x="148" y="324">returned</text>
+                  <text x="200" y="324">KPs</text>
+                  <text x="228" y="324">as</text>
+                  <text x="276" y="324">reserved</text>
+                  <text x="328" y="324">for</text>
+                  <text x="368" y="324">Bob’s</text>
+                  <text x="408" y="324">use</text>
+                  <text x="72" y="340">ServerC-&gt;ServerA:</text>
+                  <text x="160" y="340">200</text>
+                  <text x="188" y="340">OK</text>
+                  <text x="280" y="340">KeyMaterialResponse</text>
+                  <text x="36" y="356">ServerA:</text>
+                  <text x="108" y="356">Remember</text>
+                  <text x="164" y="356">that</text>
+                  <text x="208" y="356">these</text>
+                  <text x="248" y="356">KPs</text>
+                  <text x="276" y="356">go</text>
+                  <text x="300" y="356">to</text>
+                  <text x="352" y="356">b.example</text>
+                  <text x="72" y="372">ServerA-&gt;ServerB:</text>
+                  <text x="160" y="372">200</text>
+                  <text x="188" y="372">OK</text>
+                  <text x="280" y="372">KeyMaterialResponse</text>
+                  <text x="76" y="388">ServerB-&gt;ClientB1:</text>
+                  <text x="164" y="388">[[</text>
+                  <text x="192" y="388">KPs</text>
+                  <text x="220" y="388">]]</text>
+                </g>
+              </svg><a href="#section-3.3-2.1.1" class="pilcrow">¶</a>
+</div>
 </div>
 <figcaption><a href="#figure-4" class="selfRef">Figure 4</a>:
 <a href="#name-bob-fetches-keypackages-for" class="selfRef">Bob Fetches KeyPackages for Cathy's Clients</a>
@@ -1611,39 +1801,120 @@ ServerB-&gt;ClientB1: [[ KPs ]]
 </div>
 <span id="name-bob-adds-cathy-to-the-room-"></span><div id="fig-bc-add">
 <figure id="figure-5">
-          <div class="alignLeft art-ascii-art art-text artwork" id="section-3.3-3.1">
-<pre>
-ClientB1       ServerB         ServerA         ServerC         ClientC*  ClientB*  ClientA*
-  |               |               |               |               |         |         |
-  | Commit, etc.  |               |               |               |         |         |
-  |~~~~~~~~~~~~~~&gt;| /update       |               |               |         |         |
-  |               |--------------&gt;|               |               |         |         |
-  |               |        200 OK |               |               |         |         |
-  |               |&lt;--------------|               |               |         |         |
-  |      Accepted |               | /notify       |               |         |         |
-  |&lt;~~~~~~~~~~~~~~|               |--------------&gt;| Welcome, Tree |         |         |
-  |               |               |               |~~~~~~~~~~~~~~&gt;|         |         |
-  |               |               |               |~~~~~~~~~~~~~~&gt;|         |         |
-  |               |       /notify |               |               |         |         |
-  |               |&lt;--------------|               |               |         |         |
-  |               | Commit        |               |               |         |         |
-  |               |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~&gt;|         |
-  |               |               | Commit        |               |         |         |
-  |               |               |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~&gt;|
-  |               |               |               |               |         |         |
-
-ClientB1: Prepare Commit over AppSync(+cathy@c.example), Add*
-ClientB1-&gt;ServerB: [[ Commit, Welcome, GroupInfo?, RatchetTree? ]]
-ServerB-&gt;ServerA: POST /update/clubhouse@a.example CommitBundle
-ServerA: Verify that Adds are allowed by policy
-ServerA-&gt;ServerB: 200 OK
-ServerA-&gt;ServerC: POST /notify/clubhouse@a.example Intro{ Welcome, RatchetTree? }
-ServerC: Recognizes that Welcome is adding Cathy to clubhouse@a.example
-ServerC-&gt;ClientC*: [[ Welcome, RatchetTree? ]]
-ServerA-&gt;ServerB: POST /notify/clubhouse@a.example Commit
-ServerB-&gt;ClientB*: [[ Commit ]]
-ServerA-&gt;ClientA*: [[ Commit ]]
-</pre>
+          <div id="section-3.3-3.1">
+            <div class="alignLeft art-svg artwork" id="section-3.3-3.1.1">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="512" width="736" viewBox="0 0 736 512" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
+                <path d="M 24,48 L 24,304" fill="none" stroke="black"></path>
+                <path d="M 152,48 L 152,304" fill="none" stroke="black"></path>
+                <path d="M 280,48 L 280,240" fill="none" stroke="black"></path>
+                <path d="M 280,272 L 280,304" fill="none" stroke="black"></path>
+                <path d="M 408,48 L 408,240" fill="none" stroke="black"></path>
+                <path d="M 536,48 L 536,240" fill="none" stroke="black"></path>
+                <path d="M 616,48 L 616,272" fill="none" stroke="black"></path>
+                <path d="M 696,48 L 696,304" fill="none" stroke="black"></path>
+                <path d="M 152,96 L 272,96" fill="none" stroke="black"></path>
+                <path d="M 160,128 L 280,128" fill="none" stroke="black"></path>
+                <path d="M 280,160 L 400,160" fill="none" stroke="black"></path>
+                <path d="M 160,224 L 280,224" fill="none" stroke="black"></path>
+                <polygon class="arrowhead" points="408,160 396,154.4 396,165.6" fill="black" transform="rotate(0,400,160)"></polygon>
+                <polygon class="arrowhead" points="280,96 268,90.4 268,101.6" fill="black" transform="rotate(0,272,96)"></polygon>
+                <polygon class="arrowhead" points="168,224 156,218.4 156,229.6" fill="black" transform="rotate(180,160,224)"></polygon>
+                <polygon class="arrowhead" points="168,128 156,122.4 156,133.6" fill="black" transform="rotate(180,160,128)"></polygon>
+                <g class="text">
+                  <text x="36" y="36">ClientB1</text>
+                  <text x="152" y="36">ServerB</text>
+                  <text x="280" y="36">ServerA</text>
+                  <text x="408" y="36">ServerC</text>
+                  <text x="540" y="36">ClientC*</text>
+                  <text x="620" y="36">ClientB*</text>
+                  <text x="700" y="36">ClientA*</text>
+                  <text x="64" y="68">Commit,</text>
+                  <text x="116" y="68">etc.</text>
+                  <text x="88" y="84">~~~~~~~~~~~~~~&gt;</text>
+                  <text x="192" y="84">/update</text>
+                  <text x="232" y="116">200</text>
+                  <text x="260" y="116">OK</text>
+                  <text x="108" y="148">Accepted</text>
+                  <text x="320" y="148">/notify</text>
+                  <text x="88" y="164">&lt;~~~~~~~~~~~~~~</text>
+                  <text x="452" y="164">Welcome,</text>
+                  <text x="508" y="164">Tree</text>
+                  <text x="472" y="180">~~~~~~~~~~~~~~&gt;</text>
+                  <text x="472" y="196">~~~~~~~~~~~~~~&gt;</text>
+                  <text x="240" y="212">/notify</text>
+                  <text x="188" y="244">Commit</text>
+                  <text x="384" y="260">~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~&gt;</text>
+                  <text x="316" y="276">Commit</text>
+                  <text x="408" y="276">|</text>
+                  <text x="536" y="276">|</text>
+                  <text x="488" y="292">~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~&gt;</text>
+                  <text x="408" y="308">|</text>
+                  <text x="536" y="308">|</text>
+                  <text x="616" y="308">|</text>
+                  <text x="40" y="340">ClientB1:</text>
+                  <text x="112" y="340">Prepare</text>
+                  <text x="172" y="340">Commit</text>
+                  <text x="220" y="340">over</text>
+                  <text x="348" y="340">AppSync(+cathy@c.example),</text>
+                  <text x="476" y="340">Add*</text>
+                  <text x="76" y="356">ClientB1-&gt;ServerB:</text>
+                  <text x="164" y="356">[[</text>
+                  <text x="208" y="356">Commit,</text>
+                  <text x="276" y="356">Welcome,</text>
+                  <text x="360" y="356">GroupInfo?,</text>
+                  <text x="460" y="356">RatchetTree?</text>
+                  <text x="524" y="356">]]</text>
+                  <text x="72" y="372">ServerB-&gt;ServerA:</text>
+                  <text x="164" y="372">POST</text>
+                  <text x="296" y="372">/update/clubhouse@a.example</text>
+                  <text x="460" y="372">CommitBundle</text>
+                  <text x="36" y="388">ServerA:</text>
+                  <text x="100" y="388">Verify</text>
+                  <text x="148" y="388">that</text>
+                  <text x="188" y="388">Adds</text>
+                  <text x="224" y="388">are</text>
+                  <text x="272" y="388">allowed</text>
+                  <text x="316" y="388">by</text>
+                  <text x="356" y="388">policy</text>
+                  <text x="72" y="404">ServerA-&gt;ServerB:</text>
+                  <text x="160" y="404">200</text>
+                  <text x="188" y="404">OK</text>
+                  <text x="72" y="420">ServerA-&gt;ServerC:</text>
+                  <text x="164" y="420">POST</text>
+                  <text x="296" y="420">/notify/clubhouse@a.example</text>
+                  <text x="436" y="420">Intro{</text>
+                  <text x="500" y="420">Welcome,</text>
+                  <text x="588" y="420">RatchetTree?</text>
+                  <text x="648" y="420">}</text>
+                  <text x="36" y="436">ServerC:</text>
+                  <text x="116" y="436">Recognizes</text>
+                  <text x="180" y="436">that</text>
+                  <text x="232" y="436">Welcome</text>
+                  <text x="276" y="436">is</text>
+                  <text x="316" y="436">adding</text>
+                  <text x="368" y="436">Cathy</text>
+                  <text x="404" y="436">to</text>
+                  <text x="496" y="436">clubhouse@a.example</text>
+                  <text x="76" y="452">ServerC-&gt;ClientC*:</text>
+                  <text x="164" y="452">[[</text>
+                  <text x="212" y="452">Welcome,</text>
+                  <text x="300" y="452">RatchetTree?</text>
+                  <text x="364" y="452">]]</text>
+                  <text x="72" y="468">ServerA-&gt;ServerB:</text>
+                  <text x="164" y="468">POST</text>
+                  <text x="296" y="468">/notify/clubhouse@a.example</text>
+                  <text x="436" y="468">Commit</text>
+                  <text x="76" y="484">ServerB-&gt;ClientB*:</text>
+                  <text x="164" y="484">[[</text>
+                  <text x="204" y="484">Commit</text>
+                  <text x="244" y="484">]]</text>
+                  <text x="76" y="500">ServerA-&gt;ClientA*:</text>
+                  <text x="164" y="500">[[</text>
+                  <text x="204" y="500">Commit</text>
+                  <text x="244" y="500">]]</text>
+                </g>
+              </svg><a href="#section-3.3-3.1.1" class="pilcrow">¶</a>
+</div>
 </div>
 <figcaption><a href="#figure-5" class="selfRef">Figure 5</a>:
 <a href="#name-bob-adds-cathy-to-the-room-" class="selfRef">Bob Adds Cathy to the Room and Cathy's Clients to the MLS Group</a>
@@ -1664,35 +1935,94 @@ message to the other servers involved in the room, who distribute it to their
 clients.<a href="#section-3.4-1" class="pilcrow">¶</a></p>
 <span id="name-cathy-sends-a-message-to-th"></span><div id="fig-c-msg">
 <figure id="figure-6">
-          <div class="alignLeft art-ascii-art art-text artwork" id="section-3.4-2.1">
-<pre>
-ClientC1       ServerC         ServerA         ServerB         ClientB*  ClientC*  ClientA*
-  |               |               |               |               |         |         |
-  | Message       |               |               |               |         |         |
-  |~~~~~~~~~~~~~~&gt;| /submit       |               |               |         |         |
-  |               |--------------&gt;|               |               |         |         |
-  |               |        200 OK |               |               |         |         |
-  |               |&lt;--------------|               |               |         |         |
-  |      Accepted |               | /notify       |               |         |         |
-  |&lt;~~~~~~~~~~~~~~|               |--------------&gt;| Message       |         |         |
-  |               |               |               |~~~~~~~~~~~~~~&gt;|         |         |
-  |               |       /notify |               |               |         |         |
-  |               |&lt;--------------|               |               |         |         |
-  |               | Message       |               |               |         |         |
-  |               |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~&gt;|         |
-  |               |               | Message       |               |         |         |
-  |               |               |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~&gt;|
-  |               |               |               |               |         |         |
-
-ClientC1-&gt;ServerC: [[ MLSMessage(PrivateMessage) ]]
-ServerC-&gt;ServerA: POST /submit/clubhouse@a.example MLSMessage(PrivateMessage)
-ServerA: Verifies that message is allowed
-ServerA-&gt;ServerC: POST /notify/clubhouse@a.example Message{ MLSMessage(PrivateMessage) }
-ServerA-&gt;ServerB: POST /notify/clubhouse@a.example Message{ MLSMessage(PrivateMessage) }
-ServerA-&gt;ClientA*: [[ MLSMessage(PrivateMessage) ]]
-ServerB-&gt;ClientB*: [[ MLSMessage(PrivateMessage) ]]
-ServerC-&gt;ClientC*: [[ MLSMessage(PrivateMessage) ]]
-</pre>
+          <div id="section-3.4-2.1">
+            <div class="alignLeft art-svg artwork" id="section-3.4-2.1.1">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="448" width="736" viewBox="0 0 736 448" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
+                <path d="M 24,48 L 24,288" fill="none" stroke="black"></path>
+                <path d="M 152,48 L 152,288" fill="none" stroke="black"></path>
+                <path d="M 280,48 L 280,224" fill="none" stroke="black"></path>
+                <path d="M 280,256 L 280,288" fill="none" stroke="black"></path>
+                <path d="M 408,48 L 408,224" fill="none" stroke="black"></path>
+                <path d="M 536,48 L 536,224" fill="none" stroke="black"></path>
+                <path d="M 616,48 L 616,256" fill="none" stroke="black"></path>
+                <path d="M 696,48 L 696,288" fill="none" stroke="black"></path>
+                <path d="M 152,96 L 272,96" fill="none" stroke="black"></path>
+                <path d="M 160,128 L 280,128" fill="none" stroke="black"></path>
+                <path d="M 280,160 L 400,160" fill="none" stroke="black"></path>
+                <path d="M 160,208 L 280,208" fill="none" stroke="black"></path>
+                <polygon class="arrowhead" points="408,160 396,154.4 396,165.6" fill="black" transform="rotate(0,400,160)"></polygon>
+                <polygon class="arrowhead" points="280,96 268,90.4 268,101.6" fill="black" transform="rotate(0,272,96)"></polygon>
+                <polygon class="arrowhead" points="168,208 156,202.4 156,213.6" fill="black" transform="rotate(180,160,208)"></polygon>
+                <polygon class="arrowhead" points="168,128 156,122.4 156,133.6" fill="black" transform="rotate(180,160,128)"></polygon>
+                <g class="text">
+                  <text x="36" y="36">ClientC1</text>
+                  <text x="152" y="36">ServerC</text>
+                  <text x="280" y="36">ServerA</text>
+                  <text x="408" y="36">ServerB</text>
+                  <text x="540" y="36">ClientB*</text>
+                  <text x="620" y="36">ClientC*</text>
+                  <text x="700" y="36">ClientA*</text>
+                  <text x="64" y="68">Message</text>
+                  <text x="88" y="84">~~~~~~~~~~~~~~&gt;</text>
+                  <text x="192" y="84">/submit</text>
+                  <text x="232" y="116">200</text>
+                  <text x="260" y="116">OK</text>
+                  <text x="108" y="148">Accepted</text>
+                  <text x="320" y="148">/notify</text>
+                  <text x="88" y="164">&lt;~~~~~~~~~~~~~~</text>
+                  <text x="448" y="164">Message</text>
+                  <text x="472" y="180">~~~~~~~~~~~~~~&gt;</text>
+                  <text x="240" y="196">/notify</text>
+                  <text x="192" y="228">Message</text>
+                  <text x="384" y="244">~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~&gt;</text>
+                  <text x="320" y="260">Message</text>
+                  <text x="408" y="260">|</text>
+                  <text x="536" y="260">|</text>
+                  <text x="488" y="276">~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~&gt;</text>
+                  <text x="408" y="292">|</text>
+                  <text x="536" y="292">|</text>
+                  <text x="616" y="292">|</text>
+                  <text x="76" y="324">ClientC1-&gt;ServerC:</text>
+                  <text x="164" y="324">[[</text>
+                  <text x="284" y="324">MLSMessage(PrivateMessage)</text>
+                  <text x="404" y="324">]]</text>
+                  <text x="72" y="340">ServerC-&gt;ServerA:</text>
+                  <text x="164" y="340">POST</text>
+                  <text x="296" y="340">/submit/clubhouse@a.example</text>
+                  <text x="516" y="340">MLSMessage(PrivateMessage)</text>
+                  <text x="36" y="356">ServerA:</text>
+                  <text x="108" y="356">Verifies</text>
+                  <text x="164" y="356">that</text>
+                  <text x="216" y="356">message</text>
+                  <text x="260" y="356">is</text>
+                  <text x="304" y="356">allowed</text>
+                  <text x="72" y="372">ServerA-&gt;ServerC:</text>
+                  <text x="164" y="372">POST</text>
+                  <text x="296" y="372">/notify/clubhouse@a.example</text>
+                  <text x="444" y="372">Message{</text>
+                  <text x="588" y="372">MLSMessage(PrivateMessage)</text>
+                  <text x="704" y="372">}</text>
+                  <text x="72" y="388">ServerA-&gt;ServerB:</text>
+                  <text x="164" y="388">POST</text>
+                  <text x="296" y="388">/notify/clubhouse@a.example</text>
+                  <text x="444" y="388">Message{</text>
+                  <text x="588" y="388">MLSMessage(PrivateMessage)</text>
+                  <text x="704" y="388">}</text>
+                  <text x="76" y="404">ServerA-&gt;ClientA*:</text>
+                  <text x="164" y="404">[[</text>
+                  <text x="284" y="404">MLSMessage(PrivateMessage)</text>
+                  <text x="404" y="404">]]</text>
+                  <text x="76" y="420">ServerB-&gt;ClientB*:</text>
+                  <text x="164" y="420">[[</text>
+                  <text x="284" y="420">MLSMessage(PrivateMessage)</text>
+                  <text x="404" y="420">]]</text>
+                  <text x="76" y="436">ServerC-&gt;ClientC*:</text>
+                  <text x="164" y="436">[[</text>
+                  <text x="284" y="436">MLSMessage(PrivateMessage)</text>
+                  <text x="404" y="436">]]</text>
+                </g>
+              </svg><a href="#section-3.4-2.1.1" class="pilcrow">¶</a>
+</div>
 </div>
 <figcaption><a href="#figure-6" class="selfRef">Figure 6</a>:
 <a href="#name-cathy-sends-a-message-to-th" class="selfRef">Cathy Sends a Message to the Room</a>
@@ -1706,9 +2036,9 @@ ServerC-&gt;ClientC*: [[ MLSMessage(PrivateMessage) ]]
 <a href="#section-3.5" class="section-number selfRef">3.5. </a><a href="#name-bob-leaves-the-room" class="section-name selfRef">Bob Leaves the Room</a>
         </h3>
 <p id="section-3.5-1">A user removing another user follows the same flow as adding the user.  The
-user performing the removal creates a MLS Remove proposals for all of the
-removed user's devices, and an AppSync proposal updating the room state to
-remove the removed user from the room's participant list.<a href="#section-3.5-1" class="pilcrow">¶</a></p>
+user performing the removal creates an MLS commit covering Remove proposals for
+all of the removed user's devices, and an AppSync proposal updating the room
+state to remove the removed user from the room's participant list.<a href="#section-3.5-1" class="pilcrow">¶</a></p>
 <p id="section-3.5-2">Leaving is slightly more complicated because the leaving user cannot remove all
 of their devices from the MLS group.  Instead, the leave happens in three steps:<a href="#section-3.5-2" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-3.5-3">
@@ -1729,46 +2059,120 @@ include the cached proposals.<a href="#section-3.5-3.3.1" class="pilcrow">¶</a>
 possible.<a href="#section-3.5-4" class="pilcrow">¶</a></p>
 <span id="name-bob-leaves-the-room-2"></span><div id="fig-b-leave">
 <figure id="figure-7">
-          <div class="alignLeft art-text artwork" id="section-3.5-5.1">
-<pre>
-ClientB1       ServerB         ServerA         ServerC         ClientC1
-  |               |               |               |               |
-  | Proposals     |               |               |               |
-  |~~~~~~~~~~~~~~&gt;| /update       |               |               |
-  |               |--------------&gt;|               |               |
-  |               |        200 OK |               |               |
-  |               |&lt;--------------|               |               |
-  |      Accepted |               |  /notify      |               |
-  |&lt;~~~~~~~~~~~~~~|               |--------------&gt;|               |
-  |               |               |               | Proposals     |
-  |               |               |               |~~~~~~~~~~~~~~&gt;|
-  |               |               |               |               |
-  |               |               |               | Commit(Props) |
-  |               |               |               |&lt;~~~~~~~~~~~~~~|
-  |               |               |       /update |               |
-  |               |               |&lt;~~~~~~~~~~~~~~|               |
-  |               |               | 200 OK        |               |
-  |               |               |--------------&gt;|               |
-  |               |               |               | Accepted      |
-  |               |               |               |~~~~~~~~~~~~~~&gt;|
-  |               |       /notify | /notify       |               |
-  |               |&lt;--------------|--------------&gt;|               |
-  |               |               |               |               |
-
-ClientB1: Prepare Remove*, AppSync(-bob@b.example)
-ClientB1-&gt;ServerB: [[ Remove*, AppSync ]]
-ServerB-&gt;ServerA: POST /update/clubhouse@a.example Remove*, AppSync
-ServerA: Verify that Removes, AppSync are allowed by policy; cache
-ServerA-&gt;ServerB: 200 OK
-ServerA-&gt;ServerC: POST /notify/clubhouse@a.example Proposals
-ServerC1-&gt;ClientC1: [[ Proposals ]]
-ClientC1-&gt;ServerC: [[ Commit(Props), Welcome, GroupInfo?, RatchetTree? ]]
-ServerC-&gt;ServerA: POST /update/clubhouse@a.example CommitBundle
-ServerA: Check whether Commit includes queued proposals; accept
-ServerA-&gt;ServerC: 200 OK
-ServerA-&gt;ServerB: POST /notify/clubhouse@a.example Commit
-ServerA-&gt;ServerC: POST /notify/clubhouse@a.example Commit
-</pre>
+          <div id="section-3.5-5.1">
+            <div class="alignLeft art-svg artwork" id="section-3.5-5.1.1">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="624" width="592" viewBox="0 0 592 624" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
+                <path d="M 24,48 L 24,384" fill="none" stroke="black"></path>
+                <path d="M 152,48 L 152,384" fill="none" stroke="black"></path>
+                <path d="M 280,48 L 280,384" fill="none" stroke="black"></path>
+                <path d="M 408,48 L 408,384" fill="none" stroke="black"></path>
+                <path d="M 536,48 L 536,384" fill="none" stroke="black"></path>
+                <path d="M 152,96 L 272,96" fill="none" stroke="black"></path>
+                <path d="M 160,128 L 280,128" fill="none" stroke="black"></path>
+                <path d="M 280,160 L 400,160" fill="none" stroke="black"></path>
+                <path d="M 288,272 L 408,272" fill="none" stroke="black"></path>
+                <path d="M 280,304 L 400,304" fill="none" stroke="black"></path>
+                <path d="M 160,368 L 400,368" fill="none" stroke="black"></path>
+                <polygon class="arrowhead" points="408,368 396,362.4 396,373.6" fill="black" transform="rotate(0,400,368)"></polygon>
+                <polygon class="arrowhead" points="408,304 396,298.4 396,309.6" fill="black" transform="rotate(0,400,304)"></polygon>
+                <polygon class="arrowhead" points="408,160 396,154.4 396,165.6" fill="black" transform="rotate(0,400,160)"></polygon>
+                <polygon class="arrowhead" points="296,272 284,266.4 284,277.6" fill="black" transform="rotate(180,288,272)"></polygon>
+                <polygon class="arrowhead" points="280,96 268,90.4 268,101.6" fill="black" transform="rotate(0,272,96)"></polygon>
+                <polygon class="arrowhead" points="168,368 156,362.4 156,373.6" fill="black" transform="rotate(180,160,368)"></polygon>
+                <polygon class="arrowhead" points="168,128 156,122.4 156,133.6" fill="black" transform="rotate(180,160,128)"></polygon>
+                <g class="text">
+                  <text x="36" y="36">ClientB1</text>
+                  <text x="152" y="36">ServerB</text>
+                  <text x="280" y="36">ServerA</text>
+                  <text x="408" y="36">ServerC</text>
+                  <text x="540" y="36">ClientC1</text>
+                  <text x="72" y="68">Proposals</text>
+                  <text x="88" y="84">~~~~~~~~~~~~~~&gt;</text>
+                  <text x="192" y="84">/update</text>
+                  <text x="232" y="116">200</text>
+                  <text x="260" y="116">OK</text>
+                  <text x="108" y="148">Accepted</text>
+                  <text x="328" y="148">/notify</text>
+                  <text x="88" y="164">&lt;~~~~~~~~~~~~~~</text>
+                  <text x="456" y="180">Proposals</text>
+                  <text x="472" y="196">~~~~~~~~~~~~~~&gt;</text>
+                  <text x="472" y="228">Commit(Props)</text>
+                  <text x="472" y="244">&lt;~~~~~~~~~~~~~~</text>
+                  <text x="368" y="260">/update</text>
+                  <text x="304" y="292">200</text>
+                  <text x="332" y="292">OK</text>
+                  <text x="452" y="324">Accepted</text>
+                  <text x="472" y="340">~~~~~~~~~~~~~~&gt;</text>
+                  <text x="240" y="356">/notify</text>
+                  <text x="320" y="356">/notify</text>
+                  <text x="40" y="420">ClientB1:</text>
+                  <text x="112" y="420">Prepare</text>
+                  <text x="180" y="420">Remove*,</text>
+                  <text x="312" y="420">AppSync(-bob@b.example)</text>
+                  <text x="76" y="436">ClientB1-&gt;ServerB:</text>
+                  <text x="164" y="436">[[</text>
+                  <text x="212" y="436">Remove*,</text>
+                  <text x="280" y="436">AppSync</text>
+                  <text x="324" y="436">]]</text>
+                  <text x="72" y="452">ServerB-&gt;ServerA:</text>
+                  <text x="164" y="452">POST</text>
+                  <text x="296" y="452">/update/clubhouse@a.example</text>
+                  <text x="444" y="452">Remove*,</text>
+                  <text x="512" y="452">AppSync</text>
+                  <text x="36" y="468">ServerA:</text>
+                  <text x="100" y="468">Verify</text>
+                  <text x="148" y="468">that</text>
+                  <text x="204" y="468">Removes,</text>
+                  <text x="272" y="468">AppSync</text>
+                  <text x="320" y="468">are</text>
+                  <text x="368" y="468">allowed</text>
+                  <text x="412" y="468">by</text>
+                  <text x="456" y="468">policy;</text>
+                  <text x="512" y="468">cache</text>
+                  <text x="72" y="484">ServerA-&gt;ServerB:</text>
+                  <text x="160" y="484">200</text>
+                  <text x="188" y="484">OK</text>
+                  <text x="72" y="500">ServerA-&gt;ServerC:</text>
+                  <text x="164" y="500">POST</text>
+                  <text x="296" y="500">/notify/clubhouse@a.example</text>
+                  <text x="448" y="500">Proposals</text>
+                  <text x="80" y="516">ServerC1-&gt;ClientC1:</text>
+                  <text x="172" y="516">[[</text>
+                  <text x="224" y="516">Proposals</text>
+                  <text x="276" y="516">]]</text>
+                  <text x="76" y="532">ClientC1-&gt;ServerC:</text>
+                  <text x="164" y="532">[[</text>
+                  <text x="236" y="532">Commit(Props),</text>
+                  <text x="332" y="532">Welcome,</text>
+                  <text x="416" y="532">GroupInfo?,</text>
+                  <text x="516" y="532">RatchetTree?</text>
+                  <text x="580" y="532">]]</text>
+                  <text x="72" y="548">ServerC-&gt;ServerA:</text>
+                  <text x="164" y="548">POST</text>
+                  <text x="296" y="548">/update/clubhouse@a.example</text>
+                  <text x="460" y="548">CommitBundle</text>
+                  <text x="36" y="564">ServerA:</text>
+                  <text x="96" y="564">Check</text>
+                  <text x="152" y="564">whether</text>
+                  <text x="212" y="564">Commit</text>
+                  <text x="276" y="564">includes</text>
+                  <text x="340" y="564">queued</text>
+                  <text x="412" y="564">proposals;</text>
+                  <text x="484" y="564">accept</text>
+                  <text x="72" y="580">ServerA-&gt;ServerC:</text>
+                  <text x="160" y="580">200</text>
+                  <text x="188" y="580">OK</text>
+                  <text x="72" y="596">ServerA-&gt;ServerB:</text>
+                  <text x="164" y="596">POST</text>
+                  <text x="296" y="596">/notify/clubhouse@a.example</text>
+                  <text x="436" y="596">Commit</text>
+                  <text x="72" y="612">ServerA-&gt;ServerC:</text>
+                  <text x="164" y="612">POST</text>
+                  <text x="296" y="612">/notify/clubhouse@a.example</text>
+                  <text x="436" y="612">Commit</text>
+                </g>
+              </svg><a href="#section-3.5-5.1.1" class="pilcrow">¶</a>
+</div>
 </div>
 <figcaption><a href="#figure-7" class="selfRef">Figure 7</a>:
 <a href="#name-bob-leaves-the-room-2" class="selfRef">Bob Leaves the Room</a>
@@ -1920,11 +2324,10 @@ Welcome message to the proper provider.<a href="#section-7.1-5" class="pilcrow">
 are described without a specific syntax as a list of adds and removes:<a href="#section-7.2-1" class="pilcrow">¶</a></p>
 <span id="name-changing-the-state-of-the-r"></span><div id="fig-room-state-change">
 <figure id="figure-8">
-          <div class="alignLeft art-text artwork" id="section-7.2-2.1">
+          <div class="alignLeft art-ascii-art art-text artwork" id="section-7.2-2.1">
 <pre>
 Add: ["diana@d.example", "eric@e.example"],
 Remove: ["bob@b.example"],
-}
 </pre>
 </div>
 <figcaption><a href="#figure-8" class="selfRef">Figure 8</a>:
@@ -2168,7 +2571,7 @@ struct {
 </pre><a href="#section-7.5-9" class="pilcrow">¶</a>
 </div>
 <p id="section-7.5-10">In the first use case described in the Protocol Overview, Alice creates a Commit
-containing an AppSync proposal adding Bob@b.example, and Add proposals for all
+containing an AppSync proposal adding <code>bob@b.example</code>, and Add proposals for all
 Bob's MLS clients.  Alice includes the Welcome message which will be sent for
 Bob, a GroupInfo object for the hub provider, and complete <code>ratchet_tree</code>
 extension.<a href="#section-7.5-10" class="pilcrow">¶</a></p>
@@ -2267,8 +2670,9 @@ struct {
 </div>
 <p id="section-7.7-6"><strong>NOTE:</strong> Correctly fanning out Welcome messages relies on the hub and target
 providers storing the <code>KeyPackageRef</code> of claimed KeyPackages.<a href="#section-7.7-6" class="pilcrow">¶</a></p>
-<p id="section-7.7-7">For the avoidance of doubt, clients which are being removed, <span class="bcp14">SHOULD</span> receive
-the corresponding Commit message, so they can clean up their internal state.<a href="#section-7.7-7" class="pilcrow">¶</a></p>
+<p id="section-7.7-7">To be clear, clients that are being removed <span class="bcp14">SHOULD</span> receive the corresponding
+Commit message, so they can recognize that they have been removed and clean up
+their internal state.<a href="#section-7.7-7" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -2323,15 +2727,24 @@ objects into the MLS key schedule. Changes to this state can be made out of
 band, or using the AppSync proposal. Using the AppSync proposal ensures that
 members of the MLS group have received the relevant state changes before they
 are reflected in the group's <code>application_states</code>.<a href="#section-9-5" class="pilcrow">¶</a></p>
-<p id="section-9-6">Each applicationId in the application_states needs to conform to one of four
-basic types: an ordered array, an unordered array, a map, or an irreducible
-blob. This allows the AppSync proposal to efficiently modify a large application
-state object.<a href="#section-9-6" class="pilcrow">¶</a></p>
-<p id="section-9-7">The content of the <code>application_states</code> extension and the <code>AppSync</code> proposal are
-structured as follows:<a href="#section-9-7" class="pilcrow">¶</a></p>
+<p id="section-9-6">[[ NOTE: This design exposes the high-level structure of the application state
+to MLS.  An alternative design would be to have the application state be opaque
+to MLS.  There is a trade-off between generality and the complexity of the API
+between the MLS implementation and the application.  An opaque design would give
+the application more freedom, but require the MLS stack to call out to the
+application to get the updated state as part of Commit processing.  This design
+allows the updates to happen within the MLS stack, so that no callback is
+needed, at the cost of forcing the application state to fit a certain structure.
+]]<a href="#section-9-6" class="pilcrow">¶</a></p>
+<p id="section-9-7">The state for Each <code>applicationId</code> in the <code>application_states</code> needs to conform
+to one of four basic types: an ordered array, an unordered array, a map, or an
+irreducible blob. This allows the AppSync proposal to efficiently modify a large
+application state object.<a href="#section-9-7" class="pilcrow">¶</a></p>
+<p id="section-9-8">The content of the <code>application_states</code> extension and the <code>AppSync</code> proposal are
+structured as follows:<a href="#section-9-8" class="pilcrow">¶</a></p>
 <span id="name-the-application_state-exten"></span><div id="fig-app-state">
 <figure id="figure-9">
-        <div class="lang-tls sourcecode" id="section-9-8.1">
+        <div class="lang-tls sourcecode" id="section-9-9.1">
 <pre>
 struct {
   opaque element&lt;V&gt;;
@@ -2368,7 +2781,7 @@ struct {
 </div>
 <span id="name-the-appsync-proposal-type"></span><div id="fig-app-sync">
 <figure id="figure-10">
-        <div class="lang-tls sourcecode" id="section-9-9.1">
+        <div class="lang-tls sourcecode" id="section-9-10.1">
 <pre>
 struct {
   uint32 index;
@@ -2401,20 +2814,23 @@ struct {
 <a href="#name-the-appsync-proposal-type" class="selfRef">The AppSync proposal type</a>
         </figcaption></figure>
 </div>
-<p id="section-9-10">The <code>applicationId</code> determines the structure and interpretation of the contents.
+<p id="section-9-11">The <code>applicationId</code> determines the structure and interpretation of the contents.
 of an ApplicationState object. AppSync proposals
 contain changes to this state, which the client uses to update the
-representation of the state in <code>application_states</code>.<a href="#section-9-10" class="pilcrow">¶</a></p>
-<p id="section-9-11">A client receiving an AppSync proposal applies it in the following way:<a href="#section-9-11" class="pilcrow">¶</a></p>
+representation of the state in <code>application_states</code>.<a href="#section-9-11" class="pilcrow">¶</a></p>
+<p id="section-9-12">A client receiving an AppSync proposal applies it in the following way:<a href="#section-9-12" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-9-12.1">
-          <p id="section-9-12.1.1">Identify an <code>application_states</code> GroupContext extension which contains the same <code>application_id</code> state as the AppSync proposal<a href="#section-9-12.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-9-13.1">
+          <p id="section-9-13.1.1">Identify an <code>application_states</code> GroupContext extension which contains the
+same <code>application_id</code> state as the AppSync proposal<a href="#section-9-13.1.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-9-12.2">
-          <p id="section-9-12.2.1">Apply the relevant operations (replace, remove, update, append, insert) according to the <code>stateType</code> to the relevant parts of the ApplicationState object in <code>application_states</code> extension.<a href="#section-9-12.2.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-9-13.2">
+          <p id="section-9-13.2.1">Apply the relevant operations (replace, remove, update, append, insert)
+according to the <code>stateType</code> to the relevant parts of the ApplicationState
+object in <code>application_states</code> extension.<a href="#section-9-13.2.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
-<p id="section-9-13">An AppSync for an irreducible state replaces its <code>state</code> element with a new
+<p id="section-9-14">An AppSync for an irreducible state replaces its <code>state</code> element with a new
 (possibly empty) <code>newState</code>. An AppSync for a map-based ApplicationState first
 removes all the keys in <code>removedKeys</code> and than replaces or adds the elements in
 <code>newOrUpdatedElements</code>. An AppSync for an unorderedList ApplicationState first
@@ -2423,17 +2839,17 @@ removes all the indexes in <code>removedIndices</code>, then adds the elements i
 elements (index-by-index) in <code>replacedElements</code>, the removes the elements in
 <code>removedIndices</code> according to the then order of the array, then inserts all the
 elements in <code>insertedElements</code> according to the then order of the array, then
-finally appends the <code>appendedEntries</code> (in order). All indices are zero-based.<a href="#section-9-13" class="pilcrow">¶</a></p>
-<p id="section-9-14">Note that the <code>application_states</code> extension is updated directly by AppSync
+finally appends the <code>appendedEntries</code> (in order). All indices are zero-based.<a href="#section-9-14" class="pilcrow">¶</a></p>
+<p id="section-9-15">Note that the <code>application_states</code> extension is updated directly by AppSync
 proposals; a GroupContextExtensions proposal is not necessary. A proposal list
 that contains both an AppSync proposal and a GroupContextExtensions proposal
-is invalid.<a href="#section-9-14" class="pilcrow">¶</a></p>
-<p id="section-9-15">Likewise a proposal list in a Commit <span class="bcp14">MAY</span> contain more than one AppSync proposal,
+is invalid.<a href="#section-9-15" class="pilcrow">¶</a></p>
+<p id="section-9-16">Likewise a proposal list in a Commit <span class="bcp14">MAY</span> contain more than one AppSync proposal,
 but no more than one AppSync proposal per <code>applicationId</code>. The proposals are
-applied in the order that they are sent in the Commit.<a href="#section-9-15" class="pilcrow">¶</a></p>
-<p id="section-9-16">AppSync proposals do not need to contain an UpdatePath. An AppSync proposal can be sent by an authorized external sender.<a href="#section-9-16" class="pilcrow">¶</a></p>
-<p id="section-9-17">[[ TODO: IANA registry for application_id; register extension and proposal types
-as safe extensions ]]<a href="#section-9-17" class="pilcrow">¶</a></p>
+applied in the order that they are sent in the Commit.<a href="#section-9-16" class="pilcrow">¶</a></p>
+<p id="section-9-17">AppSync proposals do not need to contain an UpdatePath. An AppSync proposal can be sent by an authorized external sender.<a href="#section-9-17" class="pilcrow">¶</a></p>
+<p id="section-9-18">[[ TODO: IANA registry for application_id; register extension and proposal types
+as safe extensions ]]<a href="#section-9-18" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="consent">

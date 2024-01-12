@@ -302,14 +302,14 @@ Table of Contents
    ClientA1       ServerA         ServerB         ClientB*
      |               |               |               |
      |               |               |     Store KPs |
-     |               |               |<~~~~~~~~~~~~~~|
-     |               |               |<~~~~~~~~~~~~~~|
+     |               |               |<~~~~~~~~~~~~~~+
+     |               |               |<~~~~~~~~~~~~~~+
      | Request KPs   |               |               |
-     |~~~~~~~~~~~~~~>| /keyMaterial  |               |
-     |               |-------------->|               |
+     +~~~~~~~~~~~~~~>| /keyMaterial  |               |
+     |               +-------------->|               |
      |               |        200 OK |               |
-     |           KPs |<--------------|               |
-     |<~~~~~~~~~~~~~~|               |               |
+     |           KPs |<--------------+               |
+     |<~~~~~~~~~~~~~~+               |               |
      |               |               |               |
 
    ClientB*->ServerB: [[ Store KeyPackages ]]
@@ -326,13 +326,13 @@ Table of Contents
 ClientA1       ServerA         ServerB         ClientB*
   |               |               |               |
   | Commit, etc.  |               |               |
-  |~~~~~~~~~~~~~~>| /notify       |               |
-  |               |-------------->| Welcome, Tree |
-  |               |               |~~~~~~~~~~~~~~>|
-  |               |               |~~~~~~~~~~~~~~>|
+  +~~~~~~~~~~~~~~>| /notify       |               |
+  |               +-------------->| Welcome, Tree |
+  |               |               +~~~~~~~~~~~~~~>|
+  |               |               +~~~~~~~~~~~~~~>|
   |               |        200 OK |               |
-  |      Accepted |<--------------|               |
-  |<~~~~~~~~~~~~~~|               |               |
+  |      Accepted |<--------------+               |
+  |<~~~~~~~~~~~~~~+               |               |
   |               |               |               |
 
 ClientA1: Prepare Commit over AppSync(+bob@b.example), Add*
@@ -359,14 +359,14 @@ ServerB->ClientB*: [[ Welcome, RatchetTree? ]]
  ClientB1       ServerB         ServerA         ServerC         ClientC*
    |               |               |               |               |
    |               |               |               |     Store KPs |
-   |               |               |               |<~~~~~~~~~~~~~~|
-   |               |               |               |<~~~~~~~~~~~~~~|
+   |               |               |               |<~~~~~~~~~~~~~~+
+   |               |               |               |<~~~~~~~~~~~~~~+
    | Request KPs   |               |               |               |
-   |~~~~~~~~~~~~~~>| /keyMaterial  | /keyMaterial  |               |
-   |               |-------------->|-------------->|               |
+   +~~~~~~~~~~~~~~>| /keyMaterial  | /keyMaterial  |               |
+   |               +-------------->+-------------->|               |
    |               |        200 OK |        200 OK |               |
-   |           KPs |<--------------|<--------------|               |
-   |<~~~~~~~~~~~~~~|               |               |               |
+   |           KPs |<--------------+<--------------+               |
+   |<~~~~~~~~~~~~~~+               |               |               |
    |               |               |               |               |
 
  ClientC*->ServerC: [[ Store KeyPackages ]]
@@ -385,20 +385,20 @@ ServerB->ClientB*: [[ Welcome, RatchetTree? ]]
 ClientB1       ServerB         ServerA         ServerC         ClientC*  ClientB*  ClientA*
   |               |               |               |               |         |         |
   | Commit, etc.  |               |               |               |         |         |
-  |~~~~~~~~~~~~~~>| /update       |               |               |         |         |
-  |               |-------------->|               |               |         |         |
+  +~~~~~~~~~~~~~~>| /update       |               |               |         |         |
+  |               +-------------->|               |               |         |         |
   |               |        200 OK |               |               |         |         |
-  |               |<--------------|               |               |         |         |
+  |               |<--------------+               |               |         |         |
   |      Accepted |               | /notify       |               |         |         |
-  |<~~~~~~~~~~~~~~|               |-------------->| Welcome, Tree |         |         |
-  |               |               |               |~~~~~~~~~~~~~~>|         |         |
-  |               |               |               |~~~~~~~~~~~~~~>|         |         |
+  |<~~~~~~~~~~~~~~+               +-------------->| Welcome, Tree |         |         |
+  |               |               |               +~~~~~~~~~~~~~~>|         |         |
+  |               |               |               +~~~~~~~~~~~~~~>|         |         |
   |               |       /notify |               |               |         |         |
-  |               |<--------------|               |               |         |         |
+  |               |<--------------+               |               |         |         |
   |               | Commit        |               |               |         |         |
-  |               |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>|         |
+  |               +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>|         |
   |               |               | Commit        |               |         |         |
-  |               |               |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>|
+  |               |               +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>|
   |               |               |               |               |         |         |
 
 ClientB1: Prepare Commit over AppSync(+cathy@c.example), Add*
@@ -428,19 +428,19 @@ ServerA->ClientA*: [[ Commit ]]
 ClientC1       ServerC         ServerA         ServerB         ClientB*  ClientC*  ClientA*
   |               |               |               |               |         |         |
   | Message       |               |               |               |         |         |
-  |~~~~~~~~~~~~~~>| /submit       |               |               |         |         |
-  |               |-------------->|               |               |         |         |
+  +~~~~~~~~~~~~~~>| /submit       |               |               |         |         |
+  |               +-------------->|               |               |         |         |
   |               |        200 OK |               |               |         |         |
-  |               |<--------------|               |               |         |         |
+  |               |<--------------+               |               |         |         |
   |      Accepted |               | /notify       |               |         |         |
-  |<~~~~~~~~~~~~~~|               |-------------->| Message       |         |         |
-  |               |               |               |~~~~~~~~~~~~~~>|         |         |
+  |<~~~~~~~~~~~~~~+               +-------------->| Message       |         |         |
+  |               |               |               +~~~~~~~~~~~~~~>|         |         |
   |               |       /notify |               |               |         |         |
-  |               |<--------------|               |               |         |         |
+  |               |<--------------+               |               |         |         |
   |               | Message       |               |               |         |         |
-  |               |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>|         |
+  |               +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>|         |
   |               |               | Message       |               |         |         |
-  |               |               |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>|
+  |               |               +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>|
   |               |               |               |               |         |         |
 
 ClientC1->ServerC: [[ MLSMessage(PrivateMessage) ]]
@@ -457,10 +457,10 @@ ServerC->ClientC*: [[ MLSMessage(PrivateMessage) ]]
 3.5.  Bob Leaves the Room
 
    A user removing another user follows the same flow as adding the
-   user.  The user performing the removal creates a MLS Remove proposals
-   for all of the removed user's devices, and an AppSync proposal
-   updating the room state to remove the removed user from the room's
-   participant list.
+   user.  The user performing the removal creates an MLS commit covering
+   Remove proposals for all of the removed user's devices, and an
+   AppSync proposal updating the room state to remove the removed user
+   from the room's participant list.
 
    Leaving is slightly more complicated because the leaving user cannot
    remove all of their devices from the MLS group.  Instead, the leave
@@ -482,25 +482,25 @@ ServerC->ClientC*: [[ MLSMessage(PrivateMessage) ]]
 ClientB1       ServerB         ServerA         ServerC         ClientC1
   |               |               |               |               |
   | Proposals     |               |               |               |
-  |~~~~~~~~~~~~~~>| /update       |               |               |
-  |               |-------------->|               |               |
+  +~~~~~~~~~~~~~~>| /update       |               |               |
+  |               +-------------->|               |               |
   |               |        200 OK |               |               |
-  |               |<--------------|               |               |
+  |               |<--------------+               |               |
   |      Accepted |               |  /notify      |               |
-  |<~~~~~~~~~~~~~~|               |-------------->|               |
+  |<~~~~~~~~~~~~~~+               +-------------->|               |
   |               |               |               | Proposals     |
-  |               |               |               |~~~~~~~~~~~~~~>|
+  |               |               |               +~~~~~~~~~~~~~~>|
   |               |               |               |               |
   |               |               |               | Commit(Props) |
-  |               |               |               |<~~~~~~~~~~~~~~|
+  |               |               |               |<~~~~~~~~~~~~~~+
   |               |               |       /update |               |
-  |               |               |<~~~~~~~~~~~~~~|               |
+  |               |               |<--------------+               |
   |               |               | 200 OK        |               |
-  |               |               |-------------->|               |
+  |               |               +-------------->|               |
   |               |               |               | Accepted      |
-  |               |               |               |~~~~~~~~~~~~~~>|
+  |               |               |               +~~~~~~~~~~~~~~>|
   |               |       /notify | /notify       |               |
-  |               |<--------------|-------------->|               |
+  |               |<--------------+-------------->|               |
   |               |               |               |               |
 
 ClientB1: Prepare Remove*, AppSync(-bob@b.example)
@@ -642,7 +642,6 @@ ServerA->ServerC: POST /notify/clubhouse@a.example Commit
 
    Add: ["diana@d.example", "eric@e.example"],
    Remove: ["bob@b.example"],
-   }
 
                   Figure 8: Changing the state of the room
 
@@ -872,7 +871,7 @@ ServerA->ServerC: POST /notify/clubhouse@a.example Commit
    };
 
    In the first use case described in the Protocol Overview, Alice
-   creates a Commit containing an AppSync proposal adding Bob@b.example,
+   creates a Commit containing an AppSync proposal adding bob@b.example,
    and Add proposals for all Bob's MLS clients.  Alice includes the
    Welcome message which will be sent for Bob, a GroupInfo object for
    the hub provider, and complete ratchet_tree extension.
@@ -958,9 +957,9 @@ ServerA->ServerC: POST /notify/clubhouse@a.example Commit
    *NOTE:* Correctly fanning out Welcome messages relies on the hub and
    target providers storing the KeyPackageRef of claimed KeyPackages.
 
-   For the avoidance of doubt, clients which are being removed, SHOULD
-   receive the corresponding Commit message, so they can clean up their
-   internal state.
+   To be clear, clients that are being removed SHOULD receive the
+   corresponding Commit message, so they can recognize that they have
+   been removed and clean up their internal state.
 
 8.  Use of MLS DS/AS
 
@@ -1013,10 +1012,21 @@ ServerA->ServerC: POST /notify/clubhouse@a.example Commit
    the relevant state changes before they are reflected in the group's
    application_states.
 
-   Each applicationId in the application_states needs to conform to one
-   of four basic types: an ordered array, an unordered array, a map, or
-   an irreducible blob.  This allows the AppSync proposal to efficiently
-   modify a large application state object.
+   [[ NOTE: This design exposes the high-level structure of the
+   application state to MLS.  An alternative design would be to have the
+   application state be opaque to MLS.  There is a trade-off between
+   generality and the complexity of the API between the MLS
+   implementation and the application.  An opaque design would give the
+   application more freedom, but require the MLS stack to call out to
+   the application to get the updated state as part of Commit
+   processing.  This design allows the updates to happen within the MLS
+   stack, so that no callback is needed, at the cost of forcing the
+   application state to fit a certain structure. ]]
+
+   The state for Each applicationId in the application_states needs to
+   conform to one of four basic types: an ordered array, an unordered
+   array, a map, or an irreducible blob.  This allows the AppSync
+   proposal to efficiently modify a large application state object.
 
    The content of the application_states extension and the AppSync
    proposal are structured as follows:
