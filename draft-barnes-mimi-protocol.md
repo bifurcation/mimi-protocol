@@ -392,9 +392,9 @@ ServerC->ClientC*: [[ MLSMessage(PrivateMessage) ]]
 ## Bob Leaves the Room
 
 A user removing another user follows the same flow as adding the user.  The
-user performing the removal creates a MLS Remove proposals for all of the
-removed user's devices, and an AppSync proposal updating the room state to
-remove the removed user from the room's participant list.
+user performing the removal creates an MLS commit covering Remove proposals for
+all of the removed user's devices, and an AppSync proposal updating the room
+state to remove the removed user from the room's participant list.
 
 Leaving is slightly more complicated because the leaving user cannot remove all
 of their devices from the MLS group.  Instead, the leave happens in three steps:
@@ -556,10 +556,9 @@ Welcome message to the proper provider.
 The state of the room can be changed by adding or removing users.  These changes
 are described without a specific syntax as a list of adds and removes:
 
-~~~
+~~~ ascii-art
 Add: ["diana@d.example", "eric@e.example"],
 Remove: ["bob@b.example"],
-}
 ~~~
 {: #fig-room-state-change title="Changing the state of the room" }
 
@@ -797,7 +796,7 @@ struct {
 ~~~
 
 In the first use case described in the Protocol Overview, Alice creates a Commit
-containing an AppSync proposal adding Bob@b.example, and Add proposals for all
+containing an AppSync proposal adding `bob@b.example`, and Add proposals for all
 Bob's MLS clients.  Alice includes the Welcome message which will be sent for
 Bob, a GroupInfo object for the hub provider, and complete `ratchet_tree`
 extension.
@@ -890,8 +889,9 @@ struct {
 **NOTE:** Correctly fanning out Welcome messages relies on the hub and target
 providers storing the `KeyPackageRef` of claimed KeyPackages.
 
-For the avoidance of doubt, clients which are being removed, SHOULD receive
-the corresponding Commit message, so they can clean up their internal state.
+To be clear, clients that are being removed SHOULD receive the corresponding
+Commit message, so they can recognize that they have been removed and clean up
+their internal state.
 
 # Use of MLS DS/AS
 
@@ -937,10 +937,20 @@ band, or using the AppSync proposal. Using the AppSync proposal ensures that
 members of the MLS group have received the relevant state changes before they
 are reflected in the group's `application_states`.
 
-Each applicationId in the application_states needs to conform to one of four
-basic types: an ordered array, an unordered array, a map, or an irreducible
-blob. This allows the AppSync proposal to efficiently modify a large application
-state object.
+[[ NOTE: This design exposes the high-level structure of the application state
+to MLS.  An alternative design would be to have the application state be opaque
+to MLS.  There is a trade-off between generality and the complexity of the API
+between the MLS implementation and the application.  An opaque design would give
+the application more freedom, but require the MLS stack to call out to the
+application to get the updated state as part of Commit processing.  This design
+allows the updates to happen within the MLS stack, so that no callback is
+needed, at the cost of forcing the application state to fit a certain structure.
+]]
+
+The state for Each `applicationId` in the `application_states` needs to conform
+to one of four basic types: an ordered array, an unordered array, a map, or an
+irreducible blob. This allows the AppSync proposal to efficiently modify a large
+application state object.
 
 The content of the `application_states` extension and the `AppSync` proposal are
 structured as follows:
@@ -1012,8 +1022,11 @@ representation of the state in `application_states`.
 
 A client receiving an AppSync proposal applies it in the following way:
 
-* Identify an `application_states` GroupContext extension which contains the same `application_id` state as the AppSync proposal
-* Apply the relevant operations (replace, remove, update, append, insert) according to the `stateType` to the relevant parts of the ApplicationState object in `application_states` extension.
+* Identify an `application_states` GroupContext extension which contains the
+  same `application_id` state as the AppSync proposal
+* Apply the relevant operations (replace, remove, update, append, insert)
+  according to the `stateType` to the relevant parts of the ApplicationState
+  object in `application_states` extension.
 
 An AppSync for an irreducible state replaces its `state` element with a new
 (possibly empty) `newState`. An AppSync for a map-based ApplicationState first
