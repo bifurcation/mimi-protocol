@@ -1225,7 +1225,7 @@ provider-internal client-server communication up to the provider.<a href="#secti
                 <p id="section-toc.1-1.7.2.6.1"><a href="#section-7.6" class="auto internal xref">7.6</a>.  <a href="#name-submit-a-message" class="internal xref">Submit a Message</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.7">
-                <p id="section-toc.1-1.7.2.7.1"><a href="#section-7.7" class="auto internal xref">7.7</a>.  <a href="#name-notify-servers-of-room-even" class="internal xref">Notify Servers of Room Events</a></p>
+                <p id="section-toc.1-1.7.2.7.1"><a href="#section-7.7" class="auto internal xref">7.7</a>.  <a href="#name-fanout-messages-and-room-ev" class="internal xref">Fanout Messages and Room Events</a></p>
 </li>
             </ul>
 </li>
@@ -1436,7 +1436,7 @@ servers <code>ServerA</code>, <code>ServerB</code>, and <code>ServerC</code> res
 </li>
         <li class="normal" id="section-3-6.2">
           <p id="section-3-6.2.1">Users Alice (<code>alice@a.example</code>), Bob (<code>bob@b.example</code>) and Cathy
-(`cathy@c.example) of the respective service providers<a href="#section-3-6.2.1" class="pilcrow">¶</a></p>
+(<code>cathy@c.example</code>) of the respective service providers<a href="#section-3-6.2.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="section-3-6.3">
           <p id="section-3-6.3.1">Clients <code>ClientA1</code>, <code>ClientA2</code>, <code>ClientB1</code>, etc. belonging to these users<a href="#section-3-6.3.1" class="pilcrow">¶</a></p>
@@ -2242,17 +2242,18 @@ messages and ephemeral applications messages (for example "is typing"
 notifications), which do not need to be queued at the target provider.<a href="#section-7.6-4" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="notify-servers-of-room-events">
+<div id="fanout-messages-and-room-events">
 <section id="section-7.7">
-        <h3 id="name-notify-servers-of-room-even">
-<a href="#section-7.7" class="section-number selfRef">7.7. </a><a href="#name-notify-servers-of-room-even" class="section-name selfRef">Notify Servers of Room Events</a>
+        <h3 id="name-fanout-messages-and-room-ev">
+<a href="#section-7.7" class="section-number selfRef">7.7. </a><a href="#name-fanout-messages-and-room-ev" class="section-name selfRef">Fanout Messages and Room Events</a>
         </h3>
 <p id="section-7.7-1">If the hub provider accepts an application or handshake message (proposal or
-commit) message, it forward that message to all other providers with active
+commit) message, it forwards that message to all other providers with active
 participants in the room and all local clients which are active participants.
 This is described as fanning the message out. An MLS Welcome message is sent to
-the providers and local users associated with the <code>KeyPackageRef</code> values to
-which the bulk of the Welcome (the <code>encrypted_group_info</code>) was encrypted.<a href="#section-7.7-1" class="pilcrow">¶</a></p>
+the providers and local users associated with the <code>KeyPackageRef</code> values in
+the <code>secrets</code> array of the Welcome. In the case of a Welcome message, a
+<code>RatchetTreeOption</code> is also included in the FanoutMessage.<a href="#section-7.7-1" class="pilcrow">¶</a></p>
 <p id="section-7.7-2">The hub provider also fans out any messages which originate from itself (ex: MLS
 External Proposals).<a href="#section-7.7-2" class="pilcrow">¶</a></p>
 <p id="section-7.7-3">The hub can include multiple concatenated <code>FanoutMessage</code> objects relevant to
@@ -2265,9 +2266,9 @@ POST /notify/{roomId}
 <div class="lang-tls sourcecode" id="section-7.7-5">
 <pre>
 struct {
+  uint64 timestamp;
   MLSMessage message;
   /* the hub acceptance time (in milliseconds from the UNIX epoch) */
-  uint64 timestamp;
   select (message.wire_format) {
     case welcome:
       RatchetTreeOption ratchetTreeOption;
@@ -2275,12 +2276,10 @@ struct {
 } FanoutMessage;
 </pre><a href="#section-7.7-5" class="pilcrow">¶</a>
 </div>
-<p id="section-7.7-6">If the protocol is MLS 1.0, the request body is one or more of MLSMessage with
-wire_format one of PrivateMessage (application message), PublicMessage (Commit
-or Proposal), or Welcome. In the case of a Welcome message, a
-<code>RatchetTreeOption</code> is also included.<a href="#section-7.7-6" class="pilcrow">¶</a></p>
-<p id="section-7.7-7"><strong>NOTE:</strong> Correctly fanning out Welcome messages relies on the hub and target
-providers storing the <code>KeyPackageRef</code> of claimed KeyPackages.<a href="#section-7.7-7" class="pilcrow">¶</a></p>
+<p id="section-7.7-6"><strong>NOTE:</strong> Correctly fanning out Welcome messages relies on the hub and target
+providers storing the <code>KeyPackageRef</code> of claimed KeyPackages.<a href="#section-7.7-6" class="pilcrow">¶</a></p>
+<p id="section-7.7-7">For the avoidance of doubt, clients which are being removed, <span class="bcp14">SHOULD</span> receive
+the corresponding Commit message, so they can clean up their internal state.<a href="#section-7.7-7" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -2322,29 +2321,56 @@ an MLS group agree on application state as well as MLS metadata.<a href="#sectio
 <p id="section-9-3">Here, we define two extensions to MLS to facilitate this application design:<a href="#section-9-3" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-9-4">
 <li id="section-9-4.1">
-          <p id="section-9-4.1.1">A GroupContext extension <code>application_state</code> that confirms agreement on
-application state.<a href="#section-9-4.1.1" class="pilcrow">¶</a></p>
+          <p id="section-9-4.1.1">A GroupContext extension <code>application_states</code> that confirms agreement on
+application state from potentially multiple sources.<a href="#section-9-4.1.1" class="pilcrow">¶</a></p>
 </li>
         <li id="section-9-4.2">
           <p id="section-9-4.2.1">A new proposal type AppSync that allows MLS group members to propose changes
 to the agreed application state.<a href="#section-9-4.2.1" class="pilcrow">¶</a></p>
 </li>
       </ol>
-<p id="section-9-5">The <code>application_state</code> extension allows the application to inject a state
-object into the MLS key schedule.  Changes to this state can be made out of
-band, or using the AppSync proposal.  Using the AppSync proposal ensures that
+<p id="section-9-5">The <code>application_states</code> extension allows the application to inject state
+objects into the MLS key schedule. Changes to this state can be made out of
+band, or using the AppSync proposal. Using the AppSync proposal ensures that
 members of the MLS group have received the relevant state changes before they
-are reflected in the group's <code>application_state</code>.<a href="#section-9-5" class="pilcrow">¶</a></p>
-<p id="section-9-6">The content of the <code>application_state</code> extension and the <code>AppSync</code> proposal are
-structured as follows:<a href="#section-9-6" class="pilcrow">¶</a></p>
+are reflected in the group's <code>application_states</code>.<a href="#section-9-5" class="pilcrow">¶</a></p>
+<p id="section-9-6">Each applicationId in the application_states needs to conform to one of four
+basic types: an ordered array, an unordered array, a map, or an irreducible
+blob. This allows the AppSync proposal to efficiently modify a large application
+state object.<a href="#section-9-6" class="pilcrow">¶</a></p>
+<p id="section-9-7">The content of the <code>application_states</code> extension and the <code>AppSync</code> proposal are
+structured as follows:<a href="#section-9-7" class="pilcrow">¶</a></p>
 <span id="name-the-application_state-exten"></span><div id="fig-app-state">
 <figure id="figure-9">
-        <div class="lang-tls sourcecode" id="section-9-7.1">
+        <div class="lang-tls sourcecode" id="section-9-8.1">
 <pre>
 struct {
-    uint32 application_id;
-    opaque application_state&lt;V&gt;;
+  opaque element&lt;V&gt;;
+} OpaqueElement;
+
+struct {
+  opaque elementName&lt;V&gt;;
+  opaque elementValue&lt;V&gt;;
+} OpaqueMapElement;
+
+struct {
+  uint32 applicationId;
+  StateType stateType;
+  select (stateType) {
+    case irreducible:
+      OpaqueElement state;
+    case map:
+      OpaqueMapElement mapEntries&lt;V&gt;;
+    case unorderedList:
+      OpaqueElement unorderedEntries&lt;V&gt;;
+    case orderedArray:
+      OpaqueElement orderedEntries&lt;V&gt;;
+  };
 } ApplicationState;
+
+struct {
+  ApplicationState applicationStates&lt;V&gt;;
+} ApplicationStatesExtension;
 </pre>
 </div>
 <figcaption><a href="#figure-9" class="selfRef">Figure 9</a>:
@@ -2353,11 +2379,32 @@ struct {
 </div>
 <span id="name-the-appsync-proposal-type"></span><div id="fig-app-sync">
 <figure id="figure-10">
-        <div class="lang-tls sourcecode" id="section-9-8.1">
+        <div class="lang-tls sourcecode" id="section-9-9.1">
 <pre>
 struct {
-    uint32 application_id;
-    opaque application_state_update&lt;V&gt;;
+  uint32 index;
+  opaque element&lt;V&gt;;
+} ElementWithIndex;
+
+
+struct {
+  uint32 applicationId;
+  StateType stateType;
+  select (stateType) {
+    case irreducible:
+      OpaqueElement newState;
+    case map:
+      OpaqueElement removedKeys&lt;V&gt;;
+      OpaqueMapElement newOrUpdatedElements&lt;V&gt;;
+    case unorderedList:
+      uint32 removedIndices&lt;V&gt;;
+      OpaqueElement addedEntries&lt;V&gt;;
+    case orderedArray:
+      ElementWithIndex replacedElements&lt;V&gt;;
+      uint32 removedIndices&lt;V&gt;;
+      ElementWithIndex insertedElements&lt;V&gt;;
+      OpaqueElement appenededEntries&lt;V&gt;;
+  };
 } AppSync;
 </pre>
 </div>
@@ -2365,39 +2412,39 @@ struct {
 <a href="#name-the-appsync-proposal-type" class="selfRef">The AppSync proposal type</a>
         </figcaption></figure>
 </div>
-<p id="section-9-9">The <code>application_id</code> determines the structure and interpretation of the
-<code>application_state</code> and <code>application_state_update</code> fields.  The assumed
-structure is that the application holds some state, which is either expressed
-directly or committed to in the <code>application_state</code> field.  AppSync proposals
-contain deltas / diffs on this state, which the client uses to update the
-representation of the state in <code>application_state</code>.<a href="#section-9-9" class="pilcrow">¶</a></p>
-<p id="section-9-10">A client receiving an AppSync proposal applies it in the following way:<a href="#section-9-10" class="pilcrow">¶</a></p>
+<p id="section-9-10">The <code>applicationId</code> determines the structure and interpretation of the contents.
+of an ApplicationState object. AppSync proposals
+contain changes to this state, which the client uses to update the
+representation of the state in <code>application_states</code>.<a href="#section-9-10" class="pilcrow">¶</a></p>
+<p id="section-9-11">A client receiving an AppSync proposal applies it in the following way:<a href="#section-9-11" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-9-11.1">
-          <p id="section-9-11.1.1">Identify a GroupContext extension with the same <code>application_id</code> as the
-AppSync<a href="#section-9-11.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-9-12.1">
+          <p id="section-9-12.1.1">Identify an <code>application_states</code> GroupContext extension which contains the same <code>application_id</code> state as the AppSync proposal<a href="#section-9-12.1.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-9-11.2">
-          <p id="section-9-11.2.1">Verify that the current application state matches the value of the
-<code>application_state</code> field in the extension<a href="#section-9-11.2.1" class="pilcrow">¶</a></p>
-</li>
-        <li class="normal" id="section-9-11.3">
-          <p id="section-9-11.3.1">Apply the <code>application_state_update</code> to the current application state<a href="#section-9-11.3.1" class="pilcrow">¶</a></p>
-</li>
-        <li class="normal" id="section-9-11.4">
-          <p id="section-9-11.4.1">Replace the <code>application_state</code> in that extension with a representation of the
-updated application state.<a href="#section-9-11.4.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-9-12.2">
+          <p id="section-9-12.2.1">Apply the relevant operations (replace, remove, update, append, insert) according to the <code>stateType</code> to the relevant parts of the ApplicationState object in <code>application_states</code> extension.<a href="#section-9-12.2.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
-<p id="section-9-12">Note that the <code>application_state</code> extension is updated directly by AppSync
-proposals; a GroupContextExtensions proposal is not necessary.  A proposal list
+<p id="section-9-13">An AppSync for an irreducible state replaces its <code>state</code> element with a new
+(possibly empty) <code>newState</code>. An AppSync for a map-based ApplicationState first
+removes all the keys in <code>removedKeys</code> and than replaces or adds the elements in
+<code>newOrUpdatedElements</code>. An AppSync for an unorderedList ApplicationState first
+removes all the indexes in <code>removedIndices</code>, then adds the elements in
+<code>addedEntries</code>. Finally an AppSync for an orderedArray, replaces all the
+elements (index-by-index) in <code>replacedElements</code>, the removes the elements in
+<code>removedIndices</code> according to the then order of the array, then inserts all the
+elements in <code>insertedElements</code> according to the then order of the array, then
+finally appends the <code>appendedEntries</code> (in order). All indices are zero-based.<a href="#section-9-13" class="pilcrow">¶</a></p>
+<p id="section-9-14">Note that the <code>application_states</code> extension is updated directly by AppSync
+proposals; a GroupContextExtensions proposal is not necessary. A proposal list
 that contains both an AppSync proposal and a GroupContextExtensions proposal
-that changes the value of the affected <code>application_state</code> extension is invalid.<a href="#section-9-12" class="pilcrow">¶</a></p>
-<p id="section-9-13">A proposal list in a Commit <span class="bcp14">MAY</span> contain more than one AppSync proposal.  The
-proposals are applied in the order that they are sent in the Commit, after any
-GroupContextExtensions proposals.<a href="#section-9-13" class="pilcrow">¶</a></p>
-<p id="section-9-14">[[ TODO: IANA registry for application_id; register extension and proposal types
-]]<a href="#section-9-14" class="pilcrow">¶</a></p>
+is invalid.<a href="#section-9-14" class="pilcrow">¶</a></p>
+<p id="section-9-15">Likewise a proposal list in a Commit <span class="bcp14">MAY</span> contain more than one AppSync proposal,
+but no more than one AppSync proposal per <code>applicationId</code>. The proposals are
+applied in the order that they are sent in the Commit.<a href="#section-9-15" class="pilcrow">¶</a></p>
+<p id="section-9-16">AppSync proposals do not need to contain an UpdatePath. An AppSync proposal can be sent by an authorized external sender.<a href="#section-9-16" class="pilcrow">¶</a></p>
+<p id="section-9-17">[[ TODO: IANA registry for application_id; register extension and proposal types
+as safe extensions ]]<a href="#section-9-17" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="consent">
