@@ -158,8 +158,8 @@ As shown in {{fig-layers}}, the overall MIMI protocol is built out of three laye
    servers.
 
 The MIMI transport is based on HTTPS over mutually-authenticated TLS.  MIMI uses
-MLS {{!RFC9420}} for end-to-end security, using the MLS ApplicationSecuritySync
-proposal type to syncronize room state across the clients involved in a room.
+MLS {{!RFC9420}} for end-to-end security, using the MLS AppSync proposal type to
+efficiently synchronize room state across the clients involved in a room.
 
 ~~~ aasvg
 +------------------------+
@@ -184,8 +184,8 @@ actors:
 * A room `clubhouse@a.example` where the three users interact
 
 As noted in {{!I-D.mimi-arch}}, the MIMI protocol only defines interactions
-between service providers' servers.  Interactions between between clients and
-servers within a service provider domain are shown here for completeness, but
+between service providers' servers.  Interactions between clients and servers
+within a service provider domain are shown here for completeness, but
 surrounded by `[[ double brackets ]]`.
 
 ## Alice Creates a Room
@@ -215,7 +215,7 @@ The process of adding Bob to the room thus begins by Alice fetching key material
 for Bob's clients.  Alice then updates the room by sending an MLS Commit over
 the following proposals:
 
-* An ApplicationSync proposal updating the room state by adding Bob to the
+* An AppSync proposal updating the room state by adding Bob to the
   participant list
 * Add proposals for Bob's clients
 
@@ -363,7 +363,7 @@ clients.
 ClientC1       ServerC         ServerA         ServerB         ClientB*  ClientC*  ClientA*
   |               |               |               |               |         |         |
   | Message       |               |               |               |         |         |
-  |~~~~~~~~~~~~~~>| /message      |               |               |         |         |
+  |~~~~~~~~~~~~~~>| /submit       |               |               |         |         |
   |               |-------------->|               |               |         |         |
   |               |        200 OK |               |               |         |         |
   |               |<--------------|               |               |         |         |
@@ -379,7 +379,7 @@ ClientC1       ServerC         ServerA         ServerB         ClientB*  ClientC
   |               |               |               |               |         |         |
 
 ClientC1->ServerC: [[ MLSMessage(PrivateMessage) ]]
-ServerC->ServerA: POST /message/clubhouse@a.example MLSMessage(PrivateMessage)
+ServerC->ServerA: POST /submit/clubhouse@a.example MLSMessage(PrivateMessage)
 ServerA: Verifies that message is allowed
 ServerA->ServerC: POST /notify/clubhouse@a.example Message{ MLSMessage(PrivateMessage) }
 ServerA->ServerB: POST /notify/clubhouse@a.example Message{ MLSMessage(PrivateMessage) }
@@ -391,10 +391,10 @@ ServerC->ClientC*: [[ MLSMessage(PrivateMessage) ]]
 
 ## Bob Leaves the Room
 
-A user removing another user follows the same flow as adding the user.  They
-user performing the removal creates an MLS commit covering Remove proposals for
-all of the removed user's devices, and an AppSync proposal updating the room
-state to remove the removed user from the room's participant list.
+A user removing another user follows the same flow as adding the user.  The
+user performing the removal creates a MLS Remove proposals for all of the
+removed user's devices, and an AppSync proposal updating the room state to
+remove the removed user from the room's participant list.
 
 Leaving is slightly more complicated because the leaving user cannot remove all
 of their devices from the MLS group.  Instead, the leave happens in three steps:
@@ -417,16 +417,11 @@ ClientB1       ServerB         ServerA         ServerC         ClientC1
   |               |-------------->|               |               |
   |               |        200 OK |               |               |
   |               |<--------------|               |               |
-  |      Accepted |               |               |               |
-  |<~~~~~~~~~~~~~~|               |               |               |
-  |               |               |               |        Commit |
-  |               |               |               |<~~~~~~~~~~~~~~|
-  |               |               |       /update |               |
-  |               |               |<~~~~~~~~~~~~~~|               |
-  |               |               | 401 Proposals |               |
-  |               |               |~~~~~~~~~~~~~~>|               |
-  |               |               |               | Reject(Props) |
+  |      Accepted |               |  /notify      |               |
+  |<~~~~~~~~~~~~~~|               |-------------->|               |
+  |               |               |               | Proposals     |
   |               |               |               |~~~~~~~~~~~~~~>|
+  |               |               |               |               |
   |               |               |               | Commit(Props) |
   |               |               |               |<~~~~~~~~~~~~~~|
   |               |               |       /update |               |
@@ -444,13 +439,9 @@ ClientB1->ServerB: [[ Remove*, AppSync ]]
 ServerB->ServerA: POST /update/clubhouse@a.example Remove*, AppSync
 ServerA: Verify that Removes, AppSync are allowed by policy; cache
 ServerA->ServerB: 200 OK
-ClientC1->ServerC: [[ Commit, Welcome, GroupInfo?, RatchetTree? ]]
-ServerC->ServerA: POST /update/clubhouse@a.example CommitBundle
-ServerA: Check whether Commit includes queued proposals; reject
-ServerA->ServerC: 401 Unauthorized; Remove*, AppSync
-ServerC->ClientC1: Remove*, AppSync
-ClientC1: Prepare Commit over Remove*, AppSync, in addition to any others
-ClientC1->ServerC: [[ Commit, Welcome, GroupInfo?, RatchetTree? ]]
+ServerA->ServerC: POST /notify/clubhouse@a.example Proposals
+ServerC1->ClientC1: [[ Proposals ]]
+ClientC1->ServerC: [[ Commit(Props), Welcome, GroupInfo?, RatchetTree? ]]
 ServerC->ServerA: POST /update/clubhouse@a.example CommitBundle
 ServerA: Check whether Commit includes queued proposals; accept
 ServerA->ServerC: 200 OK
@@ -538,7 +529,7 @@ how the room's state evolves, e.g., by ensuring that changes are compliant with
 the room's policy. Non-hub servers facilitate interactions between their clients
 and the hub server.
 
-In this section, we desribe the state that servers keep and the HTTP endpoints
+In this section, we describe the state that servers keep and the HTTP endpoints
 they expose to enable these functions.
 
 ## Server State
@@ -563,17 +554,16 @@ Welcome message to the proper provider.
 ## Room State Changes
 
 The state of the room can be changed by adding or removing users.  These changes
-are described with a simple JSON object of the following form:
+are described without a specific syntax as a list of adds and removes:
 
 ~~~
-{
-    "add": ["diana@d.example", "eric@e.example"],
-    "remove": ["bob@b.example"],
+Add: ["diana@d.example", "eric@e.example"],
+Remove: ["bob@b.example"],
 }
 ~~~
 {: #fig-room-state-change title="Changing the state of the room" }
 
-[[ NOTE: This syntax is clearly not sufficient.  To go along with the more full
+[[ NOTE: The syntax needs to be defined.  To go along with the more full
 description of room state mentioned above, we need a more full taxonomy of the
 ways that room state can change. ]]
 
@@ -808,10 +798,11 @@ struct {
 };
 ~~~
 
-In this case Alice creates a Commit containing a AppSync proposal adding
-Bob@b.example, and Add proposals for all Bob's MLS clients.  Alice includes the
-Welcome message which will be sent for Bob, a GroupInfo object for the hub
-provider, and complete `ratchet_tree` extension.
+In the first use case described in the Protocol Overview, Alice creates a Commit
+containing an AppSync proposal adding Bob@b.example, and Add proposals for all
+Bob's MLS clients.  Alice includes the Welcome message which will be sent for
+Bob, a GroupInfo object for the hub provider, and complete `ratchet_tree`
+extension.
 
 ~~~ tls
 enum {
@@ -1107,7 +1098,7 @@ consent request, Alice grants consent to Bob to add her to any room.
 
 # Security Considerations
 
-The MIMI protocol provides incorporates several layers of security.
+The MIMI protocol incorporates several layers of security.
 
 Individual protocol actions are protected against network attackers with
 mutually-authenticated TLS, where the TLS certificates authenticate the
