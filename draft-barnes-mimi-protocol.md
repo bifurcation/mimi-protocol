@@ -1066,8 +1066,6 @@ GET /proxyDownload/{roomId}/{downloadUrl}
 
 If the request succeeds, the response body contains the downloaded URL.
 
-~~~
-
 # Use of MLS DS/AS
 
 MLS defines an abstract Delivery Server (DS) and Authentication Server (AS).
