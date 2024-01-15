@@ -599,6 +599,35 @@ GET /.well-known/mimi-protocol-directory
 }
 ~~~
 
+## Obtain consent
+
+Alice can request consent for Bob in the context of a room, or in general. Bob can grant or refuse consent to Alice in the context of a room or in general. 
+
+~~~
+POST /requestConsent/{targetDomain}
+POST /updateConsent/{requesterDomain}
+
+enum {
+  cancel(0),
+  request(1),
+  grant(2),
+  revoke(3),
+  (255)
+} ConsentOperation;
+
+struct {
+  ConsentOperation consentOperation;
+  IdentifierUri requesterUri; 
+  IdentifierUri targetUri;
+  optional<RoomId> roomId;
+  select (consentOperation) {
+      case grant:
+          KeyPackage clientKeyPackages<V>;
+  };
+} ConsentEntry;
+~~~
+
+
 ## Fetch Key Material
 
 This action attempts to claim initial keying material for all the clients
