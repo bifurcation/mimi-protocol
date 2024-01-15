@@ -601,7 +601,7 @@ GET /.well-known/mimi-protocol-directory
 
 ## Obtain consent
 
-Alice can request consent for Bob in the context of a room, or in general. Bob can grant or refuse consent to Alice in the context of a room or in general. 
+Alice can request consent for Bob in the context of a room, or in general. Bob can grant or refuse consent to Alice in the context of a room or in general.
 
 ~~~
 POST /requestConsent/{targetDomain}
@@ -617,7 +617,7 @@ enum {
 
 struct {
   ConsentOperation consentOperation;
-  IdentifierUri requesterUri; 
+  IdentifierUri requesterUri;
   IdentifierUri targetUri;
   optional<RoomId> roomId;
   select (consentOperation) {
