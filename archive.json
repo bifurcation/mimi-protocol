@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-01-14T00:10:10.320679+00:00",
+  "timestamp": "2024-01-16T00:09:15.094921+00:00",
   "repo": "bifurcation/mimi-protocol",
   "labels": [
     {
@@ -50,5 +50,58 @@
     }
   ],
   "issues": [],
-  "pulls": []
+  "pulls": [
+    {
+      "number": 1,
+      "id": "PR_kwDOLC4Pf85kGuYy",
+      "title": "Add consent mechanism section",
+      "url": "https://github.com/bifurcation/mimi-protocol/pull/1",
+      "state": "OPEN",
+      "author": "rohan-wire",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "This is a concrete mechanism which embodies the description of consent already in the document.",
+      "createdAt": "2024-01-15T15:47:09Z",
+      "updatedAt": "2024-01-15T15:49:28Z",
+      "baseRepository": "bifurcation/mimi-protocol",
+      "baseRefName": "main",
+      "baseRefOid": "2c62e0640d5eae9b6a75ceaad74c05e8cef0f766",
+      "headRepository": "bifurcation/mimi-protocol",
+      "headRefName": "rohan/consent-mech",
+      "headRefOid": "57c572e2fa11d609c56cd91fd0b6908c8e4ff884",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 2,
+      "id": "PR_kwDOLC4Pf85kG8oT",
+      "title": "mechansism for GroupInfo, Abuse, Internal IDs, downloads",
+      "url": "https://github.com/bifurcation/mimi-protocol/pull/2",
+      "state": "OPEN",
+      "author": "rohan-wire",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Commit example mechansism for \r\n- fetching GroupInfo, \r\n- Reporting Abuse, \r\n- Finding internal identifiers, and \r\n- Downloading attachments with less metadata.",
+      "createdAt": "2024-01-15T16:28:14Z",
+      "updatedAt": "2024-01-15T16:28:15Z",
+      "baseRepository": "bifurcation/mimi-protocol",
+      "baseRefName": "main",
+      "baseRefOid": "2c62e0640d5eae9b6a75ceaad74c05e8cef0f766",
+      "headRepository": "bifurcation/mimi-protocol",
+      "headRefName": "rohan/other-mech",
+      "headRefOid": "2c71c2727f0a797e0a391f4dce673b75c5e71e05",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    }
+  ]
 }
