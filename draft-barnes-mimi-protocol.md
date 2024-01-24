@@ -792,7 +792,7 @@ struct {
           PublicMessage moreProposals<V>; /* a list of additional proposals */
       };
   };
-};
+} UpdateRequest;
 ~~~
 
 In the first use case described in the Protocol Overview, Alice creates a Commit
@@ -877,11 +877,14 @@ POST /notify/{roomId}
 ~~~ tls
 struct {
   uint64 timestamp;
-  MLSMessage message;
-  /* the hub acceptance time (in milliseconds from the UNIX epoch) */
-  select (message.wire_format) {
-    case welcome:
-      RatchetTreeOption ratchetTreeOption;
+  select (protocol) {
+    case mls10:
+      MLSMessage message;
+      /* the hub acceptance time (in milliseconds from the UNIX epoch) */
+      select (message.wire_format) {
+        case welcome:
+          RatchetTreeOption ratchetTreeOption;
+      };
   };
 } FanoutMessage;
 ~~~
