@@ -5,7 +5,7 @@
 More Instant Messaging Interoperability                     R. L. Barnes
 Internet-Draft                                                     Cisco
 Intended status: Informational                                M. Hodgson
-Expires: 15 July 2024                   The Matrix.org Foundation C.I.C.
+Expires: 27 July 2024                   The Matrix.org Foundation C.I.C.
                                                               K. Kohbrok
                                                              Phoenix R&D
                                                                  R. Mahy
@@ -14,7 +14,7 @@ Expires: 15 July 2024                   The Matrix.org Foundation C.I.C.
                                         The Matrix.org Foundation C.I.C.
                                                                R. Robert
                                                              Phoenix R&D
-                                                         12 January 2024
+                                                         24 January 2024
 
 
          More Instant Messaging Interoperability: The Protocol
@@ -62,7 +62,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 15 July 2024.
+   This Internet-Draft will expire on 27 July 2024.
 
 Copyright Notice
 
@@ -868,7 +868,7 @@ ServerA->ServerC: POST /notify/clubhouse@a.example Commit
              PublicMessage moreProposals<V>; /* a list of additional proposals */
          };
      };
-   };
+   } UpdateRequest;
 
    In the first use case described in the Protocol Overview, Alice
    creates a Commit containing an AppSync proposal adding bob@b.example,
@@ -946,11 +946,14 @@ ServerA->ServerC: POST /notify/clubhouse@a.example Commit
 
    struct {
      uint64 timestamp;
-     MLSMessage message;
-     /* the hub acceptance time (in milliseconds from the UNIX epoch) */
-     select (message.wire_format) {
-       case welcome:
-         RatchetTreeOption ratchetTreeOption;
+     select (protocol) {
+       case mls10:
+         MLSMessage message;
+         /* the hub acceptance time (in milliseconds from the UNIX epoch) */
+         select (message.wire_format) {
+           case welcome:
+             RatchetTreeOption ratchetTreeOption;
+         };
      };
    } FanoutMessage;
 
