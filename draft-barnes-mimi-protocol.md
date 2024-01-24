@@ -903,29 +903,79 @@ POST /groupInfo/{roomId}
 ~~~
 
 In the case of MLS 1.0, Bob provides a credential proving his client's
-real or pseudonymous identity (for permission to join the group).
+real or pseudonymous identity (for permission to join the group). Bob also
+provides an ephemeral public key with which the hub can encrypt the
+GroupInfo and ratchet tree information and a signature public key corresponding
+to Bob's credential. Bob also specifies a CipherSuite which merely needs to be
+one ciphersuite in common with the hub. It is needed only to specify the
+algorithms used to sign and encrypt the GroupInfoRequest and GroupInfoResponse
+respectively.
+
+Finally, Bob could include an opaque joining code, which Bob could use to
+prove permission to fetch the GroupInfo even if Bob is not yet a participant.
+
 
 ~~~ tls
+struct {
+  select (protocol) {
+    case mls10:
+      CipherSuite cipher_suite;
+      HPKEPublicKey gi_encryption_key;
+      SignaturePublicKey requestingSignatureKey;
+      Credential requestingCredential;
+      opaque joining_code<V>;
+  };
+} GroupInfoRequestTBS;
 
 struct {
   select (protocol) {
     case mls10:
+      CipherSuite cipher_suite;
+      HPKEPublicKey gi_encryption_key;
       SignaturePublicKey requestingSignatureKey;
       Credential requestingCredential;
+      opaque joining_code<V>;
+      /* SignWithLabel(., "GroupInfoRequestTBS", GroupInfoRequestTBS) */
+      opaque signature<V>;
   };
 } GroupInfoRequest;
-
 ~~~
 
-The response body contains the GroupInfo and a way to get the ratchet_tree.
+The response body contains the encrypted GroupInfo and a way to get the ratchet_tree.
 
 ~~~ tls
+struct {
+      GroupInfo groupInfo;   /* without embedded ratchet_tree */
+      RatchetTreeOption ratchetTreeOption;
+} MLSGroupInfoPlusTree;
+
+struct {
+    ProtocolVersion version = mls10;
+    CipherSuite cipher_suite;
+    opaque room_id<V>;
+} MimiMLSRoomContext;
+
+encrypted_group_info =
+  EncryptWithLabel(gi_encryption_key, "MLSGroupInfoPlusTree",
+                   mimi_mls_room_context, mls_group_info_plus_tree)
+
 struct {
   GroupInfoCode status;
   select (protocol) {
     case mls10:
-      GroupInfo groupInfo;   /* without embedded ratchet_tree */
-      RatchetTreeOption ratchetTreeOption;
+      CipherSuite cipher_suite;
+      opaque encrypted_group_info<V>;
+  };
+} GroupInfoResponseTBS;
+
+struct {
+  GroupInfoCode status;
+  select (protocol) {
+    case mls10:
+      CipherSuite cipher_suite;
+      opaque encrypted_group_info<V>;
+      /* SignWithLabel(., "GroupInfoResponseTBS", GroupInfoResponseTBS) */
+      opaque signature<V>;
   };
 } GroupInfoResponse;
 ~~~
