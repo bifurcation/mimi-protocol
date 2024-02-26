@@ -896,6 +896,229 @@ To be clear, clients that are being removed SHOULD receive the corresponding
 Commit message, so they can recognize that they have been removed and clean up
 their internal state.
 
+## Claim end-to-end crypto group key information
+
+For Bob's new client to join the MLS group and therefore fully participate
+in the room with Alice, Bob needs to fetch the MLS GroupInfo (or analogous).
+
+~~~
+POST /groupInfo/{roomId}
+~~~
+
+In the case of MLS 1.0, Bob provides a credential proving his client's
+real or pseudonymous identity (for permission to join the group). Bob also
+provides an ephemeral public key with which the hub can encrypt the
+GroupInfo and ratchet tree information and a signature public key corresponding
+to Bob's credential. Bob also specifies a CipherSuite which merely needs to be
+one ciphersuite in common with the hub. It is needed only to specify the
+algorithms used to sign and encrypt the GroupInfoRequest and GroupInfoResponse
+respectively.
+
+Finally, Bob could include an opaque joining code, which Bob could use to
+prove permission to fetch the GroupInfo even if Bob is not yet a participant.
+
+
+~~~ tls
+struct {
+  select (protocol) {
+    case mls10:
+      CipherSuite cipher_suite;
+      HPKEPublicKey gi_encryption_key;
+      SignaturePublicKey requestingSignatureKey;
+      Credential requestingCredential;
+      opaque joining_code<V>;
+  };
+} GroupInfoRequestTBS;
+
+struct {
+  select (protocol) {
+    case mls10:
+      CipherSuite cipher_suite;
+      HPKEPublicKey gi_encryption_key;
+      SignaturePublicKey requestingSignatureKey;
+      Credential requestingCredential;
+      opaque joining_code<V>;
+      /* SignWithLabel(., "GroupInfoRequestTBS", GroupInfoRequestTBS) */
+      opaque signature<V>;
+  };
+} GroupInfoRequest;
+~~~
+
+The response body contains the encrypted GroupInfo and a way to get the ratchet_tree.
+
+~~~ tls
+struct {
+      GroupInfo groupInfo;   /* without embedded ratchet_tree */
+      RatchetTreeOption ratchetTreeOption;
+} MLSGroupInfoPlusTree;
+
+struct {
+    ProtocolVersion version = mls10;
+    CipherSuite cipher_suite;
+    opaque room_id<V>;
+} MimiMLSRoomContext;
+
+encrypted_group_info =
+  EncryptWithLabel(gi_encryption_key, "MLSGroupInfoPlusTree",
+                   mimi_mls_room_context, mls_group_info_plus_tree)
+
+struct {
+  GroupInfoCode status;
+  select (protocol) {
+    case mls10:
+      CipherSuite cipher_suite;
+      opaque encrypted_group_info<V>;
+  };
+} GroupInfoResponseTBS;
+
+struct {
+  GroupInfoCode status;
+  select (protocol) {
+    case mls10:
+      CipherSuite cipher_suite;
+      opaque encrypted_group_info<V>;
+      /* SignWithLabel(., "GroupInfoResponseTBS", GroupInfoResponseTBS) */
+      opaque signature<V>;
+  };
+} GroupInfoResponse;
+~~~
+
+**ISSUE**: What security properties are needed to protect a
+GroupInfo object in the MIMI context are still under discussion. It is
+possible that the requester only needs to prove possession of their private
+key. The GroupInfo in another context might be sufficiently sensitive that
+it should be encrypted from the end client to the hub provider (unreadable
+by the local provider).
+
+
+## Report abuse
+
+Abuse reports are only sent to the hub provider. They can optionally contain a handful of (end-to-end encrypted) abusive messages, and the keys necessary to decrypt them. The group_id, epoch, and allegedAbuserLeafIndex, all identify the alleged abusing client at a snapshot in time.
+
+~~~
+POST /reportAbuse/{roomId}
+~~~
+
+~~~ tls
+
+struct {
+  /* an application message (wire_format = private_message and */
+  /* content_type = application) and the key and nonce to decrypt */
+  /* just this single application message */
+  MLSMessage applicationMessage;
+  bytes key;
+  bytes nonce;
+} AbusiveMessage;
+
+struct {
+  IdentifierURI reportingUser;
+  IdentifierURI allegedAbuserURI;
+  opaque group_id<V>;
+  uint64 epoch;
+  uint32 allegedAbuserLeafIndex;
+  AbusiveMessage messages<V>;
+  AbuseType reasonCode;
+  string note;
+  AbusiveMessage messages<V>;
+} AbuseReport;
+~~~
+
+The response code only indicates if the abuse report was accepted, not if any specific automated or human action was taken.
+
+
+## Find internal address
+
+The identifier query is to find the internal URI for a specific user on a specific provider. It is only sent from the local provider to the target provider (it does not transit a hub).
+
+~~~
+GET /identifierQuery/{domain}
+~~~
+
+The request body is described as:
+
+~~~ tls
+enum {
+  reserved(0),
+  handle(1),
+  nick(2),
+  email(3),
+  phone(4),
+  partialName(5),
+  wholeProfile(6),
+  oidcStdClaim(7),
+  vcardField(8),
+  (255)
+} SearchIdentifierType;
+
+struct {
+  SearchIdentifierType searchType;
+  string searchValue;
+  select(type) {
+    case oidcStdClaim:
+      string claimName;
+    case vcardField:
+      string fieldName;
+  };
+} IdentifierRequest;
+~~~
+
+The response body is described as:
+
+~~~ tls
+enum {
+  success(0),
+  notFound(1),
+  ambiguous(2),
+  forbidden(3),
+  unsupportedField(4),
+  (255)
+} IdentifierQueryCode;
+
+enum {
+  reserved(0),
+  oidcStdClaim(7),
+  vcardField(8),
+  (255)
+} FieldSource;
+
+struct {
+  FieldSource fieldSource;
+  string fieldName;
+  opaque fieldValue<V>;
+} ProfileField;
+
+struct {
+  IdentifierUri stableUri;
+  ProfileField fields<V>;
+} UserProfile;
+
+struct {
+  IdentifierQueryCode responseCode;
+  IdentifierUri uri<V>;
+  UserProfile foundProfiles<V>;
+} IdentifierResponse;
+~~~
+
+**TODO**: The format of specific identifiers is discussed in
+{{?I-D.mahy-mimi-identity}}. Any specific conventions which are needed
+should be merged into this document.
+
+## Download files
+
+The proxyDownload endpoint is used to prevent a provider from learning about the
+IP addresses and online status of clients associated with another provider, when
+that client downloads an attachment in a specific room.
+
+The URL includes both the room ID and the original download URL. The download
+URL MUST be for a hostname associated with one of the providers with active
+participants in the room.
+
+~~~
+GET /proxyDownload/{roomId}/{downloadUrl}
+~~~
+
+If the request succeeds, the response body contains the downloaded URL.
+
 # Use of MLS DS/AS
 
 MLS defines an abstract Delivery Server (DS) and Authentication Server (AS).
