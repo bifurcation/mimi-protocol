@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-02-25T00:09:34.079065+00:00",
+  "timestamp": "2024-02-27T00:09:04.496771+00:00",
   "repo": "bifurcation/mimi-protocol",
   "labels": [
     {
@@ -58,7 +58,7 @@
       "url": "https://github.com/bifurcation/mimi-protocol/pull/1",
       "state": "OPEN",
       "author": "rohan-wire",
-      "authorAssociation": "COLLABORATOR",
+      "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "This is a concrete mechanism which embodies the description of consent already in the document.",
@@ -84,7 +84,7 @@
       "url": "https://github.com/bifurcation/mimi-protocol/pull/2",
       "state": "OPEN",
       "author": "rohan-wire",
-      "authorAssociation": "COLLABORATOR",
+      "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "Commit example mechansism for \r\n- fetching GroupInfo, \r\n- Reporting Abuse, \r\n- Finding internal identifiers, and \r\n- Downloading attachments with less metadata.",
